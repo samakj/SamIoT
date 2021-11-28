@@ -70,7 +70,8 @@ class LocationsStore:
     async def get_locations(
         self,
         ids: Optional[List[str]] = None,
-        names: Optional[List[str]] = None
+        names: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
     ) -> List[Location]:
         filters = []
 
@@ -78,6 +79,8 @@ class LocationsStore:
             filters.append("id=ANY($1)")
         if names is not None:
             filters.append("name=ANY($2)")
+        if tags is not None:
+            filters = [f"({' OR '.join(filters)})", "tags&&$3"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
@@ -85,10 +88,11 @@ class LocationsStore:
                     f"""
                         SELET id, name, tags
                         FROM locations
-                        WHERE {" OR ".join(filters)}
+                        WHERE {" AND ".join(filters)}
                     """,
                     ids,
-                    names
+                    names,
+                    tags
                 )
 
                 return [Location.parse_obj(dict(row)) for row in db_response]
