@@ -71,7 +71,7 @@ class LocationsStore:
         self,
         ids: Optional[List[str]] = None,
         names: Optional[List[str]] = None
-    ) -> Optional[Location]:
+    ) -> List[Location]:
         filters = []
 
         if ids is not None:
@@ -91,11 +91,7 @@ class LocationsStore:
                     names
                 )
 
-                return (
-                    Location.parse_obj(dict(db_response))
-                    if db_response is not None else
-                    None
-                )
+                return [Location.parse_obj(dict(row)) for row in db_response]
 
     async def update_location(
         self,
