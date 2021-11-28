@@ -1,0 +1,136 @@
+-- Show the counts and rates of each metric in measurements
+--    WITH counts AS (
+--        SELECT metric_id, COUNT(*) FROM measurements GROUP BY metric_id
+--    ), mins AS (
+--        SELECT metric_id, MIN(timestamp) FROM measurements GROUP BY metric_id
+--    ), maxs AS (
+--        SELECT metric_id, MAX(timestamp) FROM measurements GROUP BY metric_id
+--    )
+--    SELECT * 
+--      FROM (
+--    SELECT metric_id,
+--           name,  
+--           count, 
+--           ROUND(60 * (count / NULLIF(EXTRACT(EPOCH FROM (max - min))::numeric, 0)), 2) as "/min"
+--      FROM counts
+-- LEFT JOIN mins USING(metric_id)
+-- LEFT JOIN maxs USING(metric_id)
+-- LEFT JOIN metrics ON metric_id = metrics.id
+--     UNION ALL
+--    SELECT NULL as metric_id,
+--           'Total' as name, 
+--           (SELECT SUM(count) FROM counts) as count,
+--           ROUND(60 * (
+--               (SELECT SUM(count) FROM counts) / 
+--               NULLIF(EXTRACT(EPOCH FROM ((SELECT MAX(max) FROM maxs) - (SELECT MIN(min) FROM mins)))::numeric, 0)), 2) as "/min"
+--           ) AS union_query
+--  ORDER BY metric_id;
+-- \watch 1
+
+-- Creates a time weighted average for a measurement and period of time
+-- WITH args (_start, _end, _metric_id) AS (
+--     VALUES (
+--         '2021-08-29 06:00:00'::TIMESTAMP,
+--         '2021-08-29 12:00:00'::TIMESTAMP,
+--         1
+--     )
+-- ), m AS (
+--        SELECT _m.timestamp,
+--               COALESCE(f.value, i.value::NUMERIC(8,4), b.value::INTEGER::NUMERIC(8,4)) as value
+--          FROM ((
+--                   SELECT id, timestamp 
+--                     FROM measurements, args
+--                    WHERE metric_id = args._metric_id AND 
+--                          timestamp > args._start AND
+--                          timestamp < args._end
+--               )
+--               UNION ALL
+--               (
+--                   (
+--                       SELECT id, args._start 
+--                         FROM measurements, args
+--                        WHERE metric_id = args._metric_id AND 
+--                              timestamp < args._start
+--                        LIMIT 1
+--                   )
+--                   UNION ALL 
+--                   (
+--                       SELECT id, args._start 
+--                         FROM measurements, args
+--                        WHERE metric_id = args._metric_id AND 
+--                              timestamp > args._start
+--                        LIMIT 1
+--                   ) LIMIT 1
+--               )
+--               UNION ALL
+--               (
+--                   SELECT id, args._end 
+--                   FROM measurements, args
+--                   WHERE metric_id=1 AND 
+--                       timestamp < args._end
+--                   LIMIT 1
+--               )) AS _m
+--     LEFT JOIN float_measurements AS f ON _m.id = f.measurement_id
+--     LEFT JOIN integer_measurements AS i ON _m.id = i.measurement_id
+--     LEFT JOIN boolean_measurements AS b ON _m.id = b.measurement_id
+--         ORDER BY timestamp ASC 
+-- ), l as (
+--     SELECT timestamp, 
+--            lead(timestamp, 1) OVER (ORDER BY timestamp) AS next_timestamp, 
+--            value, 
+--            lead(value, 1) OVER (ORDER BY timestamp) AS next_value 
+--       FROM m
+-- ), d as (
+--     SELECT l.timestamp, 
+--            l.next_timestamp, 
+--            EXTRACT(epoch from (l.next_timestamp - l.timestamp)) AS dt, 
+--            l.value, 
+--            l.next_value, 
+--            l.next_value - l.value AS dv 
+--       FROM l
+-- )
+--   SELECT args._start as start, 
+--          args._end as end, 
+--          sum(d.value * d.dt) / EXTRACT(epoch from (args._end - args._start)) as average 
+--     FROM d, args
+-- GROUP BY args._start, args._end;
+
+-- Gets memory usage information for each table
+-- CREATE OR REPLACE FUNCTION get_table_row_count(table_name TEXT)
+--   RETURNS TABLE(col BIGINT)
+--   LANGUAGE plpgsql AS
+-- $func$
+-- BEGIN
+--    RETURN QUERY EXECUTE format('SELECT COUNT(*) FROM %I', table_name);
+-- END
+-- $func$;
+
+--     WITH tables AS (
+--            SELECT table_name
+--             FROM information_schema.tables
+--            WHERE table_schema='public' AND
+--                  table_type='BASE TABLE'
+--       ), data AS ( 
+--            SELECT table_name,
+--                   get_table_row_count(table_name) as row_count,
+--                   pg_total_relation_size(table_name::regclass) as size,
+--                   pg_size_pretty(pg_total_relation_size(table_name::regclass)) as "size (pretty)", 
+--                   pg_total_relation_size(table_name::regclass) / NULLIF(get_table_row_count(table_name), 0) as "/row",
+--                   pg_size_pretty(pg_total_relation_size(table_name::regclass) / NULLIF(get_table_row_count(table_name), 0)) as "/row (pretty)"
+--              FROM tables
+--       )
+--   SELECT * 
+--     FROM (
+--   SELECT *
+--     FROM data
+--    UNION 
+--   SELECT 'z_Total' as table_name,
+--          (SELECT SUM(row_count) FROM data) as row_count,
+--          (SELECT SUM(size) FROM data) as size,
+--          pg_size_pretty((SELECT SUM(size) FROM data)) as "size (pretty)",
+--          ROUND((SELECT SUM(size) FROM data) / (SELECT SUM(row_count) FROM data)) as "/row",
+--          pg_size_pretty(ROUND((SELECT SUM(size) FROM data) / (SELECT SUM(row_count) FROM data))) as "/row (pretty)"
+--          ) AS union_query
+-- ORDER BY table_name;
+-- \watch 1;
+
