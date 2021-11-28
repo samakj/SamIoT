@@ -1,7 +1,10 @@
 #!/bin/bash
 
+shared="$(dirname "$(pwd)")"
+root="$(dirname $shared)"
+
 python3 -m venv .
 source bin/activate
-ln -s /Users/$(whoami)/repos/SamIoT/shared ./
+ln -s "$root/shared" ./
 
 pip3 install -r requirements.txt
