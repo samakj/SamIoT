@@ -5,6 +5,8 @@ from aiohttp import ClientSession, ClientWebSocketResponse, WSMessage, WSMsgType
 from asyncio import Task
 from typing import Any, Callable, Coroutine, Optional
 
+from shared.python.json import serialise_json
+
 LOG = logging.getLogger(__name__)
 
 EventCallback = Callable[
@@ -95,7 +97,7 @@ class Websocket:
 
     async def _websocket_task(self) -> None:
         error = None
-        async with ClientSession() as session:
+        async with ClientSession(json_serialize=serialise_json) as session:
             try:
                 async with session.ws_connect(self.url) as websocket:
                     self.websocket = websocket
