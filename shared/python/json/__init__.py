@@ -32,9 +32,9 @@ def to_json_serialisable(object: Any) -> Any:
     return object
 
 
-def serialise_json(object: Any, *args, **kwargs) -> str:
+def serialise_json(object: Any, *args: Any, **kwargs: Any) -> str:
     return json.dumps(object, *args, **kwargs)
 
 
-def parse_json(object: Any, *args, **kwargs) -> str:
+def parse_json(object: Any, *args: Any, **kwargs: Any) -> str:
     return json.loads(object, *args, **kwargs)

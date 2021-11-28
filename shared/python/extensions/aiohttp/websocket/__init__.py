@@ -30,6 +30,7 @@ def is_json_string(string: str) -> bool:
 
 class Websocket:
     url: str
+    id: str
     name: str
     last_message: Optional[datetime]
     auto_reconnect_time: int
@@ -48,6 +49,7 @@ class Websocket:
     def __init__(
         self,
         url: str,
+        id: str = "",
         name: str = "",
         auto_reconnect_time: int = 15,
         *,
@@ -60,6 +62,7 @@ class Websocket:
         on_close: Optional[EventWithMessageCallback] = None
     ):
         self.url = url
+        self.id = id
         self.name = name
         self.last_message = None
         self.auto_reconnect_time = auto_reconnect_time
@@ -98,8 +101,9 @@ class Websocket:
     async def _websocket_task(self) -> None:
         error = None
         async with ClientSession(json_serialize=serialise_json) as session:
+            url = f"{self.url}{'&' if '?' in self.url else '?'}socket_id={self.id}"
             try:
-                async with session.ws_connect(self.url) as websocket:
+                async with session.ws_connect(url) as websocket:
                     self.websocket = websocket
 
                     if self.on_connect is not None:
