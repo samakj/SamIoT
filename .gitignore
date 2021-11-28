@@ -25,3 +25,6 @@ __pycache__/
 # Shared Folder
 /services/**/shared
 /shared/**/shared
+
+# Data
+/data
