@@ -1,6 +1,6 @@
 import asyncio
 from dataclasses import asdict
-from typing import List, Optional
+from typing import List, Optional, Union
 from aiohttp_pydantic import PydanticView
 from datetime import datetime
 from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
@@ -16,9 +16,9 @@ LOCATIONS_V0_ROUTES = RouteTableDef()
 class LocationsV0View(PydanticView):
     async def get(
         self,
-        ids: Optional[List[int]] = None,
-        names: Optional[List[str]] = None,
-        tags: Optional[List[str]] = None
+        ids: Optional[Union[int, List[int]]] = None,
+        names: Optional[Union[str, List[str]]] = None,
+        tags: Optional[Union[str, List[str]]] = None
     ) -> Response:
         app: IoTAPIApplication = self.request.app
 
@@ -28,7 +28,23 @@ class LocationsV0View(PydanticView):
             )
 
         return json_response(
-            await app.locations_store.get_locations(ids, names, tags)
+            await app.locations_store.get_locations(
+                ids
+                if isinstance(ids, list) else
+                [ids]
+                if ids is not None else
+                None,
+                names
+                if isinstance(names, list) else
+                [names]
+                if names is not None else
+                None,
+                tags
+                if isinstance(tags, list) else
+                [tags]
+                if tags is not None else
+                None
+            )
         )
 
 
