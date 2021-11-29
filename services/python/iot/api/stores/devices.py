@@ -119,6 +119,8 @@ class DevicesStore(BaseStore):
             filters.append("last_message>$5")
         if last_message_lte:
             filters.append("last_message>$6")
+        if not filters:
+            filters = ["TRUE"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():

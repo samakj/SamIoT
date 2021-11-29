@@ -81,6 +81,8 @@ class LocationsStore(BaseStore):
             filters.append("name=ANY($2)")
         if tags is not None:
             filters = [f"({' OR '.join(filters)})", "tags&&$3"]
+        if not filters:
+            filters = ["TRUE"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():

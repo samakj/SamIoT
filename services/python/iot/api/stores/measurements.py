@@ -132,6 +132,8 @@ class MeasurementsStore(BaseStore):
             filters.append("timestamp>=$6")
         if timestamp_lte is not None:
             filters.append("timestamp<=$7")
+        if not filters:
+            filters = ["TRUE"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():

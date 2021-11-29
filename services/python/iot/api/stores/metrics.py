@@ -102,6 +102,8 @@ class MetricsStore(BaseStore):
             filters.append("name=ANY($2)")
         if abbreviations is not None:
             filters.append("abbreviation=ANY($2)")
+        if not filters:
+            fitlers = ["TRUE"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
