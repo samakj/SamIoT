@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 from shared.python.models.Device import Device
@@ -103,22 +103,29 @@ class DevicesStore(BaseStore):
         last_message_gte: Optional[datetime] = None,
         last_message_lte: Optional[datetime] = None
     ) -> List[Device]:
+        values = []
         filters = []
 
         if ids is not None:
-            filters.append("id=ANY($1)")
+            filters.append(f"id=ANY(${len(values) + 1})")
+            values.append(ids)
         if macs is not None:
-            filters.append("macs=ANY($2)")
+            filters.append(f"macs=ANY(${len(values) + 1})")
+            values.append(macs)
         if ips is not None:
-            filters.append("ips=ANY($3)")
+            filters.append(f"ips=ANY(${len(values) + 1})")
+            values.append(ips)
         if location_ids is not None:
-            filters.append("location_ids=ANY($4)")
+            filters.append(f"location_ids=ANY(${len(values) + 1})")
+            values.append(location_ids)
         if last_message_gte or last_message_lte:
             filters = [f"({' OR '.join(filters)})"]
         if last_message_gte:
-            filters.append("last_message>$5")
+            filters.append(f"last_message>${len(values) + 1}")
+            values.append(last_message_gte)
         if last_message_lte:
-            filters.append("last_message>$6")
+            filters.append(f"last_message>${len(values) + 1}")
+            values.append(last_message_lte)
         if not filters:
             filters = ["TRUE"]
 
@@ -130,12 +137,7 @@ class DevicesStore(BaseStore):
                         FROM devices
                         WHERE {" AND ".join(filters)}
                     """,
-                    ids,
-                    macs,
-                    ips,
-                    location_ids,
-                    last_message_gte,
-                    last_message_lte,
+                    *values
                 )
 
                 return [Device.parse_obj(dict(row)) for row in db_response]
@@ -149,18 +151,24 @@ class DevicesStore(BaseStore):
         location_id: Optional[int] = None,
         last_message: Optional[datetime] = None
     ) -> Optional[Device]:
+        values: List[Any] = [id]
         updates = []
 
         if mac is not None:
-            updates.append("mac=$2")
+            updates.append(f"mac=${len(values) + 1}")
+            values.append(mac)
         if ip is not None:
-            updates.append("ip=$3")
+            updates.append(f"ip=${len(values) + 1}")
+            values.append(ip)
         if websocket_path is not None:
-            updates.append("websocket_path=$4")
+            updates.append(f"websocket_path=${len(values) + 1}")
+            values.append(websocket_path)
         if location_id is not None:
-            updates.append("location_id=$5")
+            updates.append(f"location_id=${len(values) + 1}")
+            values.append(location_id)
         if last_message is not None:
-            updates.append("last_message=$6")
+            updates.append(f"last_message=${len(values) + 1}")
+            values.append(last_message)
         if not updates:
             return await self.get_device(id)
 
@@ -173,12 +181,7 @@ class DevicesStore(BaseStore):
                         WHERE id=$1
                         RETURNING id, mac, ip, websocket_path, location_id, last_message
                     """,
-                    id,
-                    mac,
-                    ip,
-                    websocket_path,
-                    location_id,
-                    last_message,
+                    *values
                 )
 
                 result = (

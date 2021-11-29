@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from shared.python.models.Location import Location
 from shared.python.stores.BaseStore import BaseStore
@@ -73,28 +73,31 @@ class LocationsStore(BaseStore):
         names: Optional[List[str]] = None,
         tags: Optional[List[str]] = None,
     ) -> List[Location]:
+        values = []
         filters = []
 
         if ids is not None:
-            filters.append("id=ANY($1)")
+            filters.append(f"id=ANY(${len(values) + 1})")
+            values.append(ids)
         if names is not None:
-            filters.append("name=ANY($2)")
+            filters.append(f"name=ANY(${len(values) + 1})")
+            values.append(names)
         if tags is not None:
-            filters = [f"({' OR '.join(filters)})", "tags&&$3"]
+            filters = [f"({' OR '.join(filters)})",
+                       f"tags&&${len(values) + 1}"]
+            values.append(tags)
         if not filters:
             filters = ["TRUE"]
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
-                db_response = await connection.fetchrow(
+                db_response = await connection.fetch(
                     f"""
                         SELECT id, name, tags
                         FROM locations
                         WHERE {" AND ".join(filters)}
                     """,
-                    ids,
-                    names,
-                    tags
+                    *values
                 )
 
                 return [Location.parse_obj(dict(row)) for row in db_response]
@@ -105,12 +108,15 @@ class LocationsStore(BaseStore):
         name: Optional[str] = None,
         tags: Optional[List[str]] = None,
     ) -> Optional[Location]:
+        values: List[Any] = [id]
         updates = []
 
         if name is not None:
-            updates.append("name=$1")
+            updates.append(f"name=${len(values) + 1}")
+            values.append(name)
         if tags is not None:
-            updates.append("tags=$2")
+            updates.append(f"tags=${len(values) + 1}")
+            values.append(tags)
         if not updates:
             return await self.get_location(id)
 
@@ -123,8 +129,7 @@ class LocationsStore(BaseStore):
                         WHERE id=$1
                         RETURNING id, name, tags
                     """,
-                    name,
-                    tags
+                    *values
                 )
 
                 result = (

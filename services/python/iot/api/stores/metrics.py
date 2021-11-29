@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from shared.python.models.Metric import Metric
 from shared.python.stores.BaseStore import BaseStore
@@ -94,14 +94,18 @@ class MetricsStore(BaseStore):
         names: Optional[List[str]] = None,
         abbreviations: Optional[List[str]] = None,
     ) -> List[Metric]:
+        values = []
         filters = []
 
         if ids is not None:
-            filters.append("id=ANY($1)")
+            filters.append(f"id=ANY(${len(values) + 1})")
+            values.append(ids)
         if names is not None:
-            filters.append("name=ANY($2)")
+            filters.append(f"name=ANY(${len(values) + 1})")
+            values.append(names)
         if abbreviations is not None:
-            filters.append("abbreviation=ANY($2)")
+            filters.append(f"abbreviation=ANY(${len(values) + 1})")
+            values.append(abbreviations)
         if not filters:
             filters = ["TRUE"]
 
@@ -127,14 +131,18 @@ class MetricsStore(BaseStore):
         abbreviation: Optional[str] = None,
         unit: Optional[str] = None,
     ) -> Optional[Metric]:
+        values: List[Any] = [id]
         updates = []
 
         if name is not None:
-            updates.append("name=$1")
+            updates.append(f"name=${len(values) + 1}")
+            values.append(name)
         if abbreviation is not None:
-            updates.append("abbreviation=$2")
+            updates.append(f"abbreviation=${len(values) + 1}")
+            values.append(abbreviation)
         if unit is not None:
-            updates.append("unit=$2")
+            updates.append(f"unit=${len(values) + 1}")
+            values.append(unit)
         if not updates:
             return await self.get_metric(id)
 

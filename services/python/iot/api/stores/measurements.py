@@ -116,22 +116,30 @@ class MeasurementsStore(BaseStore):
         value_gte: Optional[ValueType] = None,
         value_lte: Optional[ValueType] = None,
     ) -> List[Measurement]:
+        values = []
         filters = []
 
         if ids is not None:
-            filters.append("id=ANY($1)")
+            filters.append(f"id=ANY(${len(values) + 1})")
+            values.append(ids)
         if device_ids is not None:
-            filters.append("device_id=ANY($2)")
+            filters.append(f"device_id=ANY(${len(values) + 1})")
+            values.append(device_ids)
         if location_ids is not None:
-            filters.append("location_id=ANY($3)")
+            filters.append(f"location_id=ANY(${len(values) + 1})")
+            values.append(location_ids)
         if metric_ids is not None:
-            filters.append("metric_id=ANY($4)")
+            filters.append(f"metric_id=ANY(${len(values) + 1})")
+            values.append(metric_ids)
         if tags is not None:
-            filters.append("tags&&$5")
+            filters.append(f"tags&&${len(values) + 1}")
+            values.append(tags)
         if timestamp_gte is not None:
-            filters.append("timestamp>=$6")
+            filters.append(f"timestamp>=${len(values) + 1}")
+            values.append(timestamp_gte)
         if timestamp_lte is not None:
-            filters.append("timestamp<=$7")
+            filters.append(f"timestamp<=${len(values) + 1}")
+            values.append(timestamp_lte)
         if not filters:
             filters = ["TRUE"]
 
@@ -157,13 +165,7 @@ class MeasurementsStore(BaseStore):
                         LEFT JOIN boolean_measurements ON measurements.id = boolean_measurements.measurement_id
                         WHERE {" AND ".join(filters)}
                     """,
-                    ids,
-                    device_ids,
-                    location_ids,
-                    metric_ids,
-                    tags,
-                    timestamp_gte,
-                    timestamp_lte,
+                    *values
                 )
 
                 rows = []
