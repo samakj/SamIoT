@@ -85,7 +85,7 @@ class LocationsStore(BaseStore):
         if filters and tags is not None:
             filters = [f"({' OR '.join(filters)})"]
         if tags is not None:
-            filters.append(f"tags&&${len(values) + 1}")
+            filters.append(f"tags@>${len(values) + 1}")
             values.append(tags)
         if not filters:
             filters = ["TRUE"]

@@ -132,7 +132,7 @@ class MeasurementsStore(BaseStore):
             filters.append(f"metric_id=ANY(${len(values) + 1})")
             values.append(metric_ids)
         if tags is not None:
-            filters.append(f"tags&&${len(values) + 1}")
+            filters.append(f"tags@>${len(values) + 1}")
             values.append(tags)
         if timestamp_gte is not None:
             filters.append(f"timestamp>=${len(values) + 1}")
