@@ -1,16 +1,11 @@
 from typing import Dict, List, Optional
-from asyncpg import Pool
 from datetime import datetime
 
 from shared.python.models.Device import Device
+from shared.python.stores.BaseStore import BaseStore
 
 
-class DevicesStore:
-    db: Pool
-
-    def __init__(self, db: Pool) -> None:
-        self.db = db
-
+class DevicesStore(BaseStore):
     async def create_device(
         self,
         mac: str,

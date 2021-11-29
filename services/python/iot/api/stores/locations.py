@@ -1,15 +1,10 @@
 from typing import Dict, List, Optional
-from asyncpg import Pool
 
 from shared.python.models.Location import Location
+from shared.python.stores.BaseStore import BaseStore
 
 
-class LocationsStore:
-    db: Pool
-
-    def __init__(self, db: Pool) -> None:
-        self.db = db
-
+class LocationsStore(BaseStore):
     async def create_location(
         self, name: str, tags: List[str] = []
     ) -> Optional[Location]:

@@ -1,15 +1,10 @@
 from typing import Dict, List, Optional
-from asyncpg import Pool
 
 from shared.python.models.Metric import Metric
+from shared.python.stores.BaseStore import BaseStore
 
 
-class MetricsStore:
-    db: Pool
-
-    def __init__(self, db: Pool) -> None:
-        self.db = db
-
+class MetricsStore(BaseStore):
     async def create_metric(
         self, name: str, abbreviation: str, unit: Optional[str] = None
     ) -> Optional[Metric]:

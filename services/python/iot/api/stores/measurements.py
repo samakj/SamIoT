@@ -1,17 +1,12 @@
 from typing import List, Optional
-from asyncpg import Pool
 from datetime import datetime
 from decimal import Decimal
 
 from shared.python.models.Measurement import Measurement, ValueType, ValueTypeOptions
+from shared.python.stores.BaseStore import BaseStore
 
 
-class MeasurementsStore:
-    db: Pool
-
-    def __init__(self, db: Pool) -> None:
-        self.db = db
-
+class MeasurementsStore(BaseStore):
     async def create_measurement(
         self,
         timestamp: datetime,
