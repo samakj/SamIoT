@@ -118,7 +118,7 @@ class DevicesStore(BaseStore):
         if location_ids is not None:
             filters.append(f"location_ids=ANY(${len(values) + 1})")
             values.append(location_ids)
-        if last_message_gte or last_message_lte:
+        if filters and (last_message_gte is not None or last_message_lte is not None):
             filters = [f"({' OR '.join(filters)})"]
         if last_message_gte:
             filters.append(f"last_message>${len(values) + 1}")
