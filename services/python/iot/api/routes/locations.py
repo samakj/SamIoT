@@ -16,8 +16,8 @@ LOCATIONS_V0_ROUTES = RouteTableDef()
 class LocationsV0View(PydanticView):
     async def get(
         self,
-        ids: Optional[Union[int, List[int]]] = None,
-        names: Optional[Union[str, List[str]]] = None,
+        id: Optional[Union[int, List[int]]] = None,
+        name: Optional[Union[str, List[str]]] = None,
         tags: Optional[Union[str, List[str]]] = None
     ) -> Response:
         app: IoTAPIApplication = self.request.app
@@ -29,15 +29,15 @@ class LocationsV0View(PydanticView):
 
         return json_response(
             await app.locations_store.get_locations(
-                ids
-                if isinstance(ids, list) else
-                [ids]
-                if ids is not None else
+                id
+                if isinstance(id, list) else
+                [id]
+                if id is not None else
                 None,
-                names
-                if isinstance(names, list) else
-                [names]
-                if names is not None else
+                name
+                if isinstance(name, list) else
+                [name]
+                if name is not None else
                 None,
                 tags
                 if isinstance(tags, list) else
