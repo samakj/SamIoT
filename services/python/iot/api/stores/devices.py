@@ -45,7 +45,7 @@ class DevicesStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, mac, ip, websocket_path, location_id, last_message
+                        SELECT id, mac, ip, websocket_path, location_id, last_message
                         FROM devices
                         WHERE id=$1
                     """,
@@ -63,7 +63,7 @@ class DevicesStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, mac, ip, websocket_path, location_id, last_message
+                        SELECT id, mac, ip, websocket_path, location_id, last_message
                         FROM devices
                         WHERE ip=$1
                     """,
@@ -81,7 +81,7 @@ class DevicesStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, mac, ip, websocket_path, location_id, last_message
+                        SELECT id, mac, ip, websocket_path, location_id, last_message
                         FROM devices
                         WHERE mac=$1
                     """,
@@ -124,7 +124,7 @@ class DevicesStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, mac, ip, websocket_path, location_id, last_message
+                        SELECT id, mac, ip, websocket_path, location_id, last_message
                         FROM devices
                         WHERE {" AND ".join(filters)}
                     """,

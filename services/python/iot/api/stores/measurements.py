@@ -72,7 +72,7 @@ class MeasurementsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, 
+                        SELECT id, 
                               timestamp,
                               device_id, 
                               location_id, 
@@ -137,7 +137,7 @@ class MeasurementsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, 
+                        SELECT id, 
                               timestamp,
                               device_id, 
                               location_id, 

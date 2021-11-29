@@ -36,7 +36,7 @@ class LocationsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, tags
+                        SELECT id, name, tags
                         FROM locations
                         WHERE id=$1
                     """,
@@ -54,7 +54,7 @@ class LocationsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, tags
+                        SELECT id, name, tags
                         FROM locations
                         WHERE name=$1
                     """,
@@ -86,7 +86,7 @@ class LocationsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, tags
+                        SELECT id, name, tags
                         FROM locations
                         WHERE {" AND ".join(filters)}
                     """,

@@ -37,7 +37,7 @@ class MetricsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, abbreviation, unit
+                        SELECT id, name, abbreviation, unit
                         FROM metrics
                         WHERE id=$1
                     """,
@@ -55,7 +55,7 @@ class MetricsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, abbreviation, unit
+                        SELECT id, name, abbreviation, unit
                         FROM metrics
                         WHERE name=$1
                     """,
@@ -75,7 +75,7 @@ class MetricsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELET id, name, abbreviation, unit
+                        SELECT id, name, abbreviation, unit
                         FROM metrics
                         WHERE abbreviation=$1
                     """,
@@ -107,7 +107,7 @@ class MetricsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetch(
                     f"""
-                        SELET id, name, abbreviation, unit
+                        SELECT id, name, abbreviation, unit
                         FROM metrics
                         WHERE {" OR ".join(filters)}
                     """,
