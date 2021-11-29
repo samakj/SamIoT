@@ -69,7 +69,7 @@ class LocationsStore(BaseStore):
 
     async def get_locations(
         self,
-        ids: Optional[List[str]] = None,
+        ids: Optional[List[int]] = None,
         names: Optional[List[str]] = None,
         tags: Optional[List[str]] = None,
     ) -> List[Location]:
