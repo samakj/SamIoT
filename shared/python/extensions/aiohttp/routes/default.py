@@ -1,13 +1,12 @@
 import asyncio
 from abc import ABCMeta
 from aiohttp.web import RouteTableDef, Response, json_response, View
-from aiohttp_cors import CorsViewMixin
 
 DEFAULT_ROUTES = RouteTableDef()
 
 
 @DEFAULT_ROUTES.view("/")
-class RootView(View, CorsViewMixin):
+class RootView(View):
     async def get(self) -> Response:
         routes = {}
 
@@ -39,6 +38,6 @@ class RootView(View, CorsViewMixin):
 
 
 @DEFAULT_ROUTES.view("/v0/ping")
-class V0Ping(View, CorsViewMixin):
+class V0Ping(View):
     async def get(self) -> Response:
         return json_response({"ping": "pong"})
