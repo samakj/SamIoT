@@ -4,8 +4,10 @@ import os
 from dotenv import load_dotenv
 
 from Application import IoTAPIApplication
+from routes.locations import LOCATIONS_V0_ROUTES
 from shared.python.extensions.aiohttp.middleware.error_handler import error_handler
 from shared.python.extensions.aiohttp.middleware.request_logger import request_logger
+from shared.python.extensions.aiohttp.routes.default import DEFAULT_ROUTES
 
 load_dotenv()
 logging.basicConfig(
@@ -13,6 +15,17 @@ logging.basicConfig(
     format="[%(asctime)s] %(levelname)s: %(message)s"
 )
 LOG = logging.getLogger(__name__)
+
+
+async def cleanup_sockets(app: IoTAPIApplication):
+    if app.devices_store is not None:
+        await app.devices_store.unlisten_all()
+    if app.locations_store is not None:
+        await app.locations_store.unlisten_all()
+    if app.measurements_store is not None:
+        await app.measurements_store.unlisten_all()
+    if app.metrics_store is not None:
+        await app.metrics_store.unlisten_all()
 
 
 async def create_app() -> IoTAPIApplication:
@@ -39,11 +52,10 @@ async def create_app() -> IoTAPIApplication:
         app.connect_measurements_store()
         app.connect_metrics_store()
 
-        # app.on_shutdown.append(lambda _: app["devices_store"].unlisten_all())
-        # app.on_shutdown.append(lambda _: app["locations_store"].unlisten_all())
-        # app.on_shutdown.append(lambda _: app["measurements_store"].unlisten_all())
-        # app.on_shutdown.append(lambda _: app["metrics_store"].unlisten_all())
-        # app.on_shutdown.append(lambda _: app["raw_reports_store"].unlisten_all())
+        app.add_routes(DEFAULT_ROUTES)
+        app.add_routes(LOCATIONS_V0_ROUTES)
+
+        app.on_shutdown.append(cleanup_sockets)
     except:
         await asyncio.sleep(5)
         raise
