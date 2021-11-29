@@ -76,7 +76,7 @@ class DevicesStore(BaseStore):
                     None
                 )
 
-    async def get_device_by_abbreviation(self, mac: str) -> Optional[Device]:
+    async def get_device_by_mac(self, mac: str) -> Optional[Device]:
         async with self.db.acquire() as connection:
             async with connection.transaction():
                 db_response = await connection.fetchrow(
@@ -131,7 +131,7 @@ class DevicesStore(BaseStore):
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
-                db_response = await connection.fetchrow(
+                db_response = await connection.fetch(
                     f"""
                         SELECT id, mac, ip, websocket_path, location_id, last_message
                         FROM devices
