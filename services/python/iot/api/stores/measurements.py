@@ -60,7 +60,12 @@ class MeasurementsStore(BaseStore):
                         value
                     )
 
-                return await self.get_measurement(measurement_response["id"])
+                result = await self.get_measurement(measurement_response["id"])
+
+                if result is not None:
+                    await self.broadcast("CREATE", result, result.id)
+
+                return result
 
     async def get_measurement(self, id: int) -> Optional[Measurement]:
         async with self.db.acquire() as connection:

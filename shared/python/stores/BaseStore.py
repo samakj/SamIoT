@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Tuple, Union
 from aiohttp.http_websocket import WSMsgType
 from asyncpg import Pool
 from aiohttp.web import WebSocketResponse
@@ -22,7 +22,7 @@ class BaseStore:
         self,
         method: SocketMessageMethod,
         data: Any,
-        key: str = "",
+        key: Union[str, int] = "",
     ) -> None:
         resource_key = f"/{str(key).strip('/')}"
         json_data = serialise_json({"method": method, "data": data})
@@ -43,7 +43,7 @@ class BaseStore:
         self,
         socket_id: Union[str, int],
         socket: WebSocketResponse,
-        resource_id: Optional[Union[str, int]] = ''
+        resource_id: Union[str, int] = ""
     ) -> WebSocketResponse:
         resource_key = f"/{str(resource_id).strip('/')}"
         socket_key = socket_id
@@ -78,9 +78,9 @@ class BaseStore:
     async def unlisten(
         self,
         socket_id: Union[str, int],
-        resource_id: Optional[Union[str, int]] = ''
+        key: Union[str, int] = ""
     ) -> None:
-        resource_key = f"/{str(resource_id).strip('/')}"
+        resource_key = f"/{str(key).strip('/')}"
         socket_key = str(socket_id)
 
         if (

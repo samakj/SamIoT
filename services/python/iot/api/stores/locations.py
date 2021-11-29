@@ -20,11 +20,16 @@ class LocationsStore(BaseStore):
                     tags
                 )
 
-                return (
+                result = (
                     Location.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("CREATE", result, result.id)
+
+                return result
 
     async def get_location(self, id: int) -> Optional[Location]:
         async with self.db.acquire() as connection:
@@ -120,11 +125,16 @@ class LocationsStore(BaseStore):
                     tags
                 )
 
-                return (
+                result = (
                     Location.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("UPDATE", result, id)
+
+                return result
 
     async def add_location_tag(
         self,
@@ -144,11 +154,16 @@ class LocationsStore(BaseStore):
                     tag
                 )
 
-                return (
+                result = (
                     Location.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("UPDATE", result, id)
+
+                return result
 
     async def remove_location_tag(
         self,
@@ -168,11 +183,16 @@ class LocationsStore(BaseStore):
                     tag
                 )
 
-                return (
+                result = (
                     Location.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("UPDATE", result, id)
+
+                return result
 
     async def delete_location(
         self,
@@ -189,8 +209,13 @@ class LocationsStore(BaseStore):
                     id
                 )
 
-                return (
+                result = (
                     {"id": id}
                     if db_response else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("DELETE", result, id)
+
+                return result

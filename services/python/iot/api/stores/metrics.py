@@ -21,11 +21,16 @@ class MetricsStore(BaseStore):
                     unit
                 )
 
-                return (
+                result = (
                     Metric.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("CREATE", result, result.id)
+
+                return result
 
     async def get_metric(self, id: int) -> Optional[Metric]:
         async with self.db.acquire() as connection:
@@ -146,11 +151,16 @@ class MetricsStore(BaseStore):
                     unit
                 )
 
-                return (
+                result = (
                     Metric.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("UPDATE", result, id)
+
+                return result
 
     async def delete_metric(
         self,
@@ -167,8 +177,13 @@ class MetricsStore(BaseStore):
                     id
                 )
 
-                return (
+                result = (
                     {"id": id}
                     if db_response else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("DELETE", result, id)
+
+                return result

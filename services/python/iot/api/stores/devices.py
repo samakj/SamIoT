@@ -29,11 +29,16 @@ class DevicesStore(BaseStore):
                     last_message
                 )
 
-                return (
+                result = (
                     Device.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("CREATE", result, result.id)
+
+                return result
 
     async def get_device(self, id: int) -> Optional[Device]:
         async with self.db.acquire() as connection:
@@ -174,11 +179,16 @@ class DevicesStore(BaseStore):
                     last_message,
                 )
 
-                return (
+                result = (
                     Device.parse_obj(dict(db_response))
                     if db_response is not None else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("UPDATE", result, id)
+
+                return result
 
     async def delete_device(
         self,
@@ -195,8 +205,13 @@ class DevicesStore(BaseStore):
                     id
                 )
 
-                return (
+                result = (
                     {"id": id}
                     if db_response else
                     None
                 )
+
+                if result is not None:
+                    await self.broadcast("DELETE", result, id)
+
+                return result
