@@ -8,6 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
+from shared.python.extensions.aioredis import try_route_cache
 
 METRICS_V0_ROUTES = RouteTableDef()
 
@@ -31,22 +32,27 @@ class MetricsV0View(PydanticView):
             )
 
         return json_response(
-            await app.metrics_store.get_metrics(
-                id
-                if isinstance(id, list) else
-                [id]
-                if id is not None else
-                None,
-                name
-                if isinstance(name, list) else
-                [name]
-                if name is not None else
-                None,
-                abbreviation
-                if isinstance(abbreviation, list) else
-                [abbreviation]
-                if abbreviation is not None else
-                None
+            await try_route_cache(
+                self,
+                app.metrics_store.get_metrics,
+                kwargs={
+                    "ids": (
+                        id if isinstance(id, list) else
+                        [id] if id is not None else
+                        None
+                    ),
+                    "names": (
+                        name if isinstance(name, list) else
+                        [name] if name is not None else
+                        None
+                    ),
+                    "abbreviations": (
+                        abbreviation if isinstance(abbreviation, list) else
+                        [abbreviation] if abbreviation is not None else
+                        None
+                    )
+                },
+                expiry=15 * 60
             )
         )
 
@@ -64,7 +70,12 @@ class MetricV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await app.metrics_store.get_metric(id)
+        metric = await try_route_cache(
+            self,
+            app.metrics_store.get_metric,
+            args=(id,),
+            expiry=15 * 60
+        )
 
         if metric is None:
             raise HTTPNotFound()
@@ -72,7 +83,7 @@ class MetricV0View(PydanticView):
         return json_response(metric)
 
 
-@METRICS_V0_ROUTES.view("/v0/metrics/name/{name}")
+@ METRICS_V0_ROUTES.view("/v0/metrics/name/{name}")
 class MetricNameV0View(PydanticView):
     async def get(self, name: str, /) -> Response:
         """
@@ -85,7 +96,12 @@ class MetricNameV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await app.metrics_store.get_metric_by_name(name)
+        metric = await try_route_cache(
+            self,
+            app.metrics_store.get_metric_by_name,
+            args=(name,),
+            expiry=15 * 60
+        )
 
         if metric is None:
             raise HTTPNotFound()
@@ -93,7 +109,7 @@ class MetricNameV0View(PydanticView):
         return json_response(metric)
 
 
-@METRICS_V0_ROUTES.view("/v0/metrics/abbreviation/{abbreviation}")
+@ METRICS_V0_ROUTES.view("/v0/metrics/abbreviation/{abbreviation}")
 class MetricAbbreviationV0View(PydanticView):
     async def get(self, abbreviation: str, /) -> Response:
         """
@@ -106,7 +122,12 @@ class MetricAbbreviationV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await app.metrics_store.get_metric_by_abbreviation(abbreviation)
+        metric = await try_route_cache(
+            self,
+            app.metrics_store.get_metric_by_abbreviation,
+            args=(abbreviation,),
+            expiry=15 * 60
+        )
 
         if metric is None:
             raise HTTPNotFound()
@@ -114,7 +135,7 @@ class MetricAbbreviationV0View(PydanticView):
         return json_response(metric)
 
 
-@METRICS_V0_ROUTES.view("/v0/metrics/ws")
+@ METRICS_V0_ROUTES.view("/v0/metrics/ws")
 class MetricsWebsocketV0View(PydanticView):
     async def get(self, socket_id: Optional[str] = "") -> WebSocketResponse:
         """
@@ -141,7 +162,7 @@ class MetricsWebsocketV0View(PydanticView):
         )
 
 
-@METRICS_V0_ROUTES.view("/v0/metrics/ws/{id:\d+}")
+@ METRICS_V0_ROUTES.view("/v0/metrics/ws/{id:\d+}")
 class MetricWebsocketV0View(PydanticView):
     async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         """

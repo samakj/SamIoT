@@ -1,5 +1,4 @@
 import asyncpg
-import aioredis
 from asyncpg import Pool
 from aioredis import Redis
 from aiohttp.web import Application
@@ -45,7 +44,7 @@ class ApplicationWithCache(Application):
         password: Optional[str] = None
     ) -> None:
         user_prefix = ""
-        db_name_suffix = ""
+        cache_name_suffix = ""
 
         if username is not None:
             user_prefix = f"{username}"
@@ -53,10 +52,10 @@ class ApplicationWithCache(Application):
                 user_prefix += f":{password}"
             user_prefix += "@"
         if name is not None:
-            db_name_suffix = f"/{name}"
+            cache_name_suffix = f"/{name}"
 
-        self.db = await aioredis.from_url(
-            f"redis://{user_prefix}{host}:{port}{db_name_suffix}"
+        self.cache = await Redis.from_url(
+            f"redis://{user_prefix}{host}:{port}{cache_name_suffix}"
         )
 
 

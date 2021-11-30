@@ -15,7 +15,7 @@ class MeasurementsStore(BaseStore):
         device_id: int,
         location_id: int,
         metric_id: int,
-        tags: str,
+        tags: List[str],
         value: ValueType,
     ) -> Optional[Measurement]:
         value_type: ValueTypeOptions = "string"

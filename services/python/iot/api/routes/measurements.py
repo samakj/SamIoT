@@ -10,6 +10,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
+from shared.python.extensions.aioredis import try_route_cache
 from shared.python.models.Measurement import Measurement, ValueType
 
 MEASUREMENTS_V0_ROUTES = RouteTableDef()
@@ -57,38 +58,42 @@ class MeasurementsV0View(PydanticView):
             )
 
         return json_response(
-            await app.measurements_store.get_measurements(
-                id
-                if isinstance(id, list) else
-                [id]
-                if id is not None else
-                None,
-                device_id
-                if isinstance(device_id, list) else
-                [device_id]
-                if device_id is not None else
-                None,
-                location_id
-                if isinstance(location_id, list) else
-                [location_id]
-                if location_id is not None else
-                None,
-                metric_id
-                if isinstance(metric_id, list) else
-                [metric_id]
-                if metric_id is not None else
-                None,
-                tags
-                if isinstance(tags, list) else
-                [tags]
-                if tags is not None else
-                None,
-                timestamp_gte,
-                timestamp_lte,
-                parse_value(value),
-                parse_value(value_gte),
-                parse_value(value_lte),
-
+            await try_route_cache(
+                self,
+                app.measurements_store.get_measurements,
+                kwargs={
+                    "id": (
+                        id if isinstance(id, list) else
+                        [id] if id is not None else
+                        None
+                    ),
+                    "device_id": (
+                        device_id if isinstance(device_id, list) else
+                        [device_id] if device_id is not None else
+                        None
+                    ),
+                    "location_id": (
+                        location_id if isinstance(location_id, list) else
+                        [location_id] if location_id is not None else
+                        None
+                    ),
+                    "metric_id": (
+                        metric_id if isinstance(metric_id, list) else
+                        [metric_id] if metric_id is not None else
+                        None
+                    ),
+                    "tags": (
+                        tags if isinstance(tags, list) else
+                        [tags] if tags is not None else
+                        None
+                    ),
+                    "timestamp_gte": timestamp_gte,
+                    "timestamp_lte": timestamp_lte,
+                    "value": parse_value(value),
+                    "value_gte": parse_value(value_gte),
+                    "value_lte": parse_value(value_lte),
+                },
+                expiry=15 * 60,
             )
         )
 
@@ -115,7 +120,7 @@ class MeasurementsV0View(PydanticView):
         )
 
 
-@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/{id:\d+}")
+@ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/{id:\d+}")
 class MeasurementV0View(PydanticView):
     async def get(self, id: int, /) -> Response:
         """
@@ -128,7 +133,12 @@ class MeasurementV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        measurement = await app.measurements_store.get_measurement(id)
+        measurement = await try_route_cache(
+            self,
+            app.measurements_store.get_measurement,
+            args=(id,),
+            expiry=15 * 60
+        )
 
         if measurement is None:
             raise HTTPNotFound()
@@ -136,7 +146,7 @@ class MeasurementV0View(PydanticView):
         return json_response(measurement)
 
 
-@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws")
+@ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws")
 class MeasurementsWebsocketV0View(PydanticView):
     async def get(self, socket_id: Optional[str] = "") -> WebSocketResponse:
         """
@@ -163,7 +173,7 @@ class MeasurementsWebsocketV0View(PydanticView):
         )
 
 
-@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws/{id:\d+}")
+@ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws/{id:\d+}")
 class MeasurementWebsocketV0View(PydanticView):
     async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         """
@@ -185,7 +195,7 @@ class MeasurementWebsocketV0View(PydanticView):
         )
 
 
-@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/latest")
+@ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/latest")
 class MeasurementsLatestV0View(PydanticView):
     async def get(
         self,
@@ -205,32 +215,37 @@ class MeasurementsLatestV0View(PydanticView):
             )
 
         return json_response(
-            await app.measurements_store.get_latest_measurements(
-                device_id
-                if isinstance(device_id, list) else
-                [device_id]
-                if device_id is not None else
-                None,
-                location_id
-                if isinstance(location_id, list) else
-                [location_id]
-                if location_id is not None else
-                None,
-                metric_id
-                if isinstance(metric_id, list) else
-                [metric_id]
-                if metric_id is not None else
-                None,
-                tags
-                if isinstance(tags, list) else
-                [tags]
-                if tags is not None else
-                None,
+            await try_route_cache(
+                self,
+                app.measurements_store.get_latest_measurements,
+                kwargs={
+                    "device_id": (
+                        device_id if isinstance(device_id, list) else
+                        [device_id] if device_id is not None else
+                        None
+                    ),
+                    "location_id": (
+                        location_id if isinstance(location_id, list) else
+                        [location_id] if location_id is not None else
+                        None
+                    ),
+                    "metric_id": (
+                        metric_id if isinstance(metric_id, list) else
+                        [metric_id] if metric_id is not None else
+                        None
+                    ),
+                    "tags": (
+                        tags if isinstance(tags, list) else
+                        [tags] if tags is not None else
+                        None
+                    ),
+                },
+                expiry=15 * 60
             )
         )
 
 
-@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/average/{location_id:\d+}/{metric_id:\d+}/{tags}")
+@ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/average/{location_id:\d+}/{metric_id:\d+}/{tags}")
 class MeasurementsAverageV0View(PydanticView):
     async def get(
         self,
@@ -259,12 +274,17 @@ class MeasurementsAverageV0View(PydanticView):
         _period = timedelta(seconds=period or 3600)
 
         return json_response(
-            await app.measurements_store.get_time_weighted_average_range(
-                location_id,
-                metric_id,
-                tags.split(','),
-                _start,
-                _end,
-                _period
+            await try_route_cache(
+                self,
+                app.measurements_store.get_time_weighted_average_range,
+                kwargs={
+                    "location_id": location_id,
+                    "metric_id": metric_id,
+                    "tags": tags.split(','),
+                    "start": _start,
+                    "end": _end,
+                    "period": _period
+                },
+                expiry=15 if _end > datetime.utcnow() else 15 * 60
             )
         )

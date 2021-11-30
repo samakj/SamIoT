@@ -1,5 +1,5 @@
 import asyncio
-from dataclasses import asdict
+import logging
 from typing import List, Optional, Union
 from aiohttp_pydantic import PydanticView
 from datetime import datetime
@@ -8,7 +8,9 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
+from shared.python.extensions.aioredis import try_route_cache
 
+LOG = logging.getLogger()
 LOCATIONS_V0_ROUTES = RouteTableDef()
 
 
@@ -31,22 +33,27 @@ class LocationsV0View(PydanticView):
             )
 
         return json_response(
-            await app.locations_store.get_locations(
-                id
-                if isinstance(id, list) else
-                [id]
-                if id is not None else
-                None,
-                name
-                if isinstance(name, list) else
-                [name]
-                if name is not None else
-                None,
-                tags
-                if isinstance(tags, list) else
-                [tags]
-                if tags is not None else
-                None
+            await try_route_cache(
+                self,
+                app.locations_store.get_locations,
+                kwargs={
+                    "ids": (
+                        id if isinstance(id, list) else
+                        [id] if id is not None else
+                        None
+                    ),
+                    "names": (
+                        name if isinstance(name, list) else
+                        [name] if name is not None else
+                        None
+                    ),
+                    "tags": (
+                        tags if isinstance(tags, list) else
+                        [tags] if tags is not None else
+                        None
+                    )
+                },
+                expiry=15 * 60
             )
         )
 
@@ -64,7 +71,12 @@ class LocationV0View(PydanticView):
                 "Location store not initialised before querying data."
             )
 
-        location = await app.locations_store.get_location(id)
+        location = await try_route_cache(
+            self,
+            app.locations_store.get_location,
+            args=(id,),
+            expiry=15 * 60
+        )
 
         if location is None:
             raise HTTPNotFound()
@@ -85,7 +97,12 @@ class LocationNameV0View(PydanticView):
                 "Location store not initialised before querying data."
             )
 
-        location = await app.locations_store.get_location_by_name(name)
+        location = location = await try_route_cache(
+            self,
+            app.locations_store.get_location_by_name,
+            args=(name,),
+            expiry=15 * 60
+        )
 
         if location is None:
             raise HTTPNotFound()

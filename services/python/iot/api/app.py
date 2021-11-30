@@ -32,6 +32,16 @@ async def cleanup_sockets(app: IoTAPIApplication):
         await app.metrics_store.unlisten_all()
 
 
+async def close_db(app: IoTAPIApplication):
+    if app.db is not None:
+        await app.db.close()
+
+
+async def close_cache(app: IoTAPIApplication):
+    if app.cache is not None:
+        await app.cache.close()
+
+
 async def create_app() -> IoTAPIApplication:
     try:
         app = IoTAPIApplication(
@@ -56,6 +66,14 @@ async def create_app() -> IoTAPIApplication:
         app.connect_measurements_store()
         app.connect_metrics_store()
 
+        await app.connect_cache(
+            host=os.environ["IOT_CACHE_HOST"],
+            port=os.environ["IOT_CACHE_PORT"],
+            # name=os.environ["IOT_CACHE_NAME"],
+            # username=os.environ["IOT_CACHE_USER"],
+            # password=os.environ["IOT_CACHE_PASS"],
+        )
+
         app.add_routes(DEFAULT_ROUTES)
         app.add_routes(DEVICES_V0_ROUTES)
         app.add_routes(LOCATIONS_V0_ROUTES)
@@ -65,6 +83,8 @@ async def create_app() -> IoTAPIApplication:
         oas.setup(app, title_spec="IoT API", url_prefix="/docs")
 
         app.on_shutdown.append(cleanup_sockets)
+        app.on_shutdown.append(close_db)
+        app.on_shutdown.append(close_cache)
     except:
         await asyncio.sleep(5)
         raise

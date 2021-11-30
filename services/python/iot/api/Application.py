@@ -1,6 +1,5 @@
 from typing import Optional
 from shared.python.extensions.aiohttp import ApplicationWithDatabaseAndCache
-from shared.python.models.Device import Device
 
 from stores.devices import DevicesStore
 from stores.locations import LocationsStore

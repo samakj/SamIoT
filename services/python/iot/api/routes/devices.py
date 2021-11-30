@@ -8,6 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
+from shared.python.extensions.aioredis import try_route_cache
 from shared.python.models.Device import Device
 
 DEVICES_V0_ROUTES = RouteTableDef()
@@ -35,29 +36,34 @@ class DevicesV0View(PydanticView):
             )
 
         return json_response(
-            await app.devices_store.get_devices(
-                id
-                if isinstance(id, list) else
-                [id]
-                if id is not None else
-                None,
-                mac
-                if isinstance(mac, list) else
-                [mac]
-                if mac is not None else
-                None,
-                ip
-                if isinstance(ip, list) else
-                [ip]
-                if ip is not None else
-                None,
-                location_id
-                if isinstance(location_id, list) else
-                [location_id]
-                if location_id is not None else
-                None,
-                last_message_gte,
-                last_message_lte
+            await try_route_cache(
+                self,
+                app.devices_store.get_devices,
+                kwargs={
+                    "ids": (
+                        id if isinstance(id, list) else
+                        [id] if id is not None else
+                        None
+                    ),
+                    "macs": (
+                        mac if isinstance(mac, list) else
+                        [mac] if mac is not None else
+                        None
+                    ),
+                    "ips": (
+                        ip if isinstance(ip, list) else
+                        [ip] if ip is not None else
+                        None
+                    ),
+                    "location_ids": (
+                        location_id if isinstance(location_id, list) else
+                        [location_id] if location_id is not None else
+                        None
+                    ),
+                    "last_message_gte": last_message_gte,
+                    "last_message_lte": last_message_lte
+                },
+                expiry=15 * 60
             )
         )
 
@@ -75,7 +81,12 @@ class DeviceV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await app.devices_store.get_device(id)
+        device = await try_route_cache(
+            self,
+            app.devices_store.get_device,
+            args=(id,),
+            expiry=15 * 60
+        )
 
         if device is None:
             raise HTTPNotFound()
@@ -117,7 +128,12 @@ class DeviceMacV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await app.devices_store.get_device_by_mac(mac)
+        device = await try_route_cache(
+            self,
+            app.devices_store.get_device_by_mac,
+            args=(mac,),
+            expiry=15 * 60
+        )
 
         if device is None:
             raise HTTPNotFound()
@@ -138,7 +154,12 @@ class DeviceIPV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await app.devices_store.get_device_by_ip(ip)
+        device = await try_route_cache(
+            self,
+            app.devices_store.get_device_by_ip,
+            args=(ip,),
+            expiry=15 * 60
+        )
 
         if device is None:
             raise HTTPNotFound()
