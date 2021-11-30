@@ -10,9 +10,9 @@ class MeasurementsStore(BaseStore):
     async def create_measurement(
         self,
         timestamp: datetime,
-        device_id: str,
-        location_id: str,
-        metric_id: str,
+        device_id: int,
+        location_id: int,
+        metric_id: int,
         tags: str,
         value: ValueType,
     ) -> Optional[Measurement]:
@@ -72,17 +72,17 @@ class MeasurementsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELECT id, 
-                              timestamp,
-                              device_id, 
-                              location_id, 
-                              metric_id, 
-                              tags, 
-                              value_type, 
-                              float_measurements.value as float_value
-                              integer_measurements.value as integer_value,
-                              string_measurements.value as string_value,
-                              boolean_measurements.value as boolean_value
+                        SELECT measurements.id, 
+                               timestamp,
+                               device_id, 
+                               location_id, 
+                               metric_id, 
+                               tags, 
+                               value_type, 
+                               float_measurements.value as float_value,
+                               integer_measurements.value as integer_value,
+                               string_measurements.value as string_value,
+                               boolean_measurements.value as boolean_value
                         FROM measurements
                         LEFT JOIN float_measurements ON measurements.id = float_measurements.measurement_id
                         LEFT JOIN integer_measurements ON measurements.id = integer_measurements.measurement_id
@@ -105,10 +105,10 @@ class MeasurementsStore(BaseStore):
 
     async def get_measurements(
         self,
-        ids: Optional[List[str]] = None,
-        device_ids: Optional[List[str]] = None,
-        location_ids: Optional[List[str]] = None,
-        metric_ids: Optional[List[str]] = None,
+        ids: Optional[List[int]] = None,
+        device_ids: Optional[List[int]] = None,
+        location_ids: Optional[List[int]] = None,
+        metric_ids: Optional[List[int]] = None,
         tags: Optional[List[str]] = None,
         timestamp_gte: Optional[datetime] = None,
         timestamp_lte: Optional[datetime] = None,
@@ -131,6 +131,8 @@ class MeasurementsStore(BaseStore):
         if metric_ids is not None:
             filters.append(f"metric_id=ANY(${len(values) + 1})")
             values.append(metric_ids)
+        if filters:
+            filters = [f"({' OR '.join(filters)})"]
         if tags is not None:
             filters.append(f"tags@>${len(values) + 1}")
             values.append(tags)
@@ -147,17 +149,17 @@ class MeasurementsStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        SELECT id, 
-                              timestamp,
-                              device_id, 
-                              location_id, 
-                              metric_id, 
-                              tags, 
-                              value_type, 
-                              float_measurements.value as float_value
-                              integer_measurements.value as integer_value,
-                              string_measurements.value as string_value,
-                              boolean_measurements.value as boolean_value
+                        SELECT measurements.id, 
+                               timestamp,
+                               device_id, 
+                               location_id, 
+                               metric_id, 
+                               tags, 
+                               value_type, 
+                               float_measurements.value as float_value,
+                               integer_measurements.value as integer_value,
+                               string_measurements.value as string_value,
+                               boolean_measurements.value as boolean_value
                         FROM measurements
                         LEFT JOIN float_measurements ON measurements.id = float_measurements.measurement_id
                         LEFT JOIN integer_measurements ON measurements.id = integer_measurements.measurement_id
@@ -170,18 +172,19 @@ class MeasurementsStore(BaseStore):
 
                 rows = []
 
-                for row in db_response:
-                    _row = dict(row)
-                    value_type = row["value_type"]
-                    row["value"] = row[f"{value_type}_value"]
+                if db_response is not None:
+                    for row in db_response:
+                        _row = dict(row)
+                        value_type = row["value_type"]
+                        row["value"] = row[f"{value_type}_value"]
 
-                    if value is not None and _row["value"] != value:
-                        continue
-                    if value_gte is not None and _row["value"] < value_gte:
-                        continue
-                    if value_lte is not None and _row["value"] > value_lte:
-                        continue
+                        if value is not None and _row["value"] != value:
+                            continue
+                        if value_gte is not None and _row["value"] < value_gte:
+                            continue
+                        if value_lte is not None and _row["value"] > value_lte:
+                            continue
 
-                    rows.append(_row)
+                        rows.append(_row)
 
                 return [Measurement.parse_obj(row) for row in rows]
