@@ -61,7 +61,7 @@ class DevicesV0View(PydanticView):
 
 @DEVICES_V0_ROUTES.view("/v0/devices/{id:\d+}")
 class DeviceV0View(PydanticView):
-    async def get(self, id: int) -> Response:
+    async def get(self, id: int, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -97,7 +97,7 @@ class DeviceV0View(PydanticView):
 
 @DEVICES_V0_ROUTES.view("/v0/devices/mac/{mac}")
 class DeviceMacV0View(PydanticView):
-    async def get(self, mac: str) -> Response:
+    async def get(self, mac: str, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -115,7 +115,7 @@ class DeviceMacV0View(PydanticView):
 
 @DEVICES_V0_ROUTES.view("/v0/devices/ip/{ip}")
 class DeviceIPV0View(PydanticView):
-    async def get(self, ip: str) -> Response:
+    async def get(self, ip: str, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -157,7 +157,7 @@ class DevicesWebsocketV0View(PydanticView):
 
 @DEVICES_V0_ROUTES.view("/v0/devices/ws/{id:\d+}")
 class DeviceWebsocketV0View(PydanticView):
-    async def get(self, id: int, socket_id: Optional[str] = "") -> WebSocketResponse:
+    async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

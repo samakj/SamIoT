@@ -111,7 +111,7 @@ class MeasurementsV0View(PydanticView):
 
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/{id:\d+}")
 class MeasurementV0View(PydanticView):
-    async def get(self, id: int) -> Response:
+    async def get(self, id: int, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.measurements_store:
@@ -153,7 +153,7 @@ class MeasurementsWebsocketV0View(PydanticView):
 
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws/{id:\d+}")
 class MeasurementWebsocketV0View(PydanticView):
-    async def get(self, id: int, socket_id: Optional[str] = "") -> WebSocketResponse:
+    async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

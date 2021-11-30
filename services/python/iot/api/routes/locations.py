@@ -50,7 +50,7 @@ class LocationsV0View(PydanticView):
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/{id:\d+}")
 class LocationV0View(PydanticView):
-    async def get(self, id: int) -> Response:
+    async def get(self, id: int, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.locations_store:
@@ -68,7 +68,7 @@ class LocationV0View(PydanticView):
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/name/{name}")
 class LocationNameV0View(PydanticView):
-    async def get(self, name: str) -> Response:
+    async def get(self, name: str, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.locations_store:
@@ -110,7 +110,7 @@ class LocationsWebsocketV0View(PydanticView):
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/ws/{id:\d+}")
 class LocationWebsocketV0View(PydanticView):
-    async def get(self, id: int, socket_id: Optional[str] = "") -> WebSocketResponse:
+    async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

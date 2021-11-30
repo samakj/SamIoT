@@ -50,7 +50,7 @@ class MetricsV0View(PydanticView):
 
 @METRICS_V0_ROUTES.view("/v0/metrics/{id:\d+}")
 class MetricV0View(PydanticView):
-    async def get(self, id: int) -> Response:
+    async def get(self, id: int, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -68,7 +68,7 @@ class MetricV0View(PydanticView):
 
 @METRICS_V0_ROUTES.view("/v0/metrics/name/{name}")
 class MetricNameV0View(PydanticView):
-    async def get(self, name: str) -> Response:
+    async def get(self, name: str, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -86,7 +86,7 @@ class MetricNameV0View(PydanticView):
 
 @METRICS_V0_ROUTES.view("/v0/metrics/abbreviation/{abbreviation}")
 class MetricAbbreviationV0View(PydanticView):
-    async def get(self, abbreviation: str) -> Response:
+    async def get(self, abbreviation: str, /) -> Response:
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -128,7 +128,7 @@ class MetricsWebsocketV0View(PydanticView):
 
 @METRICS_V0_ROUTES.view("/v0/metrics/ws/{id:\d+}")
 class MetricWebsocketV0View(PydanticView):
-    async def get(self, id: int, socket_id: Optional[str] = "") -> WebSocketResponse:
+    async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
         app: IoTAPIApplication = self.request.app
 
         socket_id = (
