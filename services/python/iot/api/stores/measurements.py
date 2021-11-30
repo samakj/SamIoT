@@ -191,3 +191,68 @@ class MeasurementsStore(BaseStore):
                         rows.append(_row)
 
                 return [Measurement.parse_obj(row) for row in rows]
+
+    async def get_latest_measurements(
+        self,
+        device_ids: Optional[List[int]] = None,
+        location_ids: Optional[List[int]] = None,
+        metric_ids: Optional[List[int]] = None,
+        tags: Optional[List[str]] = None,
+    ) -> List[Measurement]:
+        values = []
+        filters = []
+
+        if device_ids is not None:
+            filters.append(f"device_id=ANY(${len(values) + 1})")
+            values.append(device_ids)
+        if location_ids is not None:
+            filters.append(f"location_id=ANY(${len(values) + 1})")
+            values.append(location_ids)
+        if metric_ids is not None:
+            filters.append(f"metric_id=ANY(${len(values) + 1})")
+            values.append(metric_ids)
+        if filters:
+            filters = [f"({' OR '.join(filters)})"]
+        if tags is not None:
+            filters.append(f"tags@>${len(values) + 1}")
+            values.append(tags)
+        if not filters:
+            filters = ["TRUE"]
+
+        async with self.db.acquire() as connection:
+            async with connection.transaction():
+                db_response = await connection.fetchrow(
+                    f"""
+                        SELECT DISTINCT ON (location_id, metric_id, tags)
+                               measurements.id, 
+                               timestamp,
+                               device_id, 
+                               location_id, 
+                               metric_id, 
+                               tags, 
+                               value_type, 
+                               float_measurements.value as float_value,
+                               integer_measurements.value as integer_value,
+                               string_measurements.value as string_value,
+                               boolean_measurements.value as boolean_value
+                        FROM measurements
+                        LEFT JOIN float_measurements ON measurements.id = float_measurements.measurement_id
+                        LEFT JOIN integer_measurements ON measurements.id = integer_measurements.measurement_id
+                        LEFT JOIN string_measurements ON measurements.id = string_measurements.measurement_id
+                        LEFT JOIN boolean_measurements ON measurements.id = boolean_measurements.measurement_id
+                        WHERE {" AND ".join(filters)}
+                        ORDER BY location_id, metric_id, tags, timestamp DESC
+                    """,
+                    *values
+                )
+
+                rows = []
+
+                if db_response is not None:
+                    for row in db_response:
+                        _row = dict(row)
+                        value_type = row["value_type"]
+                        row["value"] = row[f"{value_type}_value"]
+                        rows.append(_row)
+
+                return [Measurement.parse_obj(row) for row in rows]

@@ -183,3 +183,48 @@ class MeasurementWebsocketV0View(PydanticView):
         return await app.measurements_store.listen(
             socket_id, websocket, id
         )
+
+
+@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/latest")
+class MeasurementsV0View(PydanticView):
+    async def get(
+        self,
+        device_id: Optional[Union[int, List[int]]] = None,
+        location_id: Optional[Union[int, List[int]]] = None,
+        metric_id: Optional[Union[int, List[int]]] = None,
+        tags: Optional[Union[str, List[str]]] = None,
+    ) -> Response:
+        """
+        Tags: Measurements
+        """
+        app: IoTAPIApplication = self.request.app
+
+        if not app.measurements_store:
+            raise ValueError(
+                "Measurement store not initialised before querying data."
+            )
+
+        return json_response(
+            await app.measurements_store.get_latest_measurements(
+                device_id
+                if isinstance(device_id, list) else
+                [device_id]
+                if device_id is not None else
+                None,
+                location_id
+                if isinstance(location_id, list) else
+                [location_id]
+                if location_id is not None else
+                None,
+                metric_id
+                if isinstance(metric_id, list) else
+                [metric_id]
+                if metric_id is not None else
+                None,
+                tags
+                if isinstance(tags, list) else
+                [tags]
+                if tags is not None else
+                None,
+            )
+        )
