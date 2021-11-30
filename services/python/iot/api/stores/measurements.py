@@ -1,5 +1,7 @@
-from typing import List, Optional
-from datetime import datetime
+import asyncio
+import math
+from typing import Any, Dict, List, Optional
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from shared.python.models.Measurement import Measurement, ValueType, ValueTypeOptions
@@ -256,3 +258,143 @@ class MeasurementsStore(BaseStore):
                         rows.append(_row)
 
                 return [Measurement.parse_obj(row) for row in rows]
+
+    async def get_time_weighted_average(
+        self,
+        location_id: int,
+        metric_id: int,
+        tags: List[str],
+        start: datetime,
+        end: datetime
+    ) -> Dict[str, Any]:
+        async with self.db.acquire() as connection:
+            async with connection.transaction():
+                response = await connection.fetchrow(
+                    f"""
+                    WITH args (_start, _end, _location_id, _metric_id, _tags) AS (
+                        VALUES (
+                            $1::TIMESTAMP,
+                            $2::TIMESTAMP,
+                            $3::INTEGER,
+                            $4::INTEGER,
+                            $5::TEXT[]
+                        )
+                    ), m AS (
+                        SELECT _m.timestamp,
+                               COALESCE(f.value, i.value::NUMERIC(8,4), b.value::INTEGER::NUMERIC(8,4)) as value
+                          FROM ((
+                                  SELECT id, timestamp 
+                                    FROM measurements, args
+                                  WHERE metric_id = args._metric_id AND
+                                        location_id = args._location_id AND 
+                                        tags @> args._tags AND
+                                        timestamp > args._start AND
+                                        timestamp < args._end
+                              )
+                              UNION ALL
+                              (
+                                  (
+                                      SELECT id, args._start 
+                                        FROM measurements, args
+                                       WHERE metric_id = args._metric_id AND
+                                             location_id = args._location_id AND 
+                                             tags @> args._tags AND
+                                             timestamp < args._start
+                                       LIMIT 1
+                                  )
+                                  UNION ALL 
+                                  (
+                                      SELECT id, args._start 
+                                        FROM measurements, args
+                                       WHERE metric_id = args._metric_id AND
+                                             location_id = args._location_id AND 
+                                             tags @> args._tags AND
+                                             timestamp > args._start AND
+                                             timestamp < args._end
+                                       LIMIT 1
+                                  ) LIMIT 1
+                              )
+                              UNION ALL
+                              (
+                                  SELECT id, args._end 
+                                    FROM measurements, args
+                                   WHERE metric_id = args._metric_id AND
+                                         location_id = args._location_id AND 
+                                         tags @> args._tags AND
+                                         timestamp < args._end
+                                   LIMIT 1
+                              )) AS _m
+                    LEFT JOIN float_measurements AS f ON _m.id = f.measurement_id
+                    LEFT JOIN integer_measurements AS i ON _m.id = i.measurement_id
+                    LEFT JOIN boolean_measurements AS b ON _m.id = b.measurement_id
+                     ORDER BY timestamp ASC 
+                    ), l as (
+                        SELECT timestamp, 
+                               lead(timestamp, 1) OVER (ORDER BY timestamp) AS next_timestamp, 
+                               value, 
+                               lead(value, 1) OVER (ORDER BY timestamp) AS next_value 
+                          FROM m
+                    ), d as (
+                        SELECT l.timestamp, 
+                               l.next_timestamp, 
+                               EXTRACT(epoch from (l.next_timestamp - l.timestamp)) AS dt, 
+                               l.value, 
+                               l.next_value, 
+                               l.next_value - l.value AS dv 
+                          FROM l
+                    )
+                          SELECT args._start as start, 
+                                 args._end as end,
+                                 args._metric_id as metric_id,
+                                 args._location_id as location_id,
+                                 args._tags as tags,
+                                 sum(d.value * d.dt) / EXTRACT(epoch from (args._end - args._start)) as average,
+                                 min(d.value) as min,
+                                 max(d.value) as max
+                            FROM d, args
+                        GROUP BY args._start, args._end,args._metric_id, args._location_id, args._tags;
+                    """,
+                    start, end, location_id, metric_id, tags
+                )
+
+                return {
+                    "start": response["start"] if response else start,
+                    "end": response["end"] if response else end,
+                    "metric_id": response["metric_id"] if response else metric_id,
+                    "location_id": response["location_id"] if response else location_id,
+                    "tags": response["tags"] if response else tags,
+                    "average": round(Decimal(response.get("average")), 4) if response else None,
+                    "min": Decimal(response.get("min")) if response else None,
+                    "max": Decimal(response.get("max")) if response else None,
+                }
+
+    async def get_time_weighted_average_range(
+        self,
+        location_id: int,
+        metric_id: int,
+        tags: List[str],
+        start: datetime,
+        end: datetime,
+        period: timedelta
+    ) -> List[Dict[str, Any]]:
+        period_count = math.ceil((end - start) / period)
+        periods = []
+
+        for i in range(period_count):
+            _start = start + i * period
+            _end = start + (i + 1) * period
+            if _end > end:
+                _end = end
+            periods.append([_start, _end])
+
+        return list(
+            await asyncio.gather(*[
+                self.get_time_weighted_average(
+                    location_id,
+                    metric_id,
+                    tags,
+                    _period[0],
+                    _period[1]
+                ) for _period in periods
+            ])
+        )

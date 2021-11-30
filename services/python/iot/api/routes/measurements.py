@@ -4,7 +4,7 @@ from dataclasses import asdict
 from decimal import Decimal
 from typing import List, Optional, Union
 from aiohttp_pydantic import PydanticView
-from datetime import datetime
+from datetime import datetime, timedelta
 from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 
 from shared.python.extensions.aiohttp.responses.json import json_response
@@ -186,7 +186,7 @@ class MeasurementWebsocketV0View(PydanticView):
 
 
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/latest")
-class MeasurementsV0View(PydanticView):
+class MeasurementsLatestV0View(PydanticView):
     async def get(
         self,
         device_id: Optional[Union[int, List[int]]] = None,
@@ -226,5 +226,45 @@ class MeasurementsV0View(PydanticView):
                 [tags]
                 if tags is not None else
                 None,
+            )
+        )
+
+
+@MEASUREMENTS_V0_ROUTES.view("/v0/measurements/average/{location_id:\d+}/{metric_id:\d+}/{tags}")
+class MeasurementsAverageV0View(PydanticView):
+    async def get(
+        self,
+        location_id: int,
+        metric_id: int,
+        tags: str,
+        /,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+        period: Optional[int] = None
+    ) -> Response:
+        """
+        Period is in seconds.
+
+        Tags: Measurements
+        """
+        app: IoTAPIApplication = self.request.app
+
+        if not app.measurements_store:
+            raise ValueError(
+                "Measurement store not initialised before querying data."
+            )
+
+        _end = end or datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+        _start = start or (_end - timedelta(days=1))
+        _period = timedelta(seconds=period or 3600)
+
+        return json_response(
+            await app.measurements_store.get_time_weighted_average_range(
+                location_id,
+                metric_id,
+                tags.split(','),
+                _start,
+                _end,
+                _period
             )
         )
