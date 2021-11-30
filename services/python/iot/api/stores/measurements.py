@@ -93,13 +93,16 @@ class MeasurementsStore(BaseStore):
                     id,
                 )
 
+                if not db_response:
+                    return None
+
                 d = dict(db_response)
                 value_type = d["value_type"]
                 d["value"] = d[f"{value_type}_value"]
 
                 return (
                     Measurement.parse_obj(d)
-                    if db_response is not None else
+                    if d is not None else
                     None
                 )
 
