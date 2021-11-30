@@ -88,7 +88,7 @@ class MeasurementsStore(BaseStore):
                         LEFT JOIN integer_measurements ON measurements.id = integer_measurements.measurement_id
                         LEFT JOIN string_measurements ON measurements.id = string_measurements.measurement_id
                         LEFT JOIN boolean_measurements ON measurements.id = boolean_measurements.measurement_id
-                        WHERE id=$1
+                        WHERE measurements.id=$1
                     """,
                     id,
                 )
@@ -120,7 +120,7 @@ class MeasurementsStore(BaseStore):
         filters = []
 
         if ids is not None:
-            filters.append(f"id=ANY(${len(values) + 1})")
+            filters.append(f"measurements.id=ANY(${len(values) + 1})")
             values.append(ids)
         if device_ids is not None:
             filters.append(f"device_id=ANY(${len(values) + 1})")
