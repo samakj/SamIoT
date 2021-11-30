@@ -25,6 +25,7 @@ class APIClient:
         self,
         method: str,
         endpoint: str,
+        *args: Any,
         **kwargs: Any
     ) -> ClientResponse:
         url = f"{self.http_base_url.strip('/')}/{endpoint.strip('/')}"
@@ -33,22 +34,22 @@ class APIClient:
             _kwargs["params"] = to_json_serialisable(kwargs.get('params', {}))
 
         async with ClientSession(json_serialize=serialise_json) as session:
-            async with session.__getattribute__(method.lower())(url, **_kwargs) as response:
+            async with session.__getattribute__(method.lower())(url, *args, **_kwargs) as response:
                 response.raise_for_status()
                 await response.read()
             return response
 
-    async def get(self, endpoint: str, **kwargs: Any) -> ClientResponse:
-        return await self.request("GET", endpoint, **kwargs)
+    async def get(self, endpoint: str, *args: Any, **kwargs: Any) -> ClientResponse:
+        return await self.request("GET", endpoint, *args, **kwargs)
 
-    async def post(self, endpoint: str, **kwargs: Any) -> ClientResponse:
-        return await self.request("POST", endpoint, **kwargs)
+    async def post(self, endpoint: str, *args: Any, **kwargs: Any) -> ClientResponse:
+        return await self.request("POST", endpoint, *args, **kwargs)
 
-    async def patch(self, endpoint: str, **kwargs: Any) -> ClientResponse:
-        return await self.request("PATCH", endpoint, **kwargs)
+    async def patch(self, endpoint: str, *args: Any, **kwargs: Any) -> ClientResponse:
+        return await self.request("PATCH", endpoint, *args, **kwargs)
 
-    async def delete(self, endpoint: str, **kwargs: Any) -> ClientResponse:
-        return await self.request("DELETE", endpoint, **kwargs)
+    async def delete(self, endpoint: str, *args: Any, **kwargs: Any) -> ClientResponse:
+        return await self.request("DELETE", endpoint, *args, **kwargs)
 
     async def listen(
         self,
