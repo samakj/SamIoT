@@ -13,6 +13,6 @@ class Measurement(BaseModel):
     device_id: int
     location_id: int
     metric_id: int
-    tags: Optional[List[str]] = None
+    tags: List[str]
     value_type: ValueTypeOptions = "string"
     value: ValueType = None

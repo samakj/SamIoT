@@ -112,6 +112,16 @@ class DeviceV0View(PydanticView):
         if _device is None:
             raise HTTPNotFound()
 
+        if app.cache is not None:
+            base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/locations"
+            invalid_keys = set()
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}?*"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_device.id}"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}/mac/{_device.mac}"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}/ip/{_device.ip}"))
+            await app.cache.delete(*invalid_keys)
+
         return json_response(_device)
 
 

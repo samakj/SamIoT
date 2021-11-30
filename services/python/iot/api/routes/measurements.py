@@ -108,16 +108,24 @@ class MeasurementsV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        return json_response(
-            await app.measurements_store.create_measurement(
-                timestamp=measurement.timestamp,
-                device_id=measurement.device_id,
-                location_id=measurement.location_id,
-                metric_id=measurement.metric_id,
-                tags=measurement.tags,
-                value=measurement.value,
-            )
+        _measurement = await app.measurements_store.create_measurement(
+            timestamp=measurement.timestamp,
+            device_id=measurement.device_id,
+            location_id=measurement.location_id,
+            metric_id=measurement.metric_id,
+            tags=measurement.tags,
+            value=measurement.value,
         )
+
+        if app.cache is not None:
+            base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/measurements"
+            invalid_keys = set()
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}?*"))
+            invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_measurement.id}"))
+            await app.cache.delete(*invalid_keys)
+
+        return json_response(_measurement)
 
 
 @ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/{id:\d+}")
