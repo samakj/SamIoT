@@ -90,7 +90,7 @@ class MetricsStore(BaseStore):
 
     async def get_metrics(
         self,
-        ids: Optional[List[str]] = None,
+        ids: Optional[List[int]] = None,
         names: Optional[List[str]] = None,
         abbreviations: Optional[List[str]] = None,
     ) -> List[Metric]:
@@ -117,9 +117,7 @@ class MetricsStore(BaseStore):
                         FROM metrics
                         WHERE {" OR ".join(filters)}
                     """,
-                    ids,
-                    names,
-                    abbreviations
+                    *values
                 )
 
                 return [Metric.parse_obj(dict(row)) for row in db_response]
@@ -155,10 +153,7 @@ class MetricsStore(BaseStore):
                         WHERE id=$1
                         RETURNING id, name, abbreviation, unit
                     """,
-                    id,
-                    name,
-                    abbreviation,
-                    unit
+                    *values
                 )
 
                 result = (

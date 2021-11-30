@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from Application import IoTAPIApplication
 from routes.locations import LOCATIONS_V0_ROUTES
 from routes.devices import DEVICES_V0_ROUTES
+from routes.metrics import METRICS_V0_ROUTES
 from shared.python.extensions.aiohttp.middleware.error_handler import error_handler
 from shared.python.extensions.aiohttp.middleware.request_logger import request_logger
 from shared.python.extensions.aiohttp.routes.default import DEFAULT_ROUTES
@@ -56,6 +57,7 @@ async def create_app() -> IoTAPIApplication:
         app.add_routes(DEFAULT_ROUTES)
         app.add_routes(DEVICES_V0_ROUTES)
         app.add_routes(LOCATIONS_V0_ROUTES)
+        app.add_routes(METRICS_V0_ROUTES)
 
         app.on_shutdown.append(cleanup_sockets)
     except:
