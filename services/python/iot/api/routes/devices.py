@@ -24,6 +24,9 @@ class DevicesV0View(PydanticView):
         last_message_gte: Optional[datetime] = None,
         last_message_lte: Optional[datetime] = None
     ) -> Response:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -62,6 +65,9 @@ class DevicesV0View(PydanticView):
 @DEVICES_V0_ROUTES.view("/v0/devices/{id:\d+}")
 class DeviceV0View(PydanticView):
     async def get(self, id: int, /) -> Response:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -77,6 +83,9 @@ class DeviceV0View(PydanticView):
         return json_response(device)
 
     async def patch(self, device: Device) -> Response:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -98,6 +107,9 @@ class DeviceV0View(PydanticView):
 @DEVICES_V0_ROUTES.view("/v0/devices/mac/{mac}")
 class DeviceMacV0View(PydanticView):
     async def get(self, mac: str, /) -> Response:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -116,6 +128,9 @@ class DeviceMacV0View(PydanticView):
 @DEVICES_V0_ROUTES.view("/v0/devices/ip/{ip}")
 class DeviceIPV0View(PydanticView):
     async def get(self, ip: str, /) -> Response:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -134,6 +149,9 @@ class DeviceIPV0View(PydanticView):
 @DEVICES_V0_ROUTES.view("/v0/devices/ws")
 class DevicesWebsocketV0View(PydanticView):
     async def get(self, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.devices_store:
@@ -158,6 +176,9 @@ class DevicesWebsocketV0View(PydanticView):
 @DEVICES_V0_ROUTES.view("/v0/devices/ws/{id:\d+}")
 class DeviceWebsocketV0View(PydanticView):
     async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Devices
+        """
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

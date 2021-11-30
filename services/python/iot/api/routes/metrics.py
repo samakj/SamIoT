@@ -20,6 +20,9 @@ class MetricsV0View(PydanticView):
         name: Optional[Union[str, List[str]]] = None,
         abbreviation: Optional[Union[str, List[str]]] = None
     ) -> Response:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -51,6 +54,9 @@ class MetricsV0View(PydanticView):
 @METRICS_V0_ROUTES.view("/v0/metrics/{id:\d+}")
 class MetricV0View(PydanticView):
     async def get(self, id: int, /) -> Response:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -69,6 +75,9 @@ class MetricV0View(PydanticView):
 @METRICS_V0_ROUTES.view("/v0/metrics/name/{name}")
 class MetricNameV0View(PydanticView):
     async def get(self, name: str, /) -> Response:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -87,6 +96,9 @@ class MetricNameV0View(PydanticView):
 @METRICS_V0_ROUTES.view("/v0/metrics/abbreviation/{abbreviation}")
 class MetricAbbreviationV0View(PydanticView):
     async def get(self, abbreviation: str, /) -> Response:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -105,6 +117,9 @@ class MetricAbbreviationV0View(PydanticView):
 @METRICS_V0_ROUTES.view("/v0/metrics/ws")
 class MetricsWebsocketV0View(PydanticView):
     async def get(self, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.metrics_store:
@@ -129,6 +144,9 @@ class MetricsWebsocketV0View(PydanticView):
 @METRICS_V0_ROUTES.view("/v0/metrics/ws/{id:\d+}")
 class MetricWebsocketV0View(PydanticView):
     async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Metrics
+        """
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

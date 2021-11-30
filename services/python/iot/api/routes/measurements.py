@@ -46,6 +46,9 @@ class MeasurementsV0View(PydanticView):
         value_gte: Optional[str] = None,
         value_lte: Optional[str] = None,
     ) -> Response:
+        """
+        Tags: Measurements
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.measurements_store:
@@ -90,6 +93,9 @@ class MeasurementsV0View(PydanticView):
         )
 
     async def post(self, measurement: Measurement):
+        """
+        Tags: Measurements
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.measurements_store:
@@ -112,6 +118,9 @@ class MeasurementsV0View(PydanticView):
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/{id:\d+}")
 class MeasurementV0View(PydanticView):
     async def get(self, id: int, /) -> Response:
+        """
+        Tags: Measurements
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.measurements_store:
@@ -130,6 +139,9 @@ class MeasurementV0View(PydanticView):
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws")
 class MeasurementsWebsocketV0View(PydanticView):
     async def get(self, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Measurements
+        """
         app: IoTAPIApplication = self.request.app
 
         if not app.measurements_store:
@@ -154,6 +166,9 @@ class MeasurementsWebsocketV0View(PydanticView):
 @MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws/{id:\d+}")
 class MeasurementWebsocketV0View(PydanticView):
     async def get(self, id: int, /, socket_id: Optional[str] = "") -> WebSocketResponse:
+        """
+        Tags: Measurements
+        """
         app: IoTAPIApplication = self.request.app
 
         socket_id = (

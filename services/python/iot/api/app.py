@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from dotenv import load_dotenv
+from aiohttp_pydantic import oas
 
 from Application import IoTAPIApplication
 from routes.locations import LOCATIONS_V0_ROUTES
@@ -60,6 +61,8 @@ async def create_app() -> IoTAPIApplication:
         app.add_routes(LOCATIONS_V0_ROUTES)
         app.add_routes(MEASUREMENTS_V0_ROUTES)
         app.add_routes(METRICS_V0_ROUTES)
+
+        oas.setup(app, title_spec="IoT API", url_prefix="/docs")
 
         app.on_shutdown.append(cleanup_sockets)
     except:
