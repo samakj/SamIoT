@@ -1,3 +1,4 @@
+from ipaddress import IPv4Address
 import json
 from dataclasses import asdict, is_dataclass
 from datetime import date, datetime, timedelta
@@ -6,7 +7,7 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import Any
 
-TYPES_TO_STRING = (Decimal, float, timedelta)
+TYPES_TO_STRING = (Decimal, float, timedelta, IPv4Address)
 
 
 def to_json_serialisable(object: Any) -> Any:
