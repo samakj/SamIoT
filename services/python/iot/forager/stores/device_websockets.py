@@ -21,17 +21,17 @@ class DeviceWebsocketsStore:
         self,
         device: Device,
         *,
-        on_connect: Optional[EventCallback],
-        on_disconnect: Optional[EventCallback],
-        on_message: Optional[EventWithMessageCallback],
-        on_text: Optional[EventWithMessageCallback],
-        on_json: Optional[EventWithMessageCallback],
-        on_error: Optional[EventWithMessageCallback],
-        on_close: Optional[EventWithMessageCallback],
+        on_connect: Optional[EventCallback] = None,
+        on_disconnect: Optional[EventCallback] = None,
+        on_message: Optional[EventWithMessageCallback] = None,
+        on_text: Optional[EventWithMessageCallback] = None,
+        on_json: Optional[EventWithMessageCallback] = None,
+        on_error: Optional[EventWithMessageCallback] = None,
+        on_close: Optional[EventWithMessageCallback] = None,
     ) -> Optional[Websocket]:
         if device.id in self.websockets:
             LOG.warning(
-                f"Creating {device.id} connected device websocket which exists,"
+                f"Creating device {device.id} websocket already which exists,"
                 " cancelling old task..."
             )
             await self.delete_websocket(device.id)
