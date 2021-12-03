@@ -47,6 +47,7 @@ class MeasurementsStore(BaseStore):
                     location_id,
                     metric_id,
                     tags,
+                    value_type
                 )
 
                 if value is not None:
