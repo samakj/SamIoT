@@ -62,22 +62,22 @@ class MeasurementsV0View(PydanticView):
                 self,
                 app.measurements_store.get_measurements,
                 kwargs={
-                    "id": (
+                    "ids": (
                         id if isinstance(id, list) else
                         [id] if id is not None else
                         None
                     ),
-                    "device_id": (
+                    "device_ids": (
                         device_id if isinstance(device_id, list) else
                         [device_id] if device_id is not None else
                         None
                     ),
-                    "location_id": (
+                    "location_ids": (
                         location_id if isinstance(location_id, list) else
                         [location_id] if location_id is not None else
                         None
                     ),
-                    "metric_id": (
+                    "metric_ids": (
                         metric_id if isinstance(metric_id, list) else
                         [metric_id] if metric_id is not None else
                         None
@@ -117,7 +117,7 @@ class MeasurementsV0View(PydanticView):
             value=measurement.value,
         )
 
-        if app.cache is not None:
+        if _measurement is not None and app.cache is not None:
             base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/measurements"
             invalid_keys = set()
             invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
