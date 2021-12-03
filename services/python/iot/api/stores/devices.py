@@ -174,7 +174,7 @@ class DevicesStore(BaseStore):
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
-                db_response = await connection.fetch(
+                db_response = await connection.fetchrow(
                     f"""
                         UPDATE devices
                         SET {", ".join(updates)}

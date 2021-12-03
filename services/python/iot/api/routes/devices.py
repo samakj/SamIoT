@@ -120,7 +120,9 @@ class DeviceV0View(PydanticView):
             invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_device.id}"))
             invalid_keys.update(await app.cache.keys(f"route:{base_url}/mac/{_device.mac}"))
             invalid_keys.update(await app.cache.keys(f"route:{base_url}/ip/{_device.ip}"))
-            await app.cache.delete(*invalid_keys)
+
+            if invalid_keys:
+                await app.cache.delete(*invalid_keys)
 
         return json_response(_device)
 
