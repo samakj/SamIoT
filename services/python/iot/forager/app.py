@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from aiohttp_pydantic import oas
 
 from Application import ForagerApplication
+from rotues.listener import LISTENERS_V0_ROUTES
+from rotues.websockets import WEBSOCKETS_V0_ROUTES
 from shared.python.extensions.aiohttp.middleware.error_handler import error_handler
 from shared.python.extensions.aiohttp.middleware.request_logger import request_logger
 from shared.python.extensions.aiohttp.routes.default import DEFAULT_ROUTES
@@ -37,8 +39,12 @@ async def create_app() -> ForagerApplication:
         app.connect_measurements_listener()
 
         app.add_routes(DEFAULT_ROUTES)
+        app.add_routes(LISTENERS_V0_ROUTES)
+        app.add_routes(WEBSOCKETS_V0_ROUTES)
 
         oas.setup(app, title_spec="IoT API", url_prefix="/docs")
+
+        await app.measurements_listener.watch_all()
 
         app.on_shutdown.append(cleanup_sockets)
     except:

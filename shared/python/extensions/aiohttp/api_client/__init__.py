@@ -31,7 +31,11 @@ class APIClient:
         url = f"{self.http_base_url.strip('/')}/{endpoint.strip('/')}"
         _kwargs = kwargs
         if kwargs.get("params") is not None:
-            _kwargs["params"] = to_json_serialisable(kwargs.get('params', {}))
+            params = kwargs.get('params', {})
+            _kwargs["params"] = {}
+            for key in params.keys():
+                if params[key] is not None:
+                    _kwargs["params"][key] = to_json_serialisable(params[key])
 
         async with ClientSession(json_serialize=serialise_json) as session:
             async with session.__getattribute__(method.lower())(url, *args, **_kwargs) as response:

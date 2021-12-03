@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 from aiohttp import ClientSession, ClientWebSocketResponse, WSMessage, WSMsgType, ClientConnectionError, ClientConnectorError
 from asyncio import Task
-from typing import Any, Callable, Coroutine, Optional
+from typing import Any, Callable, Coroutine, Dict, Optional
 
 from shared.python.json import serialise_json
 
@@ -77,6 +77,26 @@ class Websocket:
         self.websocket = None
         self.task = None
         self.watchdog_task = None
+
+    async def serialise(self) -> Dict[str, Any]:
+        return {
+            "url": self.url,
+            "id": self.id,
+            "name": self.name,
+            "last_message": self.last_message,
+            "auto_reconnect_time": self.auto_reconnect_time,
+            "websocket_open": self.websocket and not self.websocket.closed,
+            "task_running": self.task and not self.task.cancelled(),
+            "watchdog_running": self.watchdog_task and not self.watchdog_task.cancelled(),
+            "websocket_open": self.websocket and not self.websocket.closed,
+            "on_connect_callback": self.on_connect is not None,
+            "on_disconnect_callback": self.on_disconnect is not None,
+            "on_message_callback": self.on_message is not None,
+            "on_text_callback": self.on_text is not None,
+            "on_json_callback": self.on_json is not None,
+            "on_error_callback": self.on_error is not None,
+            "on_close_callback": self.on_close is not None,
+        }
 
     async def _websocket_message_handler(self) -> None:
         if self.websocket is not None:

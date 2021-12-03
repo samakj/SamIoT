@@ -21,5 +21,7 @@ class ForagerApplication(Application):
 
     def connect_iot_client(self) -> None:
         self.iot_client = IoTClient(
-            host=os.environ["IOT_API_HOST"], port=os.environ["IOT_API_PORT"]
+            host=os.environ["IOT_API_HOST"],
+            port=os.environ["IOT_API_PORT"],
+            ssl=False
         )
