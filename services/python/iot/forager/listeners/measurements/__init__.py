@@ -48,6 +48,7 @@ class MeasurementsListener:
 
     async def set_watch_list(self, device_ids: List[int]) -> None:
         self.watch_list = device_ids
+        await self.enact_watch_list()
 
     async def enact_watch_list(self) -> None:
         for device_id in self.watch_list:
@@ -58,7 +59,7 @@ class MeasurementsListener:
                     f"Device {device_id} doesn't exist, ignoring in watch list."
                 )
                 continue
-            if self.websocket_store.get_websocket(device_id) is None:
+            if await self.websocket_store.get_websocket(device_id) is None:
                 device = self.devices[device_id]
                 await self.websocket_store.create(
                     device,

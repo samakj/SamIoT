@@ -77,7 +77,7 @@ class DeviceWebsocketsStore:
             f"Shutting down {len(self.websockets.keys())} device"
             " websockets..."
         )
-        for id in self.websockets:
+        for id in [id for id in self.websockets.keys()]:
             await self.delete_websocket(id)
 
         LOG.info(f"Done.")

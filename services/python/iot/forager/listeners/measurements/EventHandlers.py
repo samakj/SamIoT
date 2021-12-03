@@ -31,6 +31,8 @@ class EventHandlers:
         self.websocket_store = websocket_store
         self.iot_client = iot_client
         self.metrics = {}
+        self.metrics_by_name = {}
+        self.metrics_by_abbreviation = {}
 
     async def update_metrics(self) -> None:
         metrics = {}
