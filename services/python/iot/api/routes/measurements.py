@@ -123,7 +123,8 @@ class MeasurementsV0View(PydanticView):
             invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
             invalid_keys.update(await app.cache.keys(f"route:{base_url}?*"))
             invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_measurement.id}"))
-            await app.cache.delete(*invalid_keys)
+            if invalid_keys:
+                await app.cache.delete(*invalid_keys)
 
         return json_response(_measurement)
 

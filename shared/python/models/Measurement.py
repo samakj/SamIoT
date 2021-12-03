@@ -4,7 +4,7 @@ from typing import List, Literal, Optional, Union
 from pydantic import BaseModel
 
 ValueTypeOptions = Literal["string", "float", "integer", "boolean"]
-ValueType = Union[int, str, Decimal, bool, None]
+ValueType = Union[bool, Decimal, int, str, None]
 
 
 class Measurement(BaseModel):

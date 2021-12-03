@@ -1,8 +1,10 @@
 import asyncio
 import math
 from typing import Any, Dict, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+
+from aiohttp.web_exceptions import HTTPBadRequest
 
 from shared.python.models.Measurement import Measurement, ValueType, ValueTypeOptions
 from shared.python.stores.BaseStore import BaseStore
@@ -26,6 +28,11 @@ class MeasurementsStore(BaseStore):
             value_type = "float"
         if isinstance(value, bool):
             value_type = "boolean"
+
+        if timestamp.tzinfo is not None and timestamp.tzinfo != timezone.utc:
+            raise HTTPBadRequest(reason="None UTC date timezone detected")
+
+        timestamp = timestamp.replace(tzinfo=None)
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
@@ -63,12 +70,12 @@ class MeasurementsStore(BaseStore):
                         value
                     )
 
-                result = await self.get_measurement(measurement_response["id"])
+        result = await self.get_measurement(measurement_response["id"])
 
-                if result is not None:
-                    await self.broadcast("CREATE", result, result.id)
+        if result is not None:
+            await self.broadcast("CREATE", result, result.id)
 
-                return result
+        return result
 
     async def get_measurement(self, id: int) -> Optional[Measurement]:
         async with self.db.acquire() as connection:
@@ -153,7 +160,7 @@ class MeasurementsStore(BaseStore):
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
-                db_response = await connection.fetchrow(
+                db_response = await connection.fetch(
                     f"""
                         SELECT measurements.id, 
                                timestamp,
@@ -181,8 +188,8 @@ class MeasurementsStore(BaseStore):
                 if db_response is not None:
                     for row in db_response:
                         _row = dict(row)
-                        value_type = row["value_type"]
-                        row["value"] = row[f"{value_type}_value"]
+                        value_type = _row["value_type"]
+                        _row["value"] = _row[f"{value_type}_value"]
 
                         if value is not None and _row["value"] != value:
                             continue
