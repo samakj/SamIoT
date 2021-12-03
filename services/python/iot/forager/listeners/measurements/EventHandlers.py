@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from iso8601 import parse_date
 from typing import Dict, List, Optional, Union
 
@@ -125,8 +125,10 @@ class EventHandlers:
             if data.get("type") == "ping":
                 return
 
-            timestamp = parse_date(data.get("timestamp", "1970-01-01"))
-            if datetime.utcnow() - timestamp > timedelta(days=1):
+            timestamp = parse_date(
+                data.get("timestamp", "1970-01-01T00:00:00Z")
+            )
+            if datetime.now(timezone.utc) - timestamp > timedelta(days=1):
                 timestamp = datetime.utcnow()
 
             metric = await self.get_metric(data.get("metric"))
@@ -141,7 +143,7 @@ class EventHandlers:
                     id=-1,
                     timestamp=timestamp,
                     device_id=device.id,
-                    location_id=data["location_id"],
+                    location_id=device.location_id,
                     metric_id=metric.id,
                     tags=data["tags"],
                     value_type="boolean",
