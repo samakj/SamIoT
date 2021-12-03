@@ -10,7 +10,7 @@ from listeners.measurements.EventHandlers import EventHandlers
 LOG = logging.getLogger()
 
 
-class MeasurementListener:
+class MeasurementsListener:
     websocket_store: DeviceWebsocketsStore
     iot_client: IoTClient
     devices: Dict[int, Device]

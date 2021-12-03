@@ -127,11 +127,25 @@ class EventHandlers:
             if datetime.utcnow() - timestamp > timedelta(days=1):
                 timestamp = datetime.utcnow()
 
-            metric = self.get_metric(data.get("metric"))
+            metric = await self.get_metric(data.get("metric"))
             if metric is None:
                 LOG.warn(
                     f"Device {device.id} sent unknown metric '{data.get('metric')}' skipping."
                 )
+                return
+
+            await self.iot_client.measurements.create_measurement(
+                Measurement(
+                    id=-1,
+                    timestamp=timestamp,
+                    device_id=device.id,
+                    location_id=data["location_id"],
+                    metric_id=metric.id,
+                    tags=data["tags"],
+                    value_type="boolean",
+                    value=data["value"]
+                )
+            )
 
         return callback
 
