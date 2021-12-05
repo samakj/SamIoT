@@ -12,7 +12,7 @@ ln -s "$root/shared" ./
 pip3 install -r requirements.txt
 
 gunicorn app:create_app \
-    --bind 0.0.0.0:8070 \
+    --bind 0.0.0.0:8060 \
     --worker-class aiohttp.GunicornWebWorker \
     --log-level 'info' \
     --reload
