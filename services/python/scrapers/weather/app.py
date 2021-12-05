@@ -29,10 +29,14 @@ async def create_app() -> WeatherScraperApplication:
         )
 
         app.connect_open_weather_map_client()
+        app.connect_forecast_job()
 
         app.add_routes(DEFAULT_ROUTES)
 
         oas.setup(app, title_spec="Weather Scraper", url_prefix="/docs")
+
+        if app.forecast_job is not None:
+            await app.forecast_job.start()
     except:
         await asyncio.sleep(5)
         raise

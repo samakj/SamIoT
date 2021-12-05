@@ -80,12 +80,12 @@ class OpenWeatherMapDailyResponse(BaseModel):
     humidity: int
     dew_point: Decimal
     uvi: Decimal
-    rain: Decimal
     pop: Decimal
     clouds: int
     wind_speed: Decimal
     wind_deg: int
     weather: List[OpenWeatherMapWeatherResponse]
+    rain: Optional[Decimal] = None
     wind_gust: Optional[Decimal] = None
 
 

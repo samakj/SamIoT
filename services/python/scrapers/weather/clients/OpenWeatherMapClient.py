@@ -9,7 +9,7 @@ class OpenWeatherMapClient(APIClient):
     api_key: str
 
     def __init__(self, api_key: str) -> None:
-        super().__init__("api.openweathermap.org/data/2.5/", 443, ssl=True)
+        super().__init__("api.openweathermap.org/data/2.5/", ssl=True)
         self.api_key = api_key
 
     async def get_current_and_forecast(
