@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 from aiohttp_pydantic import oas
 
 from Application import WeatherAPIApplication
-from services.python.weather.api.routes.daily import DAILY_V0_ROUTES
-from services.python.weather.api.routes.hourly import HOURLY_V0_ROUTES
-from services.python.weather.api.routes.current import CURRENT_V0_ROUTES
+from routes.daily import DAILY_V0_ROUTES
+from routes.hourly import HOURLY_V0_ROUTES
+from routes.current import CURRENT_V0_ROUTES
 from shared.python.extensions.aiohttp.middleware.error_handler import error_handler
 from shared.python.extensions.aiohttp.middleware.request_logger import request_logger
 from shared.python.extensions.aiohttp.routes.default import DEFAULT_ROUTES
@@ -32,11 +32,11 @@ async def create_app() -> WeatherAPIApplication:
         )
 
         await app.connect_db(
-            host=os.environ["WATHER_DB_HOST"],
-            port=os.environ["WATHER_DB_PORT"],
-            name=os.environ["WATHER_DB_NAME"],
-            username=os.environ["WATHER_DB_USER"],
-            password=os.environ["WATHER_DB_PASS"],
+            host=os.environ["WEATHER_DB_HOST"],
+            port=os.environ["WEATHER_DB_PORT"],
+            name=os.environ["WEATHER_DB_NAME"],
+            username=os.environ["WEATHER_DB_USER"],
+            password=os.environ["WEATHER_DB_PASS"],
         )
 
         app.connect_current_store()
