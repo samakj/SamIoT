@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import datetime
 
-from models.OpenWeatherMap import OpenWeatherMapCurrentAndForecastResponse, OpenWeatherMapHistoricResponse
+from shared.python.models.OpenWeatherMap import OpenWeatherMapCurrentAndForecastResponse, OpenWeatherMapHistoricResponse
 from shared.python.extensions.aiohttp.api_client import APIClient
 
 
