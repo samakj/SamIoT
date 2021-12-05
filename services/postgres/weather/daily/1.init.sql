@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS daily (
+    id             SERIAL PRIMARY KEY,
+    dt             TIMESTAMP NOT NULL, 
+    sunrise        TIMESTAMP NOT NULL,
+    sunset         TIMESTAMP NOT NULL,
+    moonrise       TIMESTAMP NOT NULL,  
+    moonset        TIMESTAMP NOT NULL, 
+    moon_phase     NUMERIC(8,4) NOT NULL,
+    temp           JSON NOT NULL,
+    feels_like     JSON NOT NULL,
+    pressure       INTEGER NOT NULL,
+    humidity       INTEGER NOT NULL,
+    dew_point      NUMERIC(8,4) NOT NULL,
+    uvi            NUMERIC(8,4) NOT NULL,
+    pop            NUMERIC(8,4) NOT NULL,
+    clouds         INTEGER NOT NULL,
+    wind_speed     NUMERIC(8,4) NOT NULL,
+    wind_deg       INTEGER NOT NULL,
+    weather        JSON[] NOT NULL,
+    rain           NUMERIC(8,4),
+    wind_gust      NUMERIC(8,4)
+);

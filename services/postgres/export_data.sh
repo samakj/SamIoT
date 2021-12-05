@@ -33,4 +33,56 @@ fi
 echo "\nExporting measurements...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --command="COPY measurements TO '$root/data/iot/measurements.csv' DELIMITER ',' CSV HEADER;"
 
+if [ -f "$root/data/iot/float_measurements.csv" ]; then
+    echo "\nRenaming old float_measurements CSV...\n"
+    mv $root/data/iot/float_measurements.csv $root/data/iot/float_measurements.old.csv
+fi
+echo "\nExporting float_measurements...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --command="COPY float_measurements TO '$root/data/iot/float_measurements.csv' DELIMITER ',' CSV HEADER;"
+
+if [ -f "$root/data/iot/integer_measurements.csv" ]; then
+    echo "\nRenaming old integer_measurements CSV...\n"
+    mv $root/data/iot/integer_measurements.csv $root/data/iot/integer_measurements.old.csv
+fi
+echo "\nExporting integer_measurements...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --command="COPY integer_measurements TO '$root/data/iot/integer_measurements.csv' DELIMITER ',' CSV HEADER;"
+
+if [ -f "$root/data/iot/string_measurements.csv" ]; then
+    echo "\nRenaming old string_measurements CSV...\n"
+    mv $root/data/iot/string_measurements.csv $root/data/iot/string_measurements.old.csv
+fi
+echo "\nExporting string_measurements...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --command="COPY string_measurements TO '$root/data/iot/string_measurements.csv' DELIMITER ',' CSV HEADER;"
+
+if [ -f "$root/data/iot/boolean_measurements.csv" ]; then
+    echo "\nRenaming old boolean_measurements CSV...\n"
+    mv $root/data/iot/boolean_measurements.csv $root/data/iot/boolean_measurements.old.csv
+fi
+echo "\nExporting boolean_measurements...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --command="COPY boolean_measurements TO '$root/data/iot/boolean_measurements.csv' DELIMITER ',' CSV HEADER;"
+
+
+
+
+
+if [ -f "$root/data/weather/current.csv" ]; then
+    echo "\nRenaming old current weather CSV...\n"
+    mv $root/data/weather/current.csv $root/data/weather/current.old.csv
+fi
+echo "\nExporting current weather...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --command="COPY current TO '$root/data/weather/current.csv' DELIMITER ',' CSV HEADER;"
+
+if [ -f "$root/data/weather/hourly.csv" ]; then
+    echo "\nRenaming old hourly weather CSV...\n"
+    mv $root/data/weather/hourly.csv $root/data/weather/hourly.old.csv
+fi
+echo "\nExporting hourly weather...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --command="COPY hourly TO '$root/data/weather/hourly.csv' DELIMITER ',' CSV HEADER;"
+
+if [ -f "$root/data/weather/daily.csv" ]; then
+    echo "\nRenaming old daily weather CSV...\n"
+    mv $root/data/weather/daily.csv $root/data/weather/daily.old.csv
+fi
+echo "\nExporting daily weather...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --command="COPY daily TO '$root/data/weather/daily.csv' DELIMITER ',' CSV HEADER;"
 export PGPASSWORD=
