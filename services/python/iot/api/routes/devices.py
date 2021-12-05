@@ -63,7 +63,8 @@ class DevicesV0View(PydanticView):
                     "last_message_gte": last_message_gte,
                     "last_message_lte": last_message_lte
                 },
-                expiry=15 * 60
+                expiry=15 * 60,
+                prefix="iot:api"
             )
         )
 
@@ -85,7 +86,8 @@ class DeviceV0View(PydanticView):
             self,
             app.devices_store.get_device,
             args=(id,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if device is None:
@@ -115,11 +117,11 @@ class DeviceV0View(PydanticView):
         if app.cache is not None:
             base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/locations"
             invalid_keys = set()
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}?*"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_device.id}"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}/mac/{_device.mac}"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}/ip/{_device.ip}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}?*"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}/{_device.id}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}/mac/{_device.mac}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}/ip/{_device.ip}"))
 
             if invalid_keys:
                 await app.cache.delete(*invalid_keys)
@@ -144,7 +146,8 @@ class DeviceMacV0View(PydanticView):
             self,
             app.devices_store.get_device_by_mac,
             args=(mac,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if device is None:
@@ -170,7 +173,8 @@ class DeviceIPV0View(PydanticView):
             self,
             app.devices_store.get_device_by_ip,
             args=(ip,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if device is None:

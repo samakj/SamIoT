@@ -52,7 +52,8 @@ class MetricsV0View(PydanticView):
                         None
                     )
                 },
-                expiry=15 * 60
+                expiry=15 * 60,
+                prefix="iot:api"
             )
         )
 
@@ -74,7 +75,8 @@ class MetricV0View(PydanticView):
             self,
             app.metrics_store.get_metric,
             args=(id,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if metric is None:
@@ -100,7 +102,8 @@ class MetricNameV0View(PydanticView):
             self,
             app.metrics_store.get_metric_by_name,
             args=(name,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if metric is None:
@@ -126,7 +129,8 @@ class MetricAbbreviationV0View(PydanticView):
             self,
             app.metrics_store.get_metric_by_abbreviation,
             args=(abbreviation,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if metric is None:

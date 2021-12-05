@@ -40,14 +40,16 @@ async def try_cache(
 async def try_route_cache(
     view: AbstractView,
     get_value: Callable[..., Coroutine[Any, Any, Any]],
+    prefix: Optional[str] = None,
     args: Iterable[Any] = [],
     kwargs: Dict[str, Any] = {},
     expiry: int = 0,
     serialise_value: Callable[[Any], str] = serialise_json,
     parse_value: Callable[[str], Any] = parse_json,
 ) -> Any:
+    _prefix = f"{prefix.strip(':')}:" if prefix else ""
     return await try_cache(
-        key=f"route:{str(view.request.url)}",
+        key=f"{_prefix}route:{str(view.request.url)}",
         cache=view.request.app.cache,
         get_value=get_value,
         args=args,

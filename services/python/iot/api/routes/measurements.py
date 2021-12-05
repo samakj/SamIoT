@@ -94,6 +94,7 @@ class MeasurementsV0View(PydanticView):
                     "value_lte": parse_value(value_lte),
                 },
                 expiry=15 * 60,
+                prefix="iot:api"
             )
         )
 
@@ -120,9 +121,9 @@ class MeasurementsV0View(PydanticView):
         if _measurement is not None and app.cache is not None:
             base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/measurements"
             invalid_keys = set()
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}?*"))
-            invalid_keys.update(await app.cache.keys(f"route:{base_url}/{_measurement.id}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}?*"))
+            invalid_keys.update(await app.cache.keys(f"iot:api:route:{base_url}/{_measurement.id}"))
             if invalid_keys:
                 await app.cache.delete(*invalid_keys)
 
@@ -146,7 +147,8 @@ class MeasurementV0View(PydanticView):
             self,
             app.measurements_store.get_measurement,
             args=(id,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if measurement is None:
@@ -249,7 +251,8 @@ class MeasurementsLatestV0View(PydanticView):
                         None
                     ),
                 },
-                expiry=15 * 60
+                expiry=15 * 60,
+                prefix="iot:api"
             )
         )
 
@@ -294,6 +297,7 @@ class MeasurementsAverageV0View(PydanticView):
                     "end": _end,
                     "period": _period
                 },
-                expiry=15 if _end > datetime.utcnow() else 15 * 60
+                expiry=15 if _end > datetime.utcnow() else 15 * 60,
+                prefix="iot:api"
             )
         )

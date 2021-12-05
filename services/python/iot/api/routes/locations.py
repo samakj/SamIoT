@@ -53,7 +53,8 @@ class LocationsV0View(PydanticView):
                         None
                     )
                 },
-                expiry=15 * 60
+                expiry=15 * 60,
+                prefix="iot:api"
             )
         )
 
@@ -75,7 +76,8 @@ class LocationV0View(PydanticView):
             self,
             app.locations_store.get_location,
             args=(id,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if location is None:
@@ -101,7 +103,8 @@ class LocationNameV0View(PydanticView):
             self,
             app.locations_store.get_location_by_name,
             args=(name,),
-            expiry=15 * 60
+            expiry=15 * 60,
+            prefix="iot:api"
         )
 
         if location is None:
