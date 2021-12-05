@@ -52,22 +52,22 @@ class HourlyStore(BaseStore):
                             $16
                         )
                         ON CONFLICT (timestamp) DO
-                            UPDATE
-                                SET temperature=$2, 
-                                SET apparent_temperature=$3, 
-                                SET pressure=$4, 
-                                SET humidity=$5, 
-                                SET dew_point=$6, 
-                                SET cloud_coverage=$7, 
-                                SET wind_speed=$8, 
-                                SET wind_direction=$9, 
-                                SET owm_weather_id=$10, 
-                                SET owm_weather_title=$11, 
-                                SET owm_weather_description=$12, 
-                                SET chance_of_rain=$13, 
-                                SET visibility=$14, 
-                                SET wind_gust=$15, 
-                                SET uv_index=$16
+                            UPDATE SET 
+                                temperature=$2, 
+                                apparent_temperature=$3, 
+                                pressure=$4, 
+                                humidity=$5, 
+                                dew_point=$6, 
+                                cloud_coverage=$7, 
+                                wind_speed=$8, 
+                                wind_direction=$9, 
+                                owm_weather_id=$10, 
+                                owm_weather_title=$11, 
+                                owm_weather_description=$12, 
+                                chance_of_rain=$13, 
+                                visibility=$14, 
+                                wind_gust=$15, 
+                                uv_index=$16
                         RETURNING *
                     """,
                     hourly.timestamp,
