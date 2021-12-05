@@ -7,6 +7,7 @@ from shared.python.models.OpenWeatherMap import OpenWeatherMapCurrentResponse, O
 
 
 class CurrentWeather(BaseModel):
+    id: int
     timestamp: datetime
     sunrise: datetime
     sunset: datetime
@@ -29,6 +30,7 @@ class CurrentWeather(BaseModel):
         self, response: OpenWeatherMapCurrentResponse
     ) -> 'CurrentWeather':
         return CurrentWeather(
+            id=-1,
             timestamp=response.dt,
             sunrise=response.sunrise,
             sunset=response.sunset,
@@ -50,6 +52,7 @@ class CurrentWeather(BaseModel):
 
 
 class HourlyWeather(BaseModel):
+    id: int
     timestamp: datetime
     temperature: Decimal
     apparent_temperature: Decimal
@@ -71,6 +74,7 @@ class HourlyWeather(BaseModel):
         self, response: OpenWeatherMapHourlyResponse
     ) -> 'HourlyWeather':
         return HourlyWeather(
+            id=-1,
             timestamp=response.dt,
             temperature=response.temp,
             apparent_temperature=response.feels_like,
@@ -91,6 +95,7 @@ class HourlyWeather(BaseModel):
 
 
 class DailyWeather(BaseModel):
+    id: int
     timestamp: datetime
     sunrise: datetime
     sunset: datetime
@@ -125,6 +130,7 @@ class DailyWeather(BaseModel):
         self, response: OpenWeatherMapDailyResponse
     ) -> 'DailyWeather':
         return DailyWeather(
+            id=-1,
             timestamp=response.dt,
             sunrise=response.sunrise,
             sunset=response.sunset,
