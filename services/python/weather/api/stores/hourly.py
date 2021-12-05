@@ -53,7 +53,6 @@ class HourlyStore(BaseStore):
                         )
                         ON CONFLICT (timestamp) DO
                             UPDATE
-                                SET timestamp=$1, 
                                 SET temperature=$2, 
                                 SET apparent_temperature=$3, 
                                 SET pressure=$4, 

@@ -78,7 +78,6 @@ class DailyStore(BaseStore):
                         )
                         ON CONFLICT (timestamp) DO
                             UPDATE
-                                SET timestamp=$1, 
                                 SET sunrise=$2, 
                                 SET sunset=$3, 
                                 SET moonrise=$4, 
