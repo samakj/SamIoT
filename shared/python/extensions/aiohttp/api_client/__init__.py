@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, Union
 from aiohttp import ClientSession, ClientResponse
 
 from aiohttp.client_reqrep import ClientResponse
@@ -9,17 +9,22 @@ from shared.python.json import to_json_serialisable, serialise_json
 
 class APIClient:
     host: str
-    port: int
+    port: Optional[Union[int, str]]
     ssl: bool
     http_base_url: str
     websocket_base_url: str
 
-    def __init__(self, host: str, port: int, ssl: bool = True) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: Optional[Union[int, str]] = None,
+        ssl: bool = True
+    ) -> None:
         self.host = host
         self.port = port
         self.ssl = ssl
-        self.http_base_url = f"http{'s' if self.ssl else ''}://{self.host}:{self.port}"
-        self.websocket_base_url = f"ws{'s' if self.ssl else ''}://{self.host}:{self.port}"
+        self.http_base_url = f"http{'s' if self.ssl else ''}://{self.host}{f':{self.port}' if port is not None else ''}"
+        self.websocket_base_url = f"ws{'s' if self.ssl else ''}://{self.host}{f':{self.port}' if port is not None else ''}"
 
     async def request(
         self,
