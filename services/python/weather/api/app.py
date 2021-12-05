@@ -36,6 +36,10 @@ async def create_app() -> WeatherAPIApplication:
             password=os.environ["WATHER_DB_PASS"],
         )
 
+        app.connect_current_store()
+        app.connect_hourly_store()
+        app.connect_daily_store()
+
         await app.connect_cache(
             host=os.environ["WEATHER_CACHE_HOST"],
             port=os.environ["WEATHER_CACHE_PORT"],
