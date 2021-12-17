@@ -36,7 +36,7 @@ class OpenWeatherMapClient(APIClient):
             params={
                 "lat": lat,
                 "lon": lon,
-                "dt": datetime.fromisoformat(date.isoformat()[:10]).timestamp(),
+                "dt": date.replace(minute=0, second=0, microsecond=0).timestamp(),
                 "units": "metric",
                 "appid": self.api_key,
             }
