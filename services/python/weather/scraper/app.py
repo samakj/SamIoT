@@ -29,6 +29,7 @@ async def create_app() -> WeatherScraperApplication:
         )
 
         app.connect_open_weather_map_client()
+        app.connect_weather_client()
         app.connect_forecast_job()
 
         app.add_routes(DEFAULT_ROUTES)
