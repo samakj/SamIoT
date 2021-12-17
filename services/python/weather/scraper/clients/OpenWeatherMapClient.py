@@ -28,7 +28,7 @@ class OpenWeatherMapClient(APIClient):
             await response.json()
         )
 
-    async def get_historic(
+    async def get_historical(
         self, lat: Decimal, lon: Decimal, date: datetime
     ) -> OpenWeatherMapHistoricResponse:
         response = await self.get(
@@ -36,7 +36,7 @@ class OpenWeatherMapClient(APIClient):
             params={
                 "lat": lat,
                 "lon": lon,
-                "dt": date.replace(minute=0, second=0, microsecond=0).timestamp(),
+                "dt": int(date.replace(minute=0, second=0, microsecond=0).timestamp()),
                 "units": "metric",
                 "appid": self.api_key,
             }

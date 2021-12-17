@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS hourly (
     owm_weather_id          INTEGER NOT NULL,
     owm_weather_title       TEXT NOT NULL,
     owm_weather_description TEXT NOT NULL,
-    chance_of_rain          NUMERIC(8,4) NOT NULL,
+    chance_of_rain          NUMERIC(8,4),
     visibility              INTEGER,
     wind_gust               NUMERIC(8,4),
     uv_index                NUMERIC(8,4)

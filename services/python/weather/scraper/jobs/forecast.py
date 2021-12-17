@@ -86,7 +86,7 @@ class ForecastJob:
             hourly_weathers.append(hourly_weather)
 
         LOG.info(
-            f"Scraped {len(hourly_weathers)} hourly weathers, from " +
+            f"Scraped {len(hourly_weathers)} forecasted hourly weathers, from " +
             f"{hourly_weathers[0].timestamp} -> {hourly_weathers[-1].timestamp}"
         )
 
@@ -127,7 +127,7 @@ class ForecastJob:
             daily_weathers.append(daily_weather)
 
         LOG.info(
-            f"Scraped {len(daily_weathers)} daily weathers, from " +
+            f"Scraped {len(daily_weathers)} forecasted daily weathers, from " +
             f"{daily_weathers[0].timestamp} -> {daily_weathers[-1].timestamp}"
         )
 
@@ -148,7 +148,7 @@ class ForecastJob:
             response = await self.open_weather_map_client.get_current_and_forecast(
                 lat=Decimal(os.environ["LOCATION_LATITUDE"]), lon=Decimal(os.environ["LOCATION_LONGITUDE"])
             )
-            asyncio.gather(
+            await asyncio.gather(
                 self.handle_current_response(response.current),
                 self.handle_hourly_response(response.hourly),
                 self.handle_daily_response(response.daily),

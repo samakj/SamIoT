@@ -31,6 +31,7 @@ async def create_app() -> WeatherScraperApplication:
         app.connect_open_weather_map_client()
         app.connect_weather_client()
         app.connect_forecast_job()
+        app.connect_historical_job()
 
         app.add_routes(DEFAULT_ROUTES)
 
@@ -38,6 +39,8 @@ async def create_app() -> WeatherScraperApplication:
 
         if app.forecast_job is not None:
             await app.forecast_job.start()
+        if app.historical_job is not None:
+            await app.historical_job.start()
     except:
         await asyncio.sleep(5)
         raise

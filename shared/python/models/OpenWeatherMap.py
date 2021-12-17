@@ -45,7 +45,7 @@ class OpenWeatherMapHourlyResponse(BaseModel):
     wind_speed: Decimal
     wind_deg: int
     weather: List[OpenWeatherMapWeatherResponse]
-    pop: Decimal
+    pop: Optional[Decimal] = None
     wind_gust: Optional[Decimal] = None
     uvi: Optional[Decimal] = None
     visibility: Optional[int] = None

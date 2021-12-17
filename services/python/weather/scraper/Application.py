@@ -6,12 +6,14 @@ from aiohttp.web_app import Application
 from shared.python.clients.weather import WeatherClient
 from clients.OpenWeatherMapClient import OpenWeatherMapClient
 from jobs.forecast import ForecastJob
+from jobs.historical import HistoricalJob
 
 
 class WeatherScraperApplication(Application):
     open_weather_map_client: Optional[OpenWeatherMapClient] = None
     weather_client: Optional[WeatherClient] = None
     forecast_job: Optional[ForecastJob] = None
+    historical_job: Optional[HistoricalJob] = None
 
     def connect_open_weather_map_client(self) -> None:
         self.open_weather_map_client = OpenWeatherMapClient(
@@ -38,6 +40,23 @@ class WeatherScraperApplication(Application):
             )
 
         self.forecast_job = ForecastJob(
+            self.open_weather_map_client,
+            self.weather_client
+        )
+
+    def connect_historical_job(self) -> None:
+        if self.open_weather_map_client is None:
+            raise ValueError(
+                "Open weather map client was not initialised" +
+                "before connecting historical job."
+            )
+        if self.weather_client is None:
+            raise ValueError(
+                "Weather client was not initialised" +
+                "before connecting historical job."
+            )
+
+        self.historical_job = HistoricalJob(
             self.open_weather_map_client,
             self.weather_client
         )

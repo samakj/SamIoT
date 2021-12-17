@@ -66,7 +66,7 @@ class HourlyWeather(BaseModel):
     owm_weather_id: int
     owm_weather_title: str
     owm_weather_description: str
-    chance_of_rain: Decimal
+    chance_of_rain: Optional[Decimal] = None
     visibility: Optional[int] = None
     wind_gust: Optional[Decimal] = None
     uv_index: Optional[Decimal] = None
