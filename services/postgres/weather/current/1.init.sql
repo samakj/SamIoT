@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS current (
     id                      SERIAL PRIMARY KEY,
-    timestamp               TIMESTAMP UNIQUE,
+    timestamp               TIMESTAMP NOT NULL UNIQUE,
     sunrise                 TIMESTAMP NOT NULL,
     sunset                  TIMESTAMP NOT NULL,
     temperature             NUMERIC(8,4) NOT NULL,

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS daily (
     id                           SERIAL PRIMARY KEY,
-    timestamp                    TIMESTAMP NOT NULL, 
+    timestamp                    TIMESTAMP NOT NULL UNIQUE, 
     sunrise                      TIMESTAMP NOT NULL,
     sunset                       TIMESTAMP NOT NULL,
     moonrise                     TIMESTAMP NOT NULL,  
@@ -20,13 +20,13 @@ CREATE TABLE IF NOT EXISTS daily (
     humidity                     INTEGER NOT NULL,
     dew_point                    NUMERIC(8,4) NOT NULL,
     cloud_coverage               NUMERIC(8,4) NOT NULL,
-    visibility                   NUMERIC(8,4) NOT NULL,
+    visibility                   NUMERIC(8,4),
     wind_speed                   INTEGER NOT NULL,
     wind_direction               NUMERIC(8,4) NOT NULL,
     owm_weather_id               INTEGER NOT NULL,
-    owm_weather_title            INTEGER NOT NULL,
+    owm_weather_title            TEXT NOT NULL,
     owm_weather_description      TEXT NOT NULL,
-    chance_of_rain               TEXT NOT NULL,
+    chance_of_rain               NUMERIC(8,4) NOT NULL,
     wind_gust                    NUMERIC(8,4),
     uv_index                     NUMERIC(8,4)
 );

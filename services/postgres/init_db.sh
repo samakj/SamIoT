@@ -18,3 +18,5 @@ psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_
 echo "\nInitialising daily weather table...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --file=./weather/daily/1.init.sql
 export PGPASSWORD=
+
+source ./init_roles.sh

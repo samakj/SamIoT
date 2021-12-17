@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS hourly (
     id                      SERIAL PRIMARY KEY,
-    timestamp               TIMESTAMP UNIQUE,
+    timestamp               TIMESTAMP NOT NULL UNIQUE,
     temperature             NUMERIC(8,4) NOT NULL,
     apparent_temperature    NUMERIC(8,4) NOT NULL,
     pressure                INTEGER NOT NULL,
