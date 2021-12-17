@@ -40,6 +40,17 @@ fi
 
 
 
+if [ -f "$root/data/utilities/gas.csv" ]; then
+    echo "\nImporting gas utilities data...\n"
+    psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --command="COPY gas FROM '$root/data/utilities/gas.csv' DELIMITER ',' CSV HEADER"
+fi
+if [ -f "$root/data/utilities/electricity.csv" ]; then
+    echo "\nImporting electricity utilities data...\n"
+    psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --command="COPY electricity FROM '$root/data/utilities/electricity.csv' DELIMITER ',' CSV HEADER"
+fi
+
+
+
 if [ -f "$root/data/weather/current.csv" ]; then
     echo "\nImporting current weather data...\n"
     psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --command="COPY current FROM '$root/data/weather/current.csv' DELIMITER ',' CSV HEADER"

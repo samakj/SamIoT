@@ -11,6 +11,11 @@ psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME
 echo "\nInitialising iot measurements table...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$IOT_DB_NAME --file=./iot/measurements/1.init.sql
 
+echo "\nInitialising gas utilities table...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --file=./utilities/gas/1.init.sql
+echo "\nInitialising electricity utilities table...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --file=./utilities/electricity/1.init.sql
+
 echo "\nInitialising current weather table...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --file=./weather/current/1.init.sql
 echo "\nInitialising hourly weather table...\n"
