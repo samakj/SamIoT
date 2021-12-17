@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from aiohttp_pydantic import oas
 
 from Application import UtilitiesAPIApplication
-from routes.electricity import ELECTRICITY_V0_ROUTES
+from routes.electric import ELECTRIC_V0_ROUTES
 from routes.gas import GAS_V0_ROUTES
 from shared.python.extensions.aiohttp.middleware.error_handler import error_handler
 from shared.python.extensions.aiohttp.middleware.request_logger import request_logger
@@ -39,7 +39,7 @@ async def create_app() -> UtilitiesAPIApplication:
         )
 
         app.connect_gas_store()
-        app.connect_electricity_store()
+        app.connect_electric_store()
 
         await app.connect_cache(
             host=os.environ["UTILITIES_CACHE_HOST"],
@@ -51,7 +51,7 @@ async def create_app() -> UtilitiesAPIApplication:
 
         app.add_routes(DEFAULT_ROUTES)
         app.add_routes(GAS_V0_ROUTES)
-        app.add_routes(ELECTRICITY_V0_ROUTES)
+        app.add_routes(ELECTRIC_V0_ROUTES)
 
         oas.setup(app, title_spec="Utilities API", url_prefix="/docs")
     except:

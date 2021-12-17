@@ -72,12 +72,12 @@ fi
 echo "\nExporting gas utilities...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --command="COPY gas TO '$root/data/utilities/gas.csv' DELIMITER ',' CSV HEADER;"
 
-if [ -f "$root/data/utilities/electricity.csv" ]; then
-    echo "\nRenaming old electricity utilities CSV...\n"
-    mv $root/data/utilities/electricity.csv $root/data/utilities/electricity.old.csv
+if [ -f "$root/data/utilities/electric.csv" ]; then
+    echo "\nRenaming old electric utilities CSV...\n"
+    mv $root/data/utilities/electric.csv $root/data/utilities/electric.old.csv
 fi
-echo "\nExporting electricity utilities...\n"
-psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --command="COPY electricity TO '$root/data/utilities/electricity.csv' DELIMITER ',' CSV HEADER;"
+echo "\nExporting electric utilities...\n"
+psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$UTILITIES_DB_NAME --command="COPY electric TO '$root/data/utilities/electric.csv' DELIMITER ',' CSV HEADER;"
 
 
 

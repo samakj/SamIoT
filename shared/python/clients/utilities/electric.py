@@ -9,28 +9,28 @@ from shared.python.json import serialise_json
 from shared.python.models.Utilities import UtilitiesConsumption
 
 
-class ElectricityClient(APIClient):
-    async def get_electricity_consumption(self, id: int) -> Optional[UtilitiesConsumption]:
+class ElectricClient(APIClient):
+    async def get_electric_consumption(self, id: int) -> Optional[UtilitiesConsumption]:
         try:
-            response = await self.get(f"/v0/electricity/{id}")
+            response = await self.get(f"/v0/electric/{id}")
             return UtilitiesConsumption.parse_obj(await response.json())
         except ClientResponseError as error:
             if error.status == 404:
                 return None
             raise
 
-    async def get_electricity_consumption_by_timestamp(
+    async def get_electric_consumption_by_timestamp(
         self, timestamp: datetime
     ) -> Optional[UtilitiesConsumption]:
         try:
-            response = await self.get(f"/v0/electricity/timestamp/{timestamp}")
+            response = await self.get(f"/v0/electric/timestamp/{timestamp}")
             return UtilitiesConsumption.parse_obj(await response.json())
         except ClientResponseError as error:
             if error.status == 404:
                 return None
             raise
 
-    async def get_electricity_consumptions(
+    async def get_electric_consumptions(
         self,
         id: Optional[Union[int, List[int]]] = None,
         timestamp: Optional[Union[datetime, List[datetime]]] = None,
@@ -40,7 +40,7 @@ class ElectricityClient(APIClient):
         consumption_lte: Optional[Decimal] = None,
     ) -> List[UtilitiesConsumption]:
         response = await self.get(
-            "/v0/electricity",
+            "/v0/electric",
             params={
                 "id": id,
                 "timestamp": timestamp,
@@ -56,12 +56,12 @@ class ElectricityClient(APIClient):
             for item in await response.json()
         ]
 
-    async def upsert_electricity_consumption(
-        self, electricity: UtilitiesConsumption
+    async def upsert_electric_consumption(
+        self, electric: UtilitiesConsumption
     ) -> Optional[UtilitiesConsumption]:
         try:
             response = await self.post(
-                f"/v0/electricity/", data=serialise_json(electricity)
+                f"/v0/electric/", data=serialise_json(electric)
             )
             return UtilitiesConsumption.parse_obj(await response.json())
         except ClientResponseError as error:
@@ -69,7 +69,7 @@ class ElectricityClient(APIClient):
                 return None
             raise
 
-    async def listen_electricity_consumption(
+    async def listen_electric_consumption(
         self,
         socket_id: str = "",
         name: str = "",

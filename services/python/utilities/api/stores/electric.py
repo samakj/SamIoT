@@ -6,8 +6,8 @@ from shared.python.models.Utilities import UtilitiesConsumption
 from shared.python.stores.BaseStore import BaseStore
 
 
-class ElectricityStore(BaseStore):
-    async def upsert_electricity_consumption(
+class ElectricStore(BaseStore):
+    async def upsert_electric_consumption(
         self,
         consumption: UtilitiesConsumption
     ) -> Optional[UtilitiesConsumption]:
@@ -15,7 +15,7 @@ class ElectricityStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        INSERT INTO electricity (timestamp, consumption)
+                        INSERT INTO electric (timestamp, consumption)
                         VALUES ($1, $2)
                         ON CONFLICT (timestamp) DO
                             UPDATE SET consumption=$2
@@ -36,13 +36,13 @@ class ElectricityStore(BaseStore):
 
                 return result
 
-    async def get_electricity_consumption(self, id: int) -> Optional[UtilitiesConsumption]:
+    async def get_electric_consumption(self, id: int) -> Optional[UtilitiesConsumption]:
         async with self.db.acquire() as connection:
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     """
                         SELECT * 
-                        FROM electricity
+                        FROM electric
                         WHERE id=$1
                     """,
                     id
@@ -54,7 +54,7 @@ class ElectricityStore(BaseStore):
                     None
                 )
 
-    async def get_electricity_consumption_by_timestamp(
+    async def get_electric_consumption_by_timestamp(
         self, timestamp: datetime
     ) -> Optional[UtilitiesConsumption]:
         async with self.db.acquire() as connection:
@@ -62,7 +62,7 @@ class ElectricityStore(BaseStore):
                 db_response = await connection.fetchrow(
                     """
                         SELECT * 
-                        FROM electricity
+                        FROM electric
                         WHERE timestamp=$1
                     """,
                     timestamp
@@ -74,7 +74,7 @@ class ElectricityStore(BaseStore):
                     None
                 )
 
-    async def get_electricity_consumption_by_nearest_timestamp(
+    async def get_electric_consumption_by_nearest_timestamp(
         self, timestamp: datetime
     ) -> Optional[UtilitiesConsumption]:
         async with self.db.acquire() as connection:
@@ -84,11 +84,11 @@ class ElectricityStore(BaseStore):
                         SELECT * 
                         FROM (
                             SELECT * 
-                            FROM electricity
+                            FROM electric
                             WHERE timestamp<=$1
                             UNION
                             SELECT * 
-                            FROM electricity
+                            FROM electric
                             WHERE timestamp>=$1
                         )
                         ORDER BY ABS(extract(epoch from timestamp) - extract(epoch from $1))
@@ -103,7 +103,7 @@ class ElectricityStore(BaseStore):
                     None
                 )
 
-    async def get_electricity_consumptions(
+    async def get_electric_consumptions(
         self,
         ids: Optional[List[int]] = None,
         timestamps: Optional[List[datetime]] = None,
@@ -143,7 +143,7 @@ class ElectricityStore(BaseStore):
                 db_response = await connection.fetch(
                     f"""
                         SELECT *
-                        FROM electricity
+                        FROM electric
                         WHERE {" AND ".join(filters)}
                     """,
                     *values

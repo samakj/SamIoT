@@ -1,0 +1,10 @@
+aiohttp
+aiohttp-middlewares
+aiohttp-pydantic
+aioredis
+asyncio
+asyncpg
+gunicorn
+iso8601
+pydantic
+python-dotenv

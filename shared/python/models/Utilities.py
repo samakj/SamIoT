@@ -14,8 +14,8 @@ class UtilitiesConsumption(BaseModel):
     @staticmethod
     def from_octopus_consumption(
         octopus_consumption: OctopusConsumption
-    ) -> 'BaseModel':
-        return BaseModel(
+    ) -> 'UtilitiesConsumption':
+        return UtilitiesConsumption(
             id=-1,
             timestamp=octopus_consumption.interval_start,
             consumption=octopus_consumption.consumption

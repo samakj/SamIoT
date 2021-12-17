@@ -38,7 +38,7 @@ class GassV0View(PydanticView):
         return json_response(
             await try_route_cache(
                 self,
-                app.gas_store.get_gas_consumption,
+                app.gas_store.get_gas_consumptions,
                 kwargs={
                     "ids": (
                         id if isinstance(id, list) else

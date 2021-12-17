@@ -11,11 +11,11 @@ from Application import UtilitiesAPIApplication
 from shared.python.extensions.aioredis import try_route_cache
 from shared.python.models.Utilities import UtilitiesConsumption
 
-ELECTRICITY_V0_ROUTES = RouteTableDef()
+ELECTRIC_V0_ROUTES = RouteTableDef()
 
 
-@ELECTRICITY_V0_ROUTES.view("/v0/electricity")
-class ElectricitysV0View(PydanticView):
+@ELECTRIC_V0_ROUTES.view("/v0/electric")
+class ElectricsV0View(PydanticView):
     async def get(
         self,
         id: Optional[List[int]] = None,
@@ -26,19 +26,19 @@ class ElectricitysV0View(PydanticView):
         consumption_lte: Optional[Decimal] = None,
     ) -> Response:
         """
-        Tags: Electricity
+        Tags: Electric
         """
         app: UtilitiesAPIApplication = self.request.app
 
-        if not app.electricity_store:
+        if not app.electric_store:
             raise ValueError(
-                "Electricity store not initialised before querying data."
+                "Electric store not initialised before querying data."
             )
 
         return json_response(
             await try_route_cache(
                 self,
-                app.electricity_store.get_electricity_consumption,
+                app.electric_store.get_electric_consumptions,
                 kwargs={
                     "ids": (
                         id if isinstance(id, list) else
@@ -60,81 +60,81 @@ class ElectricitysV0View(PydanticView):
             )
         )
 
-    async def post(self, electricity: UtilitiesConsumption) -> Response:
+    async def post(self, electric: UtilitiesConsumption) -> Response:
         """
-        Tags: Electricity
+        Tags: Electric
         """
         app: UtilitiesAPIApplication = self.request.app
 
-        if not app.electricity_store:
+        if not app.electric_store:
             raise ValueError(
-                "Electricity store not initialised before querying data."
+                "Electric store not initialised before querying data."
             )
 
-        _electricity = await app.electricity_store.upsert_electricity_consumption(electricity)
+        _electric = await app.electric_store.upsert_electric_consumption(electric)
 
-        if _electricity is not None and app.cache is not None:
-            base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/electricity"
+        if _electric is not None and app.cache is not None:
+            base_url = f"{'/'.join(str(self.request.url).split('/')[:3])}/v0/electric"
             invalid_keys = set()
             invalid_keys.update(await app.cache.keys(f"utilities:api:route:{base_url}"))
             invalid_keys.update(await app.cache.keys(f"utilities:api:route:{base_url}?*"))
-            invalid_keys.update(await app.cache.keys(f"utilities:api:route:{base_url}/{_electricity.id}"))
+            invalid_keys.update(await app.cache.keys(f"utilities:api:route:{base_url}/{_electric.id}"))
             invalid_keys.update(await app.cache.keys(f"utilities:api:route:{base_url}/timestamp/*"))
             if invalid_keys:
                 await app.cache.delete(*invalid_keys)
 
-        return json_response(electricity)
+        return json_response(electric)
 
 
-@ELECTRICITY_V0_ROUTES.view("/v0/electricity/{id:\d+}")
-class ElectricityV0View(PydanticView):
+@ELECTRIC_V0_ROUTES.view("/v0/electric/{id:\d+}")
+class ElectricV0View(PydanticView):
     async def get(self, id: int, /) -> Response:
         """
-        Tags: Electricity
+        Tags: Electric
         """
         app: UtilitiesAPIApplication = self.request.app
 
-        if not app.electricity_store:
+        if not app.electric_store:
             raise ValueError(
-                "Electricity consumption store not initialised before querying data."
+                "Electric consumption store not initialised before querying data."
             )
 
-        electricity = await try_route_cache(
+        electric = await try_route_cache(
             self,
-            app.electricity_store.get_electricity_consumption,
+            app.electric_store.get_electric_consumption,
             args=(id,),
             expiry=15 * 60,
             prefix="utilities:api"
         )
 
-        if electricity is None:
+        if electric is None:
             raise HTTPNotFound()
 
-        return json_response(electricity)
+        return json_response(electric)
 
 
-@ELECTRICITY_V0_ROUTES.view("/v0/electricity/timestamp/{timestamp}")
-class ElectricityTimestampV0View(PydanticView):
+@ELECTRIC_V0_ROUTES.view("/v0/electric/timestamp/{timestamp}")
+class ElectricTimestampV0View(PydanticView):
     async def get(self, timestamp: datetime, /) -> Response:
         """
-        Tags: Electricity
+        Tags: Electric
         """
         app: UtilitiesAPIApplication = self.request.app
 
-        if not app.electricity_store:
+        if not app.electric_store:
             raise ValueError(
-                "Electricity store not initialised before querying data."
+                "Electric store not initialised before querying data."
             )
 
-        electricity = await try_route_cache(
+        electric = await try_route_cache(
             self,
-            app.electricity_store.get_electricity_consumption_by_nearest_timestamp,
+            app.electric_store.get_electric_consumption_by_nearest_timestamp,
             args=(timestamp,),
             expiry=15 * 60,
             prefix="utilities:api"
         )
 
-        if electricity is None:
+        if electric is None:
             raise HTTPNotFound()
 
-        return json_response(electricity)
+        return json_response(electric)
