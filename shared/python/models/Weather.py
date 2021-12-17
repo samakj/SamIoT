@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 
 from shared.python.models.OpenWeatherMap import OpenWeatherMapCurrentResponse, OpenWeatherMapDailyResponse, OpenWeatherMapHourlyResponse
 
