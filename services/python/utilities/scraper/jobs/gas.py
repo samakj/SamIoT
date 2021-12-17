@@ -41,9 +41,9 @@ class GasJob:
         self, response: List[OctopusConsumption]
     ) -> None:
         for result in response:
-            await self.utilities_client.gas.upsert_gas_consumption(
-                UtilitiesConsumption.from_octopus_consumption(result)
-            )
+            consumption = UtilitiesConsumption.from_octopus_consumption(result)
+            consumption.timestamp = consumption.timestamp.replace(tzinfo=None)
+            await self.utilities_client.gas.upsert_gas_consumption(consumption)
 
     async def _gas_task(self) -> None:
         while True:

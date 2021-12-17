@@ -41,9 +41,9 @@ class ElectricJob:
         self, response: List[OctopusConsumption]
     ) -> None:
         for result in response:
-            await self.utilities_client.electric.upsert_electric_consumption(
-                UtilitiesConsumption.from_octopus_consumption(result)
-            )
+            consumption = UtilitiesConsumption.from_octopus_consumption(result)
+            consumption.timestamp = consumption.timestamp.replace(tzinfo=None)
+            await self.utilities_client.electric.upsert_electric_consumption(consumption)
 
     async def _electric_task(self) -> None:
         while True:
@@ -65,7 +65,7 @@ class ElectricJob:
                 page_size=1000
             )
             LOG.info(
-                f"Scraped {len(response.results)} gas readings, from {from_date} -> now"
+                f"Scraped {len(response.results)} electric readings, from {from_date} -> now"
             )
             await self.handle_consumptions(response.results)
 
