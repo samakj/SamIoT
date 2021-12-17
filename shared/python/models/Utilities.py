@@ -7,6 +7,7 @@ from shared.python.models.OctopusEnergy import OctopusConsumption
 
 
 class UtilitiesConsumption(BaseModel):
+    id: int
     timestamp: datetime
     consumption: Decimal
 
@@ -15,6 +16,7 @@ class UtilitiesConsumption(BaseModel):
         octopus_consumption: OctopusConsumption
     ) -> 'BaseModel':
         return BaseModel(
+            id=-1,
             timestamp=octopus_consumption.interval_start,
             consumption=octopus_consumption.consumption
         )
