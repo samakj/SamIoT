@@ -145,6 +145,7 @@ class GasStore(BaseStore):
                         SELECT *
                         FROM gas
                         WHERE {" AND ".join(filters)}
+                        ORDER BY timestamp ASC
                     """,
                     *values
                 )

@@ -145,6 +145,7 @@ class ElectricStore(BaseStore):
                         SELECT *
                         FROM electric
                         WHERE {" AND ".join(filters)}
+                        ORDER BY timestamp ASC
                     """,
                     *values
                 )
