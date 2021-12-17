@@ -15,7 +15,8 @@ class DailyStore(BaseStore):
             async with connection.transaction():
                 db_response = await connection.fetchrow(
                     f"""
-                        INSERT INTO daily (timestamp
+                        INSERT INTO daily (
+                            timestamp,
                             sunrise,
                             sunset,
                             moonrise,
@@ -105,23 +106,36 @@ class DailyStore(BaseStore):
                                 owm_weather_description=$26,
                                 chance_of_rain=$27,
                                 wind_gust=$28,
-                                uv_index=$29,
+                                uv_index=$29
                         RETURNING *
                     """,
                     daily.timestamp,
+                    daily.sunrise,
+                    daily.sunset,
+                    daily.moonrise,
+                    daily.moonset,
+                    daily.moon_phase,
                     daily.temperature,
+                    daily.temperature_night,
+                    daily.temperature_evening,
+                    daily.temperature_morning,
+                    daily.temperature_min,
+                    daily.temperature_max,
                     daily.apparent_temperature,
+                    daily.apparent_temperature_night,
+                    daily.apparent_temperature_evening,
+                    daily.apparent_temperature_morning,
                     daily.pressure,
                     daily.humidity,
                     daily.dew_point,
                     daily.cloud_coverage,
+                    daily.visibility,
                     daily.wind_speed,
                     daily.wind_direction,
                     daily.owm_weather_id,
                     daily.owm_weather_title,
                     daily.owm_weather_description,
                     daily.chance_of_rain,
-                    daily.visibility,
                     daily.wind_gust,
                     daily.uv_index
                 )
