@@ -73,7 +73,7 @@ class OpenWeatherMapDailyResponse(BaseModel):
     sunset: datetime
     moonrise: datetime
     moonset: datetime
-    moon_phase: datetime
+    moon_phase: Decimal
     temp: OpenWeatherMapDailyTempResponse
     feels_like: OpenWeatherMapDailyFeelsLikeResponse
     pressure: int

@@ -26,8 +26,9 @@ class CurrentWeather(BaseModel):
     wind_gust: Optional[Decimal] = None
     uv_index: Optional[Decimal] = None
 
+    @staticmethod
     def from_owm_current_response(
-        self, response: OpenWeatherMapCurrentResponse
+        response: OpenWeatherMapCurrentResponse
     ) -> 'CurrentWeather':
         return CurrentWeather(
             id=-1,
@@ -70,8 +71,9 @@ class HourlyWeather(BaseModel):
     wind_gust: Optional[Decimal] = None
     uv_index: Optional[Decimal] = None
 
+    @staticmethod
     def from_owm_hourly_response(
-        self, response: OpenWeatherMapHourlyResponse
+        response: OpenWeatherMapHourlyResponse
     ) -> 'HourlyWeather':
         return HourlyWeather(
             id=-1,
@@ -116,18 +118,19 @@ class DailyWeather(BaseModel):
     humidity: int
     dew_point: Decimal
     cloud_coverage: int
-    visibility: int
     wind_speed: Decimal
     wind_direction: int
     owm_weather_id: int
     owm_weather_title: str
     owm_weather_description: str
     chance_of_rain: Decimal
+    visibility: Optional[int] = None
     wind_gust: Optional[Decimal] = None
     uv_index: Optional[Decimal] = None
 
+    @staticmethod
     def from_owm_daily_response(
-        self, response: OpenWeatherMapDailyResponse
+        response: OpenWeatherMapDailyResponse
     ) -> 'DailyWeather':
         return DailyWeather(
             id=-1,
