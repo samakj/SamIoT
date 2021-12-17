@@ -27,7 +27,7 @@ class ElectricJob:
         self,
         octopus_energy_client: OctopusEnergyClient,
         utilities_client: UtilitiesClient,
-        period: timedelta = timedelta(minutes=1)
+        period: timedelta = timedelta(hours=1)
     ) -> None:
         self.octopus_energy_client = octopus_energy_client
         self.utilities_client = utilities_client
