@@ -4,6 +4,7 @@ source ./env.sh
 
 root=$(pwd)
 services="$root/services"
+javascript="$services/javascript"
 postgres="$services/postgres"
 python="$services/python"
 iot="$python/iot"
@@ -42,7 +43,29 @@ WEATHER_DB_PASS="$WEATHER_DB_PASS"
 EOF
 cp "$postgres/.env" "$postgres/env.sh"
 
+echo "Writing javascript/frontend service env files."
+cat > "$javascript/frontend/.env" <<- EOF
+# Frontend
 
+FRONTEND_HOST="$FRONTEND_HOST"
+FRONTEND_PORT=$FRONTEND_PORT
+
+# IoT API
+
+IOT_API_HOST="$IOT_API_HOST"
+IOT_API_PORT=$IOT_API_PORT
+
+# Utilities API
+
+UTILITIES_API_HOST="$UTILITIES_API_HOST"
+UTILITIES_API_PORT=$UTILITIES_API_PORT
+
+# Weather API
+
+WEATHER_API_HOST="$WEATHER_API_HOST"
+WEATHER_API_PORT=$WEATHER_API_PORT
+EOF
+cp "$javascript/frontend/.env" "$javascript/frontend/env.sh"
 
 echo "Writing iot/api service env files."
 cat > "$iot/api/.env" <<- EOF
