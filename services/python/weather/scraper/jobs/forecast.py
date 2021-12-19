@@ -28,7 +28,7 @@ class ForecastJob:
         self,
         open_weather_map_client: OpenWeatherMapClient,
         weather_client: WeatherClient,
-        period: timedelta = timedelta(minutes=1)
+        period: timedelta = timedelta(minutes=5)
     ) -> None:
         self.open_weather_map_client = open_weather_map_client
         self.weather_client = weather_client
