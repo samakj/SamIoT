@@ -20,6 +20,16 @@ logging.basicConfig(
 LOG = logging.getLogger(__name__)
 
 
+async def close_db(app: WeatherAPIApplication):
+    if app.db is not None:
+        await app.db.close()
+
+
+async def close_cache(app: WeatherAPIApplication):
+    if app.cache is not None:
+        await app.cache.close()
+
+
 async def create_app() -> WeatherAPIApplication:
     try:
         app = WeatherAPIApplication(
@@ -57,6 +67,9 @@ async def create_app() -> WeatherAPIApplication:
         app.add_routes(DAILY_V0_ROUTES)
 
         oas.setup(app, title_spec="Weather API", url_prefix="/docs")
+
+        app.on_shutdown.append(close_db)
+        app.on_shutdown.append(close_cache)
     except:
         await asyncio.sleep(5)
         raise

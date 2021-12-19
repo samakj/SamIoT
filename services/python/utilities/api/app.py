@@ -19,6 +19,16 @@ logging.basicConfig(
 LOG = logging.getLogger(__name__)
 
 
+async def close_db(app: UtilitiesAPIApplication):
+    if app.db is not None:
+        await app.db.close()
+
+
+async def close_cache(app: UtilitiesAPIApplication):
+    if app.cache is not None:
+        await app.cache.close()
+
+
 async def create_app() -> UtilitiesAPIApplication:
     try:
         app = UtilitiesAPIApplication(
@@ -54,6 +64,9 @@ async def create_app() -> UtilitiesAPIApplication:
         app.add_routes(ELECTRIC_V0_ROUTES)
 
         oas.setup(app, title_spec="Utilities API", url_prefix="/docs")
+
+        app.on_shutdown.append(close_db)
+        app.on_shutdown.append(close_cache)
     except:
         await asyncio.sleep(5)
         raise

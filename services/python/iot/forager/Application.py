@@ -1,12 +1,12 @@
 import os
-from aiohttp.web import Application
 from listeners.measurements import MeasurementsListener
 
 from stores.device_websockets import DeviceWebsocketsStore
+from shared.python.extensions.aiohttp import ApplicationWithCache
 from shared.python.clients.iot import IoTClient
 
 
-class ForagerApplication(Application):
+class ForagerApplication(ApplicationWithCache):
     iot_client: IoTClient
     measurements_listener: MeasurementsListener
     device_websocket_store: DeviceWebsocketsStore

@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from dotenv import load_dotenv
 from aiohttp_pydantic import oas
 
@@ -16,6 +17,11 @@ logging.basicConfig(
     format="[%(asctime)s] %(levelname)s: %(message)s"
 )
 LOG = logging.getLogger(__name__)
+
+
+async def close_cache(app: ForagerApplication):
+    if app.cache is not None:
+        await app.cache.close()
 
 
 async def cleanup_sockets(app: ForagerApplication):
@@ -38,6 +44,14 @@ async def create_app() -> ForagerApplication:
         app.connect_device_websocket_store()
         app.connect_measurements_listener()
 
+        await app.connect_cache(
+            host=os.environ["IOT_CACHE_HOST"],
+            port=os.environ["IOT_CACHE_PORT"],
+            # name=os.environ["IOT_CACHE_NAME"],
+            # username=os.environ["IOT_CACHE_USER"],
+            # password=os.environ["IOT_CACHE_PASS"],
+        )
+
         app.add_routes(DEFAULT_ROUTES)
         app.add_routes(LISTENERS_V0_ROUTES)
         app.add_routes(WEBSOCKETS_V0_ROUTES)
@@ -47,6 +61,7 @@ async def create_app() -> ForagerApplication:
         await app.measurements_listener.watch_all()
 
         app.on_shutdown.append(cleanup_sockets)
+        app.on_shutdown.append(close_cache)
     except:
         await asyncio.sleep(5)
         raise
