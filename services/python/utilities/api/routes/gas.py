@@ -8,7 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import UtilitiesAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Utilities import UtilitiesConsumption
 
 GAS_V0_ROUTES = RouteTableDef()
@@ -35,30 +35,30 @@ class GassV0View(PydanticView):
                 "Gas store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.gas_store.get_gas_consumptions,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "timestamps": (
-                        timestamp if isinstance(timestamp, list) else
-                        [timestamp] if timestamp is not None else
-                        None
-                    ),
-                    "timestamp_gte": timestamp_gte,
-                    "timestamp_lte": timestamp_lte,
-                    "consumption_gte": consumption_gte,
-                    "consumption_lte": consumption_lte,
-                },
-                expiry=15 * 60,
-                prefix="utilities:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.gas_store.get_gas_consumptions,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "timestamps": (
+                    timestamp if isinstance(timestamp, list) else
+                    [timestamp] if timestamp is not None else
+                    None
+                ),
+                "timestamp_gte": timestamp_gte,
+                "timestamp_lte": timestamp_lte,
+                "consumption_gte": consumption_gte,
+                "consumption_lte": consumption_lte,
+            },
+            expiry=15 * 60,
+            prefix="utilities:api"
         )
+
+        return await cache.get_response()
 
     async def post(self, gas: UtilitiesConsumption) -> Response:
         """
@@ -99,7 +99,7 @@ class GasV0View(PydanticView):
                 "Gas consumption store not initialised before querying data."
             )
 
-        gas = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.gas_store.get_gas_consumption,
             args=(id,),
@@ -107,10 +107,7 @@ class GasV0View(PydanticView):
             prefix="utilities:api"
         )
 
-        if gas is None:
-            raise HTTPNotFound()
-
-        return json_response(gas)
+        return await cache.get_response()
 
 
 @GAS_V0_ROUTES.view("/v0/gas/timestamp/{timestamp}")
@@ -126,7 +123,7 @@ class GasTimestampV0View(PydanticView):
                 "Gas store not initialised before querying data."
             )
 
-        gas = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.gas_store.get_gas_consumption_by_nearest_timestamp,
             args=(timestamp,),
@@ -134,7 +131,4 @@ class GasTimestampV0View(PydanticView):
             prefix="utilities:api"
         )
 
-        if gas is None:
-            raise HTTPNotFound()
-
-        return json_response(gas)
+        return await cache.get_response()

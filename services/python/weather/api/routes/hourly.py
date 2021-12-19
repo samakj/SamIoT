@@ -9,7 +9,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import WeatherAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Weather import HourlyWeather
 
 HOURLY_V0_ROUTES = RouteTableDef()
@@ -40,42 +40,42 @@ class HourlysV0View(PydanticView):
                 "Hourly weather store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.hourly_store.get_hourly_weather,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "timestamps": (
-                        timestamp if isinstance(timestamp, list) else
-                        [timestamp] if timestamp is not None else
-                        None
-                    ),
-                    "owm_weather_ids": (
-                        owm_weather_id if isinstance(owm_weather_id, list) else
-                        [owm_weather_id] if owm_weather_id is not None else
-                        None
-                    ),
-                    "owm_weather_titles": (
-                        owm_weather_title if isinstance(owm_weather_title, list) else
-                        [owm_weather_title] if owm_weather_title is not None else
-                        None
-                    ),
-                    "temperature_gte": temperature_gte,
-                    "temperature_lte": temperature_lte,
-                    "apparent_temperature_gte": apparent_temperature_gte,
-                    "apparent_temperature_lte": apparent_temperature_lte,
-                    "timestamp_gte": timestamp_gte,
-                    "timestamp_lte": timestamp_lte,
-                },
-                expiry=15 * 60,
-                prefix="weather:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.hourly_store.get_hourly_weather,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "timestamps": (
+                    timestamp if isinstance(timestamp, list) else
+                    [timestamp] if timestamp is not None else
+                    None
+                ),
+                "owm_weather_ids": (
+                    owm_weather_id if isinstance(owm_weather_id, list) else
+                    [owm_weather_id] if owm_weather_id is not None else
+                    None
+                ),
+                "owm_weather_titles": (
+                    owm_weather_title if isinstance(owm_weather_title, list) else
+                    [owm_weather_title] if owm_weather_title is not None else
+                    None
+                ),
+                "temperature_gte": temperature_gte,
+                "temperature_lte": temperature_lte,
+                "apparent_temperature_gte": apparent_temperature_gte,
+                "apparent_temperature_lte": apparent_temperature_lte,
+                "timestamp_gte": timestamp_gte,
+                "timestamp_lte": timestamp_lte,
+            },
+            expiry=15 * 60,
+            prefix="weather:api"
         )
+
+        return await cache.get_response()
 
     async def post(self, hourly: HourlyWeather) -> Response:
         """
@@ -116,7 +116,7 @@ class HourlyV0View(PydanticView):
                 "Hourly weather store not initialised before querying data."
             )
 
-        hourly = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.hourly_store.get_hourly_weather,
             args=(id,),
@@ -124,10 +124,7 @@ class HourlyV0View(PydanticView):
             prefix="weather:api"
         )
 
-        if hourly is None:
-            raise HTTPNotFound()
-
-        return json_response(hourly)
+        return await cache.get_response()
 
 
 @HOURLY_V0_ROUTES.view("/v0/hourly/timestamp/{timestamp}")
@@ -143,7 +140,7 @@ class HourlyTimestampV0View(PydanticView):
                 "Hourly weather store not initialised before querying data."
             )
 
-        hourly = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.hourly_store.get_hourly_weather_by_nearest_timestamp,
             args=(timestamp,),
@@ -151,7 +148,4 @@ class HourlyTimestampV0View(PydanticView):
             prefix="weather:api"
         )
 
-        if hourly is None:
-            raise HTTPNotFound()
-
-        return json_response(hourly)
+        return await cache.get_response()

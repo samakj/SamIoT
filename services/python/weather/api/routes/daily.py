@@ -9,7 +9,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import WeatherAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Weather import DailyWeather
 
 DAILY_V0_ROUTES = RouteTableDef()
@@ -44,46 +44,46 @@ class DailysV0View(PydanticView):
                 "Daily weather store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.daily_store.get_daily_weather,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "timestamps": (
-                        timestamp if isinstance(timestamp, list) else
-                        [timestamp] if timestamp is not None else
-                        None
-                    ),
-                    "owm_weather_ids": (
-                        owm_weather_id if isinstance(owm_weather_id, list) else
-                        [owm_weather_id] if owm_weather_id is not None else
-                        None
-                    ),
-                    "owm_weather_titles": (
-                        owm_weather_title if isinstance(owm_weather_title, list) else
-                        [owm_weather_title] if owm_weather_title is not None else
-                        None
-                    ),
-                    "temperature_gte": temperature_gte,
-                    "temperature_lte": temperature_lte,
-                    "temperature_min_gte": temperature_min_gte,
-                    "temperature_min_lte": temperature_min_lte,
-                    "temperature_max_gte": temperature_max_gte,
-                    "temperature_max_lte": temperature_max_lte,
-                    "apparent_temperature_gte": apparent_temperature_gte,
-                    "apparent_temperature_lte": apparent_temperature_lte,
-                    "timestamp_gte": timestamp_gte,
-                    "timestamp_lte": timestamp_lte,
-                },
-                expiry=15 * 60,
-                prefix="weather:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.daily_store.get_daily_weather,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "timestamps": (
+                    timestamp if isinstance(timestamp, list) else
+                    [timestamp] if timestamp is not None else
+                    None
+                ),
+                "owm_weather_ids": (
+                    owm_weather_id if isinstance(owm_weather_id, list) else
+                    [owm_weather_id] if owm_weather_id is not None else
+                    None
+                ),
+                "owm_weather_titles": (
+                    owm_weather_title if isinstance(owm_weather_title, list) else
+                    [owm_weather_title] if owm_weather_title is not None else
+                    None
+                ),
+                "temperature_gte": temperature_gte,
+                "temperature_lte": temperature_lte,
+                "temperature_min_gte": temperature_min_gte,
+                "temperature_min_lte": temperature_min_lte,
+                "temperature_max_gte": temperature_max_gte,
+                "temperature_max_lte": temperature_max_lte,
+                "apparent_temperature_gte": apparent_temperature_gte,
+                "apparent_temperature_lte": apparent_temperature_lte,
+                "timestamp_gte": timestamp_gte,
+                "timestamp_lte": timestamp_lte,
+            },
+            expiry=15 * 60,
+            prefix="weather:api"
         )
+
+        return await cache.get_response()
 
     async def post(self, daily: DailyWeather) -> Response:
         """
@@ -124,7 +124,7 @@ class DailyV0View(PydanticView):
                 "Daily weather store not initialised before querying data."
             )
 
-        daily = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.daily_store.get_daily_weather,
             args=(id,),
@@ -132,10 +132,7 @@ class DailyV0View(PydanticView):
             prefix="weather:api"
         )
 
-        if daily is None:
-            raise HTTPNotFound()
-
-        return json_response(daily)
+        return await cache.get_response()
 
 
 @DAILY_V0_ROUTES.view("/v0/daily/timestamp/{timestamp}")
@@ -151,7 +148,7 @@ class DailyTimestampV0View(PydanticView):
                 "Daily weather store not initialised before querying data."
             )
 
-        daily = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.daily_store.get_daily_weather_by_timestamp,
             args=(timestamp,),
@@ -159,7 +156,4 @@ class DailyTimestampV0View(PydanticView):
             prefix="weather:api"
         )
 
-        if daily is None:
-            raise HTTPNotFound()
-
-        return json_response(daily)
+        return await cache.get_response()

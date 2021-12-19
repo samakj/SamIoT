@@ -4,7 +4,7 @@ from aiohttp.web import RouteTableDef, Response
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import WeatherAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Weather import CurrentWeather
 
 CURRENT_V0_ROUTES = RouteTableDef()
@@ -23,14 +23,14 @@ class CurrentV0View(PydanticView):
                 "Current weather store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.current_store.get_current_weather,
-                expiry=15 * 60,
-                prefix="weather:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.current_store.get_current_weather,
+            expiry=15 * 60,
+            prefix="weather:api"
         )
+
+        return await cache.get_response()
 
     async def post(self, current: CurrentWeather) -> Response:
         """

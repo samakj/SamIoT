@@ -10,7 +10,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Measurement import Measurement, ValueType
 
 MEASUREMENTS_V0_ROUTES = RouteTableDef()
@@ -57,46 +57,46 @@ class MeasurementsV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.measurements_store.get_measurements,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "device_ids": (
-                        device_id if isinstance(device_id, list) else
-                        [device_id] if device_id is not None else
-                        None
-                    ),
-                    "location_ids": (
-                        location_id if isinstance(location_id, list) else
-                        [location_id] if location_id is not None else
-                        None
-                    ),
-                    "metric_ids": (
-                        metric_id if isinstance(metric_id, list) else
-                        [metric_id] if metric_id is not None else
-                        None
-                    ),
-                    "tags": (
-                        tags if isinstance(tags, list) else
-                        [tags] if tags is not None else
-                        None
-                    ),
-                    "timestamp_gte": timestamp_gte,
-                    "timestamp_lte": timestamp_lte,
-                    "value": parse_value(value),
-                    "value_gte": parse_value(value_gte),
-                    "value_lte": parse_value(value_lte),
-                },
-                expiry=15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.measurements_store.get_measurements,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "device_ids": (
+                    device_id if isinstance(device_id, list) else
+                    [device_id] if device_id is not None else
+                    None
+                ),
+                "location_ids": (
+                    location_id if isinstance(location_id, list) else
+                    [location_id] if location_id is not None else
+                    None
+                ),
+                "metric_ids": (
+                    metric_id if isinstance(metric_id, list) else
+                    [metric_id] if metric_id is not None else
+                    None
+                ),
+                "tags": (
+                    tags if isinstance(tags, list) else
+                    [tags] if tags is not None else
+                    None
+                ),
+                "timestamp_gte": timestamp_gte,
+                "timestamp_lte": timestamp_lte,
+                "value": parse_value(value),
+                "value_gte": parse_value(value_gte),
+                "value_lte": parse_value(value_lte),
+            },
+            expiry=15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()
 
     async def post(self, measurement: Measurement):
         """
@@ -143,7 +143,7 @@ class MeasurementV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        measurement = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.measurements_store.get_measurement,
             args=(id,),
@@ -151,10 +151,7 @@ class MeasurementV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if measurement is None:
-            raise HTTPNotFound()
-
-        return json_response(measurement)
+        return await cache.get_response()
 
 
 @ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/ws")
@@ -225,36 +222,36 @@ class MeasurementsLatestV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.measurements_store.get_latest_measurements,
-                kwargs={
-                    "device_id": (
-                        device_id if isinstance(device_id, list) else
-                        [device_id] if device_id is not None else
-                        None
-                    ),
-                    "location_id": (
-                        location_id if isinstance(location_id, list) else
-                        [location_id] if location_id is not None else
-                        None
-                    ),
-                    "metric_id": (
-                        metric_id if isinstance(metric_id, list) else
-                        [metric_id] if metric_id is not None else
-                        None
-                    ),
-                    "tags": (
-                        tags if isinstance(tags, list) else
-                        [tags] if tags is not None else
-                        None
-                    ),
-                },
-                expiry=15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.measurements_store.get_latest_measurements,
+            kwargs={
+                "device_id": (
+                    device_id if isinstance(device_id, list) else
+                    [device_id] if device_id is not None else
+                    None
+                ),
+                "location_id": (
+                    location_id if isinstance(location_id, list) else
+                    [location_id] if location_id is not None else
+                    None
+                ),
+                "metric_id": (
+                    metric_id if isinstance(metric_id, list) else
+                    [metric_id] if metric_id is not None else
+                    None
+                ),
+                "tags": (
+                    tags if isinstance(tags, list) else
+                    [tags] if tags is not None else
+                    None
+                ),
+            },
+            expiry=15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()
 
 
 @ MEASUREMENTS_V0_ROUTES.view("/v0/measurements/average/{location_id:\d+}/{metric_id:\d+}/{tags}")
@@ -285,19 +282,19 @@ class MeasurementsAverageV0View(PydanticView):
         _start = start or (_end - timedelta(days=1))
         _period = timedelta(seconds=period or 3600)
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.measurements_store.get_time_weighted_average_range,
-                kwargs={
-                    "location_id": location_id,
-                    "metric_id": metric_id,
-                    "tags": tags.split(','),
-                    "start": _start,
-                    "end": _end,
-                    "period": _period
-                },
-                expiry=15 if _end > datetime.utcnow() else 15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.measurements_store.get_time_weighted_average_range,
+            kwargs={
+                "location_id": location_id,
+                "metric_id": metric_id,
+                "tags": tags.split(','),
+                "start": _start,
+                "end": _end,
+                "period": _period
+            },
+            expiry=15 if _end > datetime.utcnow() else 15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()

@@ -8,7 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 
 LOG = logging.getLogger()
 LOCATIONS_V0_ROUTES = RouteTableDef()
@@ -32,31 +32,31 @@ class LocationsV0View(PydanticView):
                 "Location store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.locations_store.get_locations,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "names": (
-                        name if isinstance(name, list) else
-                        [name] if name is not None else
-                        None
-                    ),
-                    "tags": (
-                        tags if isinstance(tags, list) else
-                        [tags] if tags is not None else
-                        None
-                    )
-                },
-                expiry=15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.locations_store.get_locations,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "names": (
+                    name if isinstance(name, list) else
+                    [name] if name is not None else
+                    None
+                ),
+                "tags": (
+                    tags if isinstance(tags, list) else
+                    [tags] if tags is not None else
+                    None
+                )
+            },
+            expiry=15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()
 
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/{id:\d+}")
@@ -72,7 +72,7 @@ class LocationV0View(PydanticView):
                 "Location store not initialised before querying data."
             )
 
-        location = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.locations_store.get_location,
             args=(id,),
@@ -80,10 +80,7 @@ class LocationV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if location is None:
-            raise HTTPNotFound()
-
-        return json_response(location)
+        return await cache.get_response()
 
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/name/{name}")
@@ -99,7 +96,7 @@ class LocationNameV0View(PydanticView):
                 "Location store not initialised before querying data."
             )
 
-        location = location = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.locations_store.get_location_by_name,
             args=(name,),
@@ -107,10 +104,7 @@ class LocationNameV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if location is None:
-            raise HTTPNotFound()
-
-        return json_response(location)
+        return await cache.get_response()
 
 
 @LOCATIONS_V0_ROUTES.view("/v0/locations/ws")

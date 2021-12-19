@@ -8,7 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 
 METRICS_V0_ROUTES = RouteTableDef()
 
@@ -31,31 +31,31 @@ class MetricsV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.metrics_store.get_metrics,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "names": (
-                        name if isinstance(name, list) else
-                        [name] if name is not None else
-                        None
-                    ),
-                    "abbreviations": (
-                        abbreviation if isinstance(abbreviation, list) else
-                        [abbreviation] if abbreviation is not None else
-                        None
-                    )
-                },
-                expiry=15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.metrics_store.get_metrics,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "names": (
+                    name if isinstance(name, list) else
+                    [name] if name is not None else
+                    None
+                ),
+                "abbreviations": (
+                    abbreviation if isinstance(abbreviation, list) else
+                    [abbreviation] if abbreviation is not None else
+                    None
+                )
+            },
+            expiry=15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()
 
 
 @METRICS_V0_ROUTES.view("/v0/metrics/{id:\d+}")
@@ -71,7 +71,7 @@ class MetricV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.metrics_store.get_metric,
             args=(id,),
@@ -79,10 +79,7 @@ class MetricV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if metric is None:
-            raise HTTPNotFound()
-
-        return json_response(metric)
+        return await cache.get_response()
 
 
 @ METRICS_V0_ROUTES.view("/v0/metrics/name/{name}")
@@ -98,7 +95,7 @@ class MetricNameV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.metrics_store.get_metric_by_name,
             args=(name,),
@@ -106,10 +103,7 @@ class MetricNameV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if metric is None:
-            raise HTTPNotFound()
-
-        return json_response(metric)
+        return await cache.get_response()
 
 
 @ METRICS_V0_ROUTES.view("/v0/metrics/abbreviation/{abbreviation}")
@@ -125,7 +119,7 @@ class MetricAbbreviationV0View(PydanticView):
                 "Metric store not initialised before querying data."
             )
 
-        metric = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.metrics_store.get_metric_by_abbreviation,
             args=(abbreviation,),
@@ -133,10 +127,7 @@ class MetricAbbreviationV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if metric is None:
-            raise HTTPNotFound()
-
-        return json_response(metric)
+        return await cache.get_response()
 
 
 @ METRICS_V0_ROUTES.view("/v0/metrics/ws")

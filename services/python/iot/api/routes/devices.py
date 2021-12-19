@@ -8,7 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import IoTAPIApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 from shared.python.models.Device import Device
 
 DEVICES_V0_ROUTES = RouteTableDef()
@@ -35,38 +35,38 @@ class DevicesV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        return json_response(
-            await try_route_cache(
-                self,
-                app.devices_store.get_devices,
-                kwargs={
-                    "ids": (
-                        id if isinstance(id, list) else
-                        [id] if id is not None else
-                        None
-                    ),
-                    "macs": (
-                        mac if isinstance(mac, list) else
-                        [mac] if mac is not None else
-                        None
-                    ),
-                    "ips": (
-                        ip if isinstance(ip, list) else
-                        [ip] if ip is not None else
-                        None
-                    ),
-                    "location_ids": (
-                        location_id if isinstance(location_id, list) else
-                        [location_id] if location_id is not None else
-                        None
-                    ),
-                    "last_message_gte": last_message_gte,
-                    "last_message_lte": last_message_lte
-                },
-                expiry=15 * 60,
-                prefix="iot:api"
-            )
+        cache = CachedJSONResponse(
+            self,
+            app.devices_store.get_devices,
+            kwargs={
+                "ids": (
+                    id if isinstance(id, list) else
+                    [id] if id is not None else
+                    None
+                ),
+                "macs": (
+                    mac if isinstance(mac, list) else
+                    [mac] if mac is not None else
+                    None
+                ),
+                "ips": (
+                    ip if isinstance(ip, list) else
+                    [ip] if ip is not None else
+                    None
+                ),
+                "location_ids": (
+                    location_id if isinstance(location_id, list) else
+                    [location_id] if location_id is not None else
+                    None
+                ),
+                "last_message_gte": last_message_gte,
+                "last_message_lte": last_message_lte
+            },
+            expiry=15 * 60,
+            prefix="iot:api"
         )
+
+        return await cache.get_response()
 
 
 @DEVICES_V0_ROUTES.view("/v0/devices/{id:\d+}")
@@ -82,7 +82,7 @@ class DeviceV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.devices_store.get_device,
             args=(id,),
@@ -90,10 +90,7 @@ class DeviceV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if device is None:
-            raise HTTPNotFound()
-
-        return json_response(device)
+        return await cache.get_response()
 
     async def patch(self, device: Device) -> Response:
         """
@@ -142,7 +139,7 @@ class DeviceMacV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.devices_store.get_device_by_mac,
             args=(mac,),
@@ -150,10 +147,7 @@ class DeviceMacV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if device is None:
-            raise HTTPNotFound()
-
-        return json_response(device)
+        return await cache.get_response()
 
 
 @DEVICES_V0_ROUTES.view("/v0/devices/ip/{ip}")
@@ -169,7 +163,7 @@ class DeviceIPV0View(PydanticView):
                 "Device store not initialised before querying data."
             )
 
-        device = await try_route_cache(
+        cache = CachedJSONResponse(
             self,
             app.devices_store.get_device_by_ip,
             args=(ip,),
@@ -177,10 +171,7 @@ class DeviceIPV0View(PydanticView):
             prefix="iot:api"
         )
 
-        if device is None:
-            raise HTTPNotFound()
-
-        return json_response(device)
+        return await cache.get_response()
 
 
 @DEVICES_V0_ROUTES.view("/v0/devices/ws")

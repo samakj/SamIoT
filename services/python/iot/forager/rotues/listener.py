@@ -8,7 +8,7 @@ from aiohttp.web import RouteTableDef, Response, HTTPNotFound, WebSocketResponse
 from shared.python.extensions.aiohttp.responses.json import json_response
 
 from Application import ForagerApplication
-from shared.python.extensions.aioredis import try_route_cache
+from shared.python.extensions.aioredis import CachedJSONResponse
 
 LISTENERS_V0_ROUTES = RouteTableDef()
 
@@ -21,7 +21,17 @@ class DevicesV0View(PydanticView):
         """
         app: ForagerApplication = self.request.app
 
-        return json_response([
-            app.measurements_listener.devices[device_id]
-            for device_id in app.measurements_listener.watch_list
-        ])
+        async def get_devices():
+            return [
+                app.measurements_listener.devices[device_id]
+                for device_id in app.measurements_listener.watch_list
+            ]
+
+        cache = CachedJSONResponse(
+            self,
+            get_devices,
+            expiry=10,
+            prefix="iot:forager"
+        )
+
+        return await cache.get_response()
