@@ -35,6 +35,7 @@ export interface ThemeType {
     background: string;
     foreground: string;
     text: string[];
+    cardBackground: string;
   };
 
   text: {

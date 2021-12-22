@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { Card, SmallCard, SmallWideCard } from './components/Cards';
+import { Card, FullWidthCard, SmallCard, SmallWideCard } from './components/Cards';
 import { ContentGrid } from './components/ContentGrid';
 import { H2 } from './components/Headers';
 import { DarkTheme, GlobalStyle, LightTheme } from './style';
@@ -12,6 +12,10 @@ export const App: React.FunctionComponent = () => (
     <ThemeProvider theme={DarkTheme}>
       <GlobalStyle />
       <ContentGrid>
+        <FullWidthCard>
+          <H2>Header Card</H2>
+          <p></p>
+        </FullWidthCard>
         <Card>
           <H2>Normal Card</H2>
           <p>This is a test card with some content.</p>

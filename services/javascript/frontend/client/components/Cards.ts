@@ -23,3 +23,8 @@ export const SmallWideCard = styled(Card)`
   grid-column: span 2;
   grid-row: span 1;
 `;
+
+export const FullWidthCard = styled(Card)`
+  grid-column: 1 / -1;
+  grid-row: span 1;
+`;
