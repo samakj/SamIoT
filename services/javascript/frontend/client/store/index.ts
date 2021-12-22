@@ -1,9 +1,12 @@
 /** @format */
 
 import { configureStore } from '@reduxjs/toolkit';
+import { themeSlice } from './theme/slice';
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    theme: themeSlice.reducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -14,7 +14,7 @@ export const DarkTheme: ThemeType = {
     warning: colours.orange,
     danger: colours.red,
     background: '#161d31',
-    foreground: colours.grey[0],
+    foreground: colours.grey[9],
     text: [colours.grey[7], colours.grey[5], colours.grey[3]],
     cardBackground: '#283046',
     ...colours,
