@@ -10,6 +10,7 @@ import { transparentize } from 'polished';
 import { ThemeVariants } from 'client/style/types';
 import { themeSlice } from 'client/store/theme/slice';
 import styled from 'styled-components';
+import { HeaderBarPropsType } from './types';
 
 export const ThemeVariantContainer = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ export const HeaderCard = styled(FullWidthCard)`
   }
 `;
 
-export const HeaderBar = () => {
+export const HeaderBar = ({ title }: HeaderBarPropsType) => {
   const theme = useSelector((state: RootState) => state.theme);
   const dispatch = useDispatch();
   const setThemeGenerator = useCallback(
@@ -48,7 +49,7 @@ export const HeaderBar = () => {
   );
   return (
     <HeaderCard>
-      <H2>Header Card</H2>
+      <H2>{title}</H2>
       <ThemeVariantContainer>
         <SunIcon
           color={transparentize(

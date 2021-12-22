@@ -5,6 +5,7 @@ import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { App } from 'client/App';
+import { StaticRouter } from 'react-router-dom';
 
 const server = express();
 
@@ -16,8 +17,10 @@ server.use('/', express.static(path.join(__dirname, 'static')));
 const manifest = fs.readFileSync(path.join(__dirname, 'static/manifest.json'), 'utf-8');
 const assets = JSON.parse(manifest);
 
-server.get('/', (_request, response) => {
-  const component = ReactDOMServer.renderToString(React.createElement(App));
+server.get('*', (request, response) => {
+  const context: { [key: string]: string } = {};
+  const component = ReactDOMServer.renderToString(<App url={request.url} ssr />);
+  if (context.url) response.redirect(301, context.url);
   response.render('index', { assets, component });
 });
 

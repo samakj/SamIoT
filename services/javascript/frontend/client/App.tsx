@@ -5,54 +5,41 @@ import { store } from 'client/store';
 import { Provider, useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { RootState } from 'client/store';
-import { Card, SmallCard, SmallWideCard } from 'client/components/Cards';
-import { HeaderBar } from 'client/components/header-bar';
-import { ContentGrid } from './components/ContentGrid';
-import { H2 } from './components/Headers';
-import { GlobalStyle } from './style';
+import { GlobalStyle } from 'client/style';
+import { BrowserRouter, Routes } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
+import { WeatherRoute } from 'client/routes/Weather';
+import { OverviewRoute } from 'client/routes/Overview';
+import { AppPropsType, RoutingPropsType, isServerRoutingPropsType } from './types';
 
-export const ThemeWrapper = ({ children }: React.PropsWithChildren<{}>) => {
+export const ThemeWrapper = (props: React.PropsWithChildren<{}>) => {
   const theme = useSelector((state: RootState) => state.theme);
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      {children}
+      {props?.children}
     </ThemeProvider>
   );
 };
 
-export const App = () => {
+export const Router = (props: React.PropsWithChildren<RoutingPropsType>) =>
+  isServerRoutingPropsType(props) ? (
+    <StaticRouter location={props.url}>{props.children}</StaticRouter>
+  ) : (
+    <BrowserRouter>{props.children}</BrowserRouter>
+  );
+
+export const App = (props: AppPropsType) => {
   return (
     <>
       <Provider store={store}>
         <ThemeWrapper>
-          <ContentGrid>
-            <HeaderBar />
-            <Card>
-              <H2>Normal Card</H2>
-              <p>This is a test card with some content.</p>
-            </Card>
-            <Card>
-              <H2>Normal Card</H2>
-              <p>This is a test card with some content.</p>
-            </Card>
-            <SmallCard>
-              <H2>Small Card</H2>
-              <p>This is a test card with some content.</p>
-            </SmallCard>
-            <SmallCard>
-              <H2>Small Card</H2>
-              <p>This is a test card with some content.</p>
-            </SmallCard>
-            <Card>
-              <H2>Normal Card</H2>
-              <p>This is a test card with some content.</p>
-            </Card>
-            <SmallWideCard>
-              <H2>Small Wide Card</H2>
-              <p>This is a test card with some content.</p>
-            </SmallWideCard>
-          </ContentGrid>
+          <Router {...props}>
+            <Routes>
+              {OverviewRoute}
+              {WeatherRoute}
+            </Routes>
+          </Router>
         </ThemeWrapper>
       </Provider>
     </>
