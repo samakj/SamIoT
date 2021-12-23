@@ -226,17 +226,17 @@ class MeasurementsLatestV0View(PydanticView):
             self,
             app.measurements_store.get_latest_measurements,
             kwargs={
-                "device_id": (
+                "device_ids": (
                     device_id if isinstance(device_id, list) else
                     [device_id] if device_id is not None else
                     None
                 ),
-                "location_id": (
+                "location_ids": (
                     location_id if isinstance(location_id, list) else
                     [location_id] if location_id is not None else
                     None
                 ),
-                "metric_id": (
+                "metric_ids": (
                     metric_id if isinstance(metric_id, list) else
                     [metric_id] if metric_id is not None else
                     None

@@ -231,7 +231,7 @@ class MeasurementsStore(BaseStore):
 
         async with self.db.acquire() as connection:
             async with connection.transaction():
-                db_response = await connection.fetchrow(
+                db_response = await connection.fetch(
                     f"""
                         SELECT DISTINCT ON (location_id, metric_id, tags)
                                measurements.id, 
@@ -261,8 +261,8 @@ class MeasurementsStore(BaseStore):
                 if db_response is not None:
                     for row in db_response:
                         _row = dict(row)
-                        value_type = row["value_type"]
-                        row["value"] = row[f"{value_type}_value"]
+                        value_type = _row["value_type"]
+                        _row["value"] = _row[f"{value_type}_value"]
                         rows.append(_row)
 
                 return [Measurement.parse_obj(row) for row in rows]
