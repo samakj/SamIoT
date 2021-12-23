@@ -1,6 +1,7 @@
 /** @format */
 
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { useDispatch as _useDispatch, useSelector as _useSelector } from 'react-redux';
 import { LocationsSlice } from './iot/locations/slice';
 import { themeSlice } from './theme/slice';
 
@@ -14,4 +15,9 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type Dispatch = typeof store.dispatch;
+export const useDispatch = () => _useDispatch<Dispatch>();
+export const useSelector = <Selected = unknown>(
+  selector: (state: RootState) => Selected,
+  equalityFn?: (left: Selected, right: Selected) => boolean
+): Selected => _useSelector<RootState, Selected>(selector, equalityFn);
