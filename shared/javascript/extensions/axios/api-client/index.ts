@@ -26,28 +26,28 @@ export class APIClient {
 
   get<T = any, R = AxiosResponse<T>, D = any>(
     endpoint: string,
-    config: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>
   ): Promise<R> {
     return axios.get(endpoint, config);
   }
 
   post<T = any, R = AxiosResponse<T>, D = any>(
     endpoint: string,
-    config: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>
   ): Promise<R> {
     return axios.post(endpoint, config);
   }
 
   patch<T = any, R = AxiosResponse<T>, D = any>(
     endpoint: string,
-    config: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>
   ): Promise<R> {
     return axios.patch(endpoint, config);
   }
 
   delete<T = any, R = AxiosResponse<T>, D = any>(
     endpoint: string,
-    config: AxiosRequestConfig<D>
+    config?: AxiosRequestConfig<D>
   ): Promise<R> {
     return axios.delete(endpoint, config);
   }
