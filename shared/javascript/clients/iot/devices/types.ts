@@ -22,8 +22,8 @@ export interface GetDevicesParamsType {
   mac?: DeviceType["mac"] | DeviceType["mac"][];
   ip?: DeviceType["ip"] | DeviceType["ip"][];
   locationId?: DeviceType["locationId"] | DeviceType["locationId"][];
-  lastMessageGte?: DeviceType["lastMessage"] | DeviceType["lastMessage"][];
-  lastMessageLte?: DeviceType["lastMessage"] | DeviceType["lastMessage"][];
+  lastMessageGte?: DeviceType["lastMessage"];
+  lastMessageLte?: DeviceType["lastMessage"];
 }
 export interface GetDevicesAPIParamsType {
   id?: APIDeviceType["id"] | APIDeviceType["id"][];

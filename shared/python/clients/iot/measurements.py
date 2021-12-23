@@ -93,7 +93,7 @@ class MeasurementsClient(APIClient):
         period: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         response = await self.get(
-            f"/v0/measurements/average/{location_id}/{metric_id}/{tags.join(',')}",
+            f"/v0/measurements/average/{location_id}/{metric_id}/{','.join(tags)}",
             params=to_json_serialisable(
                 {"start": start, "end": end, "period": period}
             )
