@@ -102,7 +102,7 @@ export interface DailyWeatherType {
   chanceOfRain: number;
   visibility?: number;
   windGust?: number;
-  uIndex?: number;
+  uvIndex?: number;
 }
 
 export const isDailyWeatherType = (o: any): o is DailyWeatherType =>
