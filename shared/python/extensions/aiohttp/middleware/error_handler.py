@@ -1,7 +1,9 @@
 import logging
 
-from aiohttp.web import middleware, Request, Response, HTTPException, json_response
-from typing import Any, Callable, Coroutine
+from aiohttp.web import middleware, Request, HTTPException, json_response
+from typing import Any, Awaitable, Callable
+
+from aiohttp.web_response import StreamResponse
 
 
 LOG = logging.getLogger(__name__)
@@ -10,7 +12,7 @@ LOG = logging.getLogger(__name__)
 @middleware
 async def error_handler(
     request: Request,
-    handler: Callable[[Request], Coroutine[Any, Any, Response]]
+    handler: Callable[[Request], Awaitable[StreamResponse]]
 ):
     """
     This handler catches exceptions and if they are HTTP exceptions it will 
@@ -20,12 +22,15 @@ async def error_handler(
     try:
         response = await handler(request)
     except HTTPException as error:
+        headers = error.headers
+        del headers["Content-Type"]
         response = json_response(
             data={
                 "status": error.status,
                 "reason": error.reason
             },
-            status=error.status
+            status=error.status,
+            headers=headers
         )
     except Exception as error:
         response = json_response(

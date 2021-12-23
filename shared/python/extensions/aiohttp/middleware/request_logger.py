@@ -1,9 +1,13 @@
 import logging
 import re
 import uuid
-from aiohttp.web import middleware, Request, Response
+from aiohttp.web import Request
 from datetime import datetime
-from typing import Any, Callable, Coroutine, Dict, List
+from typing import Any, Awaitable, Callable, Dict, List
+from aiohttp.web_middlewares import middleware
+from aiohttp.web_response import StreamResponse
+
+from aiohttp_middlewares.annotations import Middleware
 
 LOG = logging.getLogger(__name__)
 
@@ -39,14 +43,14 @@ def form_key(group: Dict[str, Any]) -> str:
     return f"{group['method']} {group['regex']}"
 
 
-def request_logger(grouped_paths: List[Dict[str, Any]]):
+def request_logger(grouped_paths: List[Dict[str, Any]]) -> Middleware:
     grouped_values = {}
 
     @middleware
     async def _request_logger(
         request: Request,
-        handler: Callable[[Request], Coroutine[Any, Any, Response]]
-    ):
+        handler: Callable[[Request], Awaitable[StreamResponse]]
+    ) -> StreamResponse:
         """
         This handler logs http requests made to the server and displays response
         time and code.
