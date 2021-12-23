@@ -1,8 +1,16 @@
 /** @format */
 
 import { APIClient } from '../../../extensions/axios/api-client';
-import { MeasurementType, isMeasurementType, MeasurementValueTypes } from '../../../types/iot';
 import {
+  MeasurementType,
+  isMeasurementType,
+  MeasurementValueTypes,
+  MeasurementAverageType,
+  isMeasurementAverageType,
+} from '../../../types/iot';
+import {
+  APIMeasurementAverageType,
+  APIMeasurementType,
   APIMeasurementValueTypes,
   GetAverageMeasurementsAPIParamsType,
   GetAverageMeasurementsParamsType,
@@ -10,8 +18,9 @@ import {
   GetLatestMeasurementsParamsType,
   GetMeasurementsAPIParamsType,
   GetMeasurementsParamsType,
+  isAPIMeasurementAverageType,
+  isAPIMeasurementType,
 } from './types';
-import { APIMeasurementType, isAPIMeasurementType } from './types';
 
 export class MeasurementsClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
@@ -53,6 +62,38 @@ export class MeasurementsClient extends APIClient {
           : measurement.value_type === APIMeasurementValueTypes.INTEGER
           ? parseInt(measurement.value)
           : measurement.value,
+    };
+  }
+
+  toAPIMeasurementAverageType(
+    average: MeasurementAverageType | APIMeasurementAverageType
+  ): APIMeasurementAverageType {
+    if (isAPIMeasurementAverageType(average)) return { ...average };
+    return {
+      start: average.start.toISOString(),
+      end: average.end.toISOString(),
+      location_id: average.locationId,
+      metric_id: average.metricId,
+      tags: average.tags,
+      value: average.value.toString(),
+      min: average.min.toString(),
+      max: average.max.toString(),
+    };
+  }
+
+  toMeasurementAverageType(
+    average: MeasurementAverageType | APIMeasurementAverageType
+  ): MeasurementAverageType {
+    if (isMeasurementAverageType(average)) return { ...average };
+    return {
+      start: new Date(average.start),
+      end: new Date(average.end),
+      locationId: average.location_id,
+      metricId: average.metric_id,
+      tags: average.tags,
+      value: parseFloat(average.value),
+      min: parseFloat(average.min),
+      max: parseFloat(average.max),
     };
   }
 
@@ -105,7 +146,7 @@ export class MeasurementsClient extends APIClient {
     if (params?.end != null) _params.end = params.end.toISOString();
     if (params?.period != null) _params.period = params.period;
 
-    return this.get<APIMeasurementType[]>(
+    return this.get<APIMeasurementAverageType[]>(
       `/v0/measurements/average/${locationId}/${metricId}/${tags.join(',')}`,
       {
         params: _params,

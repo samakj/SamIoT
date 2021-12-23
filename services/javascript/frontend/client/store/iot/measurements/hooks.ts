@@ -2,9 +2,19 @@
 
 import { RootState, useDispatch, useSelector } from 'client/store';
 import { useEffect, useMemo, useState } from 'react';
-import { GetMeasurementsParamsType } from 'shared/javascript/clients/iot/measurements/types';
+import {
+  GetAverageMeasurementsParamsType,
+  GetLatestMeasurementsParamsType,
+  GetMeasurementsParamsType,
+} from 'shared/javascript/clients/iot/measurements/types';
 import { MeasurementType } from 'shared/javascript/types/iot';
-import { getMeasurement, getMeasurements } from './thunks';
+import { getLatestMeasurementsKey } from './slice';
+import {
+  getAverageMeasurements,
+  getLatestMeasurements,
+  getMeasurement,
+  getMeasurements,
+} from './thunks';
 import { MeasurementsStateType } from './types';
 
 type UseMeasurementType = {
@@ -62,6 +72,79 @@ export const useMeasurements = (filters?: GetMeasurementsParamsType): Measuremen
         {}
       ),
     [ids]
+  );
+
+  return measurements;
+};
+
+export const useLatestMeasurements = (
+  filters?: GetLatestMeasurementsParamsType
+): MeasurementsStateType => {
+  const [keys, setKeys] = useState<string[]>();
+  const dispatch = useDispatch();
+  const allLatest = useSelector((state) => state.iot.measurements.latest);
+
+  useEffect(() => {
+    dispatch(getLatestMeasurements(filters)).then(
+      (action) =>
+        action.meta.requestStatus === 'fulfilled' &&
+        // @ts-ignore
+        setKeys(action.payload?.map(getLatestMeasurementsKey))
+    );
+  }, [filters]);
+
+  const measurements = useMemo(
+    (): MeasurementsStateType =>
+      keys &&
+      keys.reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: {
+            ...allLatest[key],
+            timestamp: allLatest[key].timestamp && new Date(allLatest[key].timestamp),
+          },
+        }),
+        {}
+      ),
+    [keys]
+  );
+
+  return measurements;
+};
+export const useAverageMeasurements = (
+  locationId: MeasurementType['locationId'],
+  metricId: MeasurementType['metricId'],
+  tags: MeasurementType['tags'],
+  filters?: GetAverageMeasurementsParamsType
+): MeasurementsStateType => {
+  const [keys, setKeys] = useState<string[]>();
+  const dispatch = useDispatch();
+  const allAverage = useSelector((state) => state.iot.measurements.averages);
+
+  useEffect(() => {
+    dispatch(getAverageMeasurements({ ...filters, locationId, metricId, tags })).then(
+      (action) =>
+        action.meta.requestStatus === 'fulfilled' &&
+        // @ts-ignore
+        setKeys(action.payload?.map(getAverageMeasurementsKey))
+    );
+  }, [filters]);
+
+  const measurements = useMemo(
+    (): MeasurementsStateType =>
+      keys &&
+      keys.reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: {
+            ...allAverage[key],
+            start: new Date(allAverage[key].start),
+            end: new Date(allAverage[key].end),
+          },
+        }),
+        {}
+      ),
+    [keys]
   );
 
   return measurements;

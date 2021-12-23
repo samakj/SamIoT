@@ -1,3 +1,5 @@
+/** @format */
+
 export interface LocationType {
   id: number;
   name: string;
@@ -12,16 +14,12 @@ export interface DeviceType {
   mac: string;
   ip: string;
   websocketPath: string;
-  locationId: LocationType["id"];
+  locationId: LocationType['id'];
   lastMessage?: Date;
 }
 
 export const isDeviceType = (o: any): o is DeviceType =>
-  o.id != null &&
-  o.mac != null &&
-  o.ip != null &&
-  o.websocketPath != null &&
-  o.locationId != null;
+  o.id != null && o.mac != null && o.ip != null && o.websocketPath != null && o.locationId != null;
 
 export interface MetricType {
   id: number;
@@ -34,18 +32,18 @@ export const isMetricType = (o: any): o is MetricType =>
   o.id != null && o.name != null && o.abbreviation != null;
 
 export enum MeasurementValueTypes {
-  STRING = "string",
-  FLOAT = "float",
-  INTEGER = "integer",
-  BOOLEAN = "boolean",
+  STRING = 'string',
+  FLOAT = 'float',
+  INTEGER = 'integer',
+  BOOLEAN = 'boolean',
 }
 
 export type MeasurementType = {
   id: number;
   timestamp: Date;
-  deviceId: DeviceType["id"];
-  locationId: LocationType["id"];
-  metricId: MetricType["id"];
+  deviceId: DeviceType['id'];
+  locationId: LocationType['id'];
+  metricId: MetricType['id'];
   tags: string[];
 } & (
   | { valueType: MeasurementValueTypes.FLOAT; value?: number }
@@ -62,3 +60,22 @@ export const isMeasurementType = (o: any): o is MeasurementType =>
   o.metricId != null &&
   o.tags != null &&
   o.valueType != null;
+
+export type MeasurementAverageType = {
+  start: Date;
+  end: Date;
+  locationId: LocationType['id'];
+  metricId: MetricType['id'];
+  tags: string[];
+  value?: number;
+  min?: number;
+  max?: number;
+};
+
+export const isMeasurementAverageType = (o: any): o is MeasurementAverageType =>
+  o.id != null &&
+  o.start != null &&
+  o.end != null &&
+  o.locationId != null &&
+  o.metricId != null &&
+  o.tags != null;

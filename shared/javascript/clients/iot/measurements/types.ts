@@ -1,21 +1,23 @@
-import { MeasurementType } from "../../../types/iot";
-import { APIDeviceType } from "../devices/types";
-import { APILocationType } from "../locations/types";
-import { APIMetricType } from "../metrics/types";
+/** @format */
+
+import { MeasurementType } from '../../../types/iot';
+import { APIDeviceType } from '../devices/types';
+import { APILocationType } from '../locations/types';
+import { APIMetricType } from '../metrics/types';
 
 export enum APIMeasurementValueTypes {
-  STRING = "string",
-  FLOAT = "float",
-  INTEGER = "integer",
-  BOOLEAN = "boolean",
+  STRING = 'string',
+  FLOAT = 'float',
+  INTEGER = 'integer',
+  BOOLEAN = 'boolean',
 }
 
 export type APIMeasurementType = {
   id: number;
   timestamp: string;
-  device_id: APIDeviceType["id"];
-  location_id: APILocationType["id"];
-  metric_id: APIMetricType["id"];
+  device_id: APIDeviceType['id'];
+  location_id: APILocationType['id'];
+  metric_id: APIMetricType['id'];
   tags: string[];
 } & (
   | { value_type: APIMeasurementValueTypes.FLOAT; value?: string }
@@ -33,53 +35,60 @@ export const isAPIMeasurementType = (o: any): o is APIMeasurementType =>
   o.tags != null &&
   o.value_type != null;
 
+export type APIMeasurementAverageType = {
+  start: string;
+  end: string;
+  location_id: APILocationType['id'];
+  metric_id: APIMetricType['id'];
+  tags: string[];
+  value?: string;
+  min?: string;
+  max?: string;
+};
+
+export const isAPIMeasurementAverageType = (o: any): o is APIMeasurementAverageType =>
+  o.id != null &&
+  o.start != null &&
+  o.end != null &&
+  o.location_id != null &&
+  o.metric_id != null &&
+  o.tags != null;
+
 export interface GetMeasurementsParamsType {
-  id?: MeasurementType["id"] | MeasurementType["id"][];
-  deviceId?: MeasurementType["deviceId"] | MeasurementType["deviceId"][];
-  locationId?: MeasurementType["locationId"] | MeasurementType["locationId"][];
-  metricId?: MeasurementType["metricId"] | MeasurementType["metricId"][];
-  tags?: MeasurementType["tags"] | MeasurementType["tags"][];
-  timestampGte?: MeasurementType["timestamp"];
-  timestampLte?: MeasurementType["timestamp"];
-  value?: MeasurementType["value"];
-  valueGte?: MeasurementType["value"];
-  valueLte?: MeasurementType["value"];
+  id?: MeasurementType['id'] | MeasurementType['id'][];
+  deviceId?: MeasurementType['deviceId'] | MeasurementType['deviceId'][];
+  locationId?: MeasurementType['locationId'] | MeasurementType['locationId'][];
+  metricId?: MeasurementType['metricId'] | MeasurementType['metricId'][];
+  tags?: MeasurementType['tags'] | MeasurementType['tags'][];
+  timestampGte?: MeasurementType['timestamp'];
+  timestampLte?: MeasurementType['timestamp'];
+  value?: MeasurementType['value'];
+  valueGte?: MeasurementType['value'];
+  valueLte?: MeasurementType['value'];
 }
 export interface GetMeasurementsAPIParamsType {
-  id?: APIMeasurementType["id"] | APIMeasurementType["id"][];
-  device_id?:
-    | APIMeasurementType["device_id"]
-    | APIMeasurementType["device_id"][];
-  location_id?:
-    | APIMeasurementType["location_id"]
-    | APIMeasurementType["location_id"][];
-  metric_id?:
-    | APIMeasurementType["metric_id"]
-    | APIMeasurementType["metric_id"][];
-  tags?: APIMeasurementType["tags"] | APIMeasurementType["tags"][];
-  timestamp_gte?: APIMeasurementType["timestamp"];
-  timestamp_lte?: APIMeasurementType["timestamp"];
-  value?: APIMeasurementType["value"];
-  value_gte?: APIMeasurementType["value"];
-  value_lte?: APIMeasurementType["value"];
+  id?: APIMeasurementType['id'] | APIMeasurementType['id'][];
+  device_id?: APIMeasurementType['device_id'] | APIMeasurementType['device_id'][];
+  location_id?: APIMeasurementType['location_id'] | APIMeasurementType['location_id'][];
+  metric_id?: APIMeasurementType['metric_id'] | APIMeasurementType['metric_id'][];
+  tags?: APIMeasurementType['tags'] | APIMeasurementType['tags'][];
+  timestamp_gte?: APIMeasurementType['timestamp'];
+  timestamp_lte?: APIMeasurementType['timestamp'];
+  value?: APIMeasurementType['value'];
+  value_gte?: APIMeasurementType['value'];
+  value_lte?: APIMeasurementType['value'];
 }
 export interface GetLatestMeasurementsParamsType {
-  deviceId?: MeasurementType["deviceId"] | MeasurementType["deviceId"][];
-  locationId?: MeasurementType["locationId"] | MeasurementType["locationId"][];
-  metricId?: MeasurementType["metricId"] | MeasurementType["metricId"][];
-  tags?: MeasurementType["tags"] | MeasurementType["tags"][];
+  deviceId?: MeasurementType['deviceId'] | MeasurementType['deviceId'][];
+  locationId?: MeasurementType['locationId'] | MeasurementType['locationId'][];
+  metricId?: MeasurementType['metricId'] | MeasurementType['metricId'][];
+  tags?: MeasurementType['tags'] | MeasurementType['tags'][];
 }
 export interface GetLatestMeasurementsAPIParamsType {
-  device_id?:
-    | APIMeasurementType["device_id"]
-    | APIMeasurementType["device_id"][];
-  location_id?:
-    | APIMeasurementType["location_id"]
-    | APIMeasurementType["location_id"][];
-  metric_id?:
-    | APIMeasurementType["metric_id"]
-    | APIMeasurementType["metric_id"][];
-  tags?: APIMeasurementType["tags"] | APIMeasurementType["tags"][];
+  device_id?: APIMeasurementType['device_id'] | APIMeasurementType['device_id'][];
+  location_id?: APIMeasurementType['location_id'] | APIMeasurementType['location_id'][];
+  metric_id?: APIMeasurementType['metric_id'] | APIMeasurementType['metric_id'][];
+  tags?: APIMeasurementType['tags'] | APIMeasurementType['tags'][];
 }
 export interface GetAverageMeasurementsParamsType {
   start?: Date;
