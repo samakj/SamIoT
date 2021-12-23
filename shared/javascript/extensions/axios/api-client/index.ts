@@ -28,7 +28,7 @@ export class APIClient {
     endpoint: string,
     config?: AxiosRequestConfig<D>
   ): Promise<R> {
-    return axios.get(endpoint, config);
+    return this.axiosInstance.get(endpoint, config);
   }
 
   post<T = any, R = AxiosResponse<T>, D = any>(
@@ -36,7 +36,7 @@ export class APIClient {
     data?: D,
     config?: AxiosRequestConfig<D>
   ): Promise<R> {
-    return axios.post(endpoint, data, config);
+    return this.axiosInstance.post(endpoint, data, config);
   }
 
   patch<T = any, R = AxiosResponse<T>, D = any>(
@@ -44,13 +44,13 @@ export class APIClient {
     data?: D,
     config?: AxiosRequestConfig<D>
   ): Promise<R> {
-    return axios.patch(endpoint, data, config);
+    return this.axiosInstance.patch(endpoint, data, config);
   }
 
   delete<T = any, R = AxiosResponse<T>, D = any>(
     endpoint: string,
     config?: AxiosRequestConfig<D>
   ): Promise<R> {
-    return axios.delete(endpoint, config);
+    return this.axiosInstance.delete(endpoint, config);
   }
 }
