@@ -8,7 +8,7 @@ export class MetricsClient extends APIClient {
     super(host, port, ssl);
   }
 
-  static toAPIMetricType(metric: MetricType | APIMetricType): APIMetricType {
+  toAPIMetricType(metric: MetricType | APIMetricType): APIMetricType {
     // Always the same
     // if (isAPIMetricType(metric)) return { ...metric };
     return {
@@ -19,7 +19,7 @@ export class MetricsClient extends APIClient {
     };
   }
 
-  static toMetricType(metric: MetricType | APIMetricType): MetricType {
+  toMetricType(metric: MetricType | APIMetricType): MetricType {
     // Always the same
     // if (isMetricType(metric)) return { ...metric };
     return {

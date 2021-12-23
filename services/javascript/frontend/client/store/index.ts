@@ -3,6 +3,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useDispatch as _useDispatch, useSelector as _useSelector } from 'react-redux';
 import { LocationsSlice } from './iot/locations/slice';
+import { MetricsSlice } from './iot/metrics/slice';
 import { themeSlice } from './theme/slice';
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     theme: themeSlice.reducer,
     iot: combineReducers({
       locations: LocationsSlice.reducer,
+      metrics: MetricsSlice.reducer,
     }),
   },
 });
