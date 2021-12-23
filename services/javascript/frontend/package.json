@@ -8,7 +8,7 @@
     "build:client": "NODE_ENV=development webpack --config webpack.config.client.js",
     "build:server": "NODE_ENV=development webpack --config webpack.config.server.js",
     "start": "NODE_ENV=development /usr/local/bin/node --inspect -r dotenv/config ./build/server.js",
-    "start:dev": "NODE_ENV=development /usr/local/bin/node ./dev/index.js"
+    "start:dev": "NODE_ENV=development /usr/local/bin/node --inspect -r dotenv/config ./dev/index.js"
   },
   "author": "",
   "license": "ISC",
