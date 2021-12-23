@@ -2,9 +2,8 @@
 
 import React, { useCallback } from 'react';
 import { H2 } from 'client/components/Headers';
-import { useDispatch, useSelector } from 'react-redux';
 import { FullWidthCard } from '../Cards';
-import { RootState } from 'client/store';
+import { useDispatch, useSelector } from 'client/store';
 import { Sun, Moon } from 'react-feather';
 import { transparentize } from 'polished';
 import { ThemeVariants } from 'client/style/types';
@@ -41,7 +40,7 @@ export const HeaderCard = styled(FullWidthCard)`
 `;
 
 export const HeaderBar = ({ title }: HeaderBarPropsType) => {
-  const theme = useSelector((state: RootState) => state.theme);
+  const theme = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const setThemeGenerator = useCallback(
     (variant: ThemeVariants) => () => dispatch(themeSlice.actions.setTheme(variant)),
