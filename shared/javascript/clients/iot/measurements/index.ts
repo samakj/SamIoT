@@ -75,7 +75,7 @@ export class MeasurementsClient extends APIClient {
       location_id: average.locationId,
       metric_id: average.metricId,
       tags: average.tags,
-      value: average.value.toString(),
+      average: average.average.toString(),
       min: average.min.toString(),
       max: average.max.toString(),
     };
@@ -91,7 +91,7 @@ export class MeasurementsClient extends APIClient {
       locationId: average.location_id,
       metricId: average.metric_id,
       tags: average.tags,
-      value: parseFloat(average.value),
+      average: parseFloat(average.average),
       min: parseFloat(average.min),
       max: parseFloat(average.max),
     };

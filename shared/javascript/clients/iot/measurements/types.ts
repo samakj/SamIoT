@@ -41,7 +41,7 @@ export type APIMeasurementAverageType = {
   location_id: APILocationType['id'];
   metric_id: APIMetricType['id'];
   tags: string[];
-  value?: string;
+  average?: string;
   min?: string;
   max?: string;
 };

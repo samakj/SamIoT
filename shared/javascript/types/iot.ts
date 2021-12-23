@@ -67,7 +67,7 @@ export type MeasurementAverageType = {
   locationId: LocationType['id'];
   metricId: MetricType['id'];
   tags: string[];
-  value?: number;
+  average?: number;
   min?: number;
   max?: number;
 };
