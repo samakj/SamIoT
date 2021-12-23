@@ -19,6 +19,7 @@ module.exports = {
     alias: {
       client: path.resolve('./client'),
       server: path.resolve('./server'),
+      shared: path.resolve('./shared'),
     },
   },
   externals: [nodeExternals()],

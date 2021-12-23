@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es2017",
+      "baseUrl": "./",
+      "paths": {
+        "client/*": ["client/*"],
+        "server/*": ["server/*"],
+        "shared/*": ["shared/*"],
+      },
+      "moduleResolution": "node",
+      "jsx": "react"
+    },
+    "exclude": ["node_modules", "build"]
+  }
