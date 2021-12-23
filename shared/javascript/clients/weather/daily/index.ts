@@ -7,7 +7,7 @@ import {
   isAPIDailyWeatherType,
 } from "./types";
 
-export class DailyWeathersClient extends APIClient {
+export class DailyWeatherClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }

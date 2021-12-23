@@ -5,7 +5,7 @@ import {
 } from "../../../types/weather";
 import { APICurrentWeatherType, isAPICurrentWeatherType } from "./types";
 
-export class CurrentWeathersClient extends APIClient {
+export class CurrentWeatherClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
