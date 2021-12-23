@@ -8,7 +8,7 @@ import {
   GetMeasurementsParamsType,
 } from 'shared/javascript/clients/iot/measurements/types';
 import { MeasurementType } from 'shared/javascript/types/iot';
-import { getLatestMeasurementsKey } from './slice';
+import { getLatestMeasurementsKey, getAverageMeasurementsKey } from './slice';
 import {
   getAverageMeasurements,
   getLatestMeasurements,

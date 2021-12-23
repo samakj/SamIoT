@@ -18,40 +18,28 @@ export const DevicesSlice = createSlice({
     builder.addCase(getDevice.pending, handleRequestMeta);
     builder.addCase(getDevice.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      state.devices[action.payload.id] = {
-        ...action.payload,
-        lastMessage: action.payload.lastMessage?.toISOString(),
-      };
+      state.devices[action.payload.id] = action.payload;
     });
     builder.addCase(getDevice.rejected, handleRequestMeta);
 
     builder.addCase(getDeviceByIp.pending, handleRequestMeta);
     builder.addCase(getDeviceByIp.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      state.devices[action.payload.id] = {
-        ...action.payload,
-        lastMessage: action.payload.lastMessage?.toISOString(),
-      };
+      state.devices[action.payload.id] = action.payload;
     });
     builder.addCase(getDeviceByIp.rejected, handleRequestMeta);
 
     builder.addCase(getDeviceByMac.pending, handleRequestMeta);
     builder.addCase(getDeviceByMac.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      state.devices[action.payload.id] = {
-        ...action.payload,
-        lastMessage: action.payload.lastMessage?.toISOString(),
-      };
+      state.devices[action.payload.id] = action.payload;
     });
     builder.addCase(getDeviceByMac.rejected, handleRequestMeta);
 
     builder.addCase(getDevices.pending, handleRequestMeta);
     builder.addCase(getDevices.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      action.payload.forEach(
-        (device) =>
-          (state.devices[device.id] = { ...device, lastMessage: device.lastMessage?.toISOString() })
-      );
+      action.payload.forEach((device) => (state.devices[device.id] = device));
     });
     builder.addCase(getDevices.rejected, handleRequestMeta);
   },

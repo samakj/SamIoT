@@ -9,7 +9,11 @@ import {
   getMeasurements,
   getAverageMeasurements,
 } from './thunks';
-import { MeasurementsSliceStateType } from './types';
+import {
+  MeasurementsSliceStateType,
+  SerialisedMeasurementAverageType,
+  SerialisedMeasurementType,
+} from './types';
 
 export const initialState: MeasurementsSliceStateType = {
   requests: {},
@@ -18,13 +22,13 @@ export const initialState: MeasurementsSliceStateType = {
   averages: {},
 };
 
-export const getLatestMeasurementsKey = (measurement: MeasurementType): string =>
+export const getLatestMeasurementsKey = (measurement: SerialisedMeasurementType): string =>
   `${measurement.locationId}:${measurement.deviceId}:` +
   `${measurement.metricId}:${measurement.tags.join(',')}`;
 
-export const getAverageMeasurementsKey = (average: MeasurementAverageType): string =>
+export const getAverageMeasurementsKey = (average: SerialisedMeasurementAverageType): string =>
   `${average.locationId}:${average.metricId}:${average.tags.join(',')}` +
-  `${average.start.toISOString()}:${average.end.toISOString()}`;
+  `${average.start}:${average.end}`;
 
 export const MeasurementsSlice = createSlice({
   name: 'measurements',
@@ -34,23 +38,14 @@ export const MeasurementsSlice = createSlice({
     builder.addCase(getMeasurement.pending, handleRequestMeta);
     builder.addCase(getMeasurement.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      state.measurements[action.payload.id] = {
-        ...action.payload,
-        timestamp: action.payload.timestamp?.toISOString(),
-      };
+      state.measurements[action.payload.id] = action.payload;
     });
     builder.addCase(getMeasurement.rejected, handleRequestMeta);
 
     builder.addCase(getMeasurements.pending, handleRequestMeta);
     builder.addCase(getMeasurements.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
-      action.payload.forEach(
-        (measurement) =>
-          (state.measurements[measurement.id] = {
-            ...measurement,
-            timestamp: measurement.timestamp?.toISOString(),
-          })
-      );
+      action.payload.forEach((measurement) => (state.measurements[measurement.id] = measurement));
     });
     builder.addCase(getMeasurements.rejected, handleRequestMeta);
 
@@ -58,11 +53,7 @@ export const MeasurementsSlice = createSlice({
     builder.addCase(getLatestMeasurements.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
       action.payload.forEach(
-        (measurement) =>
-          (state.latest[getLatestMeasurementsKey(measurement)] = {
-            ...measurement,
-            timestamp: measurement.timestamp?.toISOString(),
-          })
+        (measurement) => (state.latest[getLatestMeasurementsKey(measurement)] = measurement)
       );
     });
     builder.addCase(getLatestMeasurements.rejected, handleRequestMeta);
@@ -71,12 +62,7 @@ export const MeasurementsSlice = createSlice({
     builder.addCase(getAverageMeasurements.fulfilled, (state, action) => {
       handleRequestMeta(state, action);
       action.payload.forEach(
-        (average) =>
-          (state.averages[getAverageMeasurementsKey(average)] = {
-            ...average,
-            start: average.start?.toISOString(),
-            end: average.end?.toISOString(),
-          })
+        (average) => (state.averages[getAverageMeasurementsKey(average)] = average)
       );
     });
     builder.addCase(getAverageMeasurements.rejected, handleRequestMeta);

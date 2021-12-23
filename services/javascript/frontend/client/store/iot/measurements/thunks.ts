@@ -13,7 +13,11 @@ export const getMeasurement = createAsyncThunk(
   'iot/measurement',
   async (id: MeasurementType['id']) => {
     const response = await IoTClient.measurements.getMeasurement(id);
-    return IoTClient.measurements.toMeasurementType(response.data);
+    const measurement = IoTClient.measurements.toMeasurementType(response.data);
+    return {
+      ...measurement,
+      timestamp: measurement.timestamp.toISOString(),
+    };
   }
 );
 
@@ -21,7 +25,13 @@ export const getMeasurements = createAsyncThunk(
   'iot/measurements',
   async (filters?: GetMeasurementsParamsType) => {
     const response = await IoTClient.measurements.getMeasurements(filters);
-    return response.data.map(IoTClient.measurements.toMeasurementType);
+    return response.data.map((apiMeasurement) => {
+      const measurement = IoTClient.measurements.toMeasurementType(apiMeasurement);
+      return {
+        ...measurement,
+        timestamp: measurement.timestamp.toISOString(),
+      };
+    });
   }
 );
 
@@ -29,7 +39,13 @@ export const getLatestMeasurements = createAsyncThunk(
   'iot/measurements/latest',
   async (filters?: GetLatestMeasurementsParamsType) => {
     const response = await IoTClient.measurements.getLatestMeasurements(filters);
-    return response.data.map(IoTClient.measurements.toMeasurementType);
+    return response.data.map((apiMeasurement) => {
+      const measurement = IoTClient.measurements.toMeasurementType(apiMeasurement);
+      return {
+        ...measurement,
+        timestamp: measurement.timestamp.toISOString(),
+      };
+    });
   }
 );
 
@@ -48,6 +64,13 @@ export const getAverageMeasurements = createAsyncThunk(
       filters.tags,
       filters
     );
-    return response.data.map(IoTClient.measurements.toMeasurementAverageType);
+    return response.data.map((apiAverage) => {
+      const average = IoTClient.measurements.toMeasurementAverageType(apiAverage);
+      return {
+        ...average,
+        start: average.start?.toISOString(),
+        end: average.end?.toISOString(),
+      };
+    });
   }
 );
