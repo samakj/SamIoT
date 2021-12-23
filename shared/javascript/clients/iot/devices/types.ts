@@ -18,18 +18,18 @@ export const isAPIDeviceType = (o: any): o is APIDeviceType =>
   o.location_id != null;
 
 export interface GetDevicesParamsType {
-  id?: DeviceType["id"];
-  mac?: DeviceType["mac"];
-  ip?: DeviceType["ip"];
-  locationId?: DeviceType["locationId"];
-  lastMessageGte?: DeviceType["lastMessage"];
-  lastMessageLte?: DeviceType["lastMessage"];
+  id?: DeviceType["id"] | DeviceType["id"][];
+  mac?: DeviceType["mac"] | DeviceType["mac"][];
+  ip?: DeviceType["ip"] | DeviceType["ip"][];
+  locationId?: DeviceType["locationId"] | DeviceType["locationId"][];
+  lastMessageGte?: DeviceType["lastMessage"] | DeviceType["lastMessage"][];
+  lastMessageLte?: DeviceType["lastMessage"] | DeviceType["lastMessage"][];
 }
 export interface GetDevicesAPIParamsType {
-  id?: APIDeviceType["id"];
-  mac?: APIDeviceType["mac"];
-  ip?: APIDeviceType["ip"];
-  location_id?: APIDeviceType["location_id"];
+  id?: APIDeviceType["id"] | APIDeviceType["id"][];
+  mac?: APIDeviceType["mac"] | APIDeviceType["mac"][];
+  ip?: APIDeviceType["ip"] | APIDeviceType["ip"][];
+  location_id?: APIDeviceType["location_id"] | APIDeviceType["location_id"][];
   last_message_gte?: APIDeviceType["last_message"];
   last_message_lte?: APIDeviceType["last_message"];
 }

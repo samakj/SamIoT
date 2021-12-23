@@ -11,12 +11,14 @@ export const isAPIMetricType = (o: any): o is APIMetricType =>
   o.id != null && o.name != null && o.abbreviation != null;
 
 export interface GetMetricsParamsType {
-  id?: MetricType["id"];
-  name?: MetricType["name"];
-  abbreviation?: MetricType["abbreviation"];
+  id?: MetricType["id"] | MetricType["id"][];
+  name?: MetricType["name"] | MetricType["name"][];
+  abbreviation?: MetricType["abbreviation"] | MetricType["abbreviation"][];
 }
 export interface GetMetricsAPIParamsType {
-  id?: APIMetricType["id"];
-  name?: APIMetricType["name"];
-  abbreviation?: APIMetricType["abbreviation"];
+  id?: APIMetricType["id"] | APIMetricType["id"][];
+  name?: APIMetricType["name"] | APIMetricType["name"][];
+  abbreviation?:
+    | APIMetricType["abbreviation"]
+    | APIMetricType["abbreviation"][];
 }
