@@ -1,11 +1,15 @@
 /** @format */
 
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { LocationsSlice } from './iot/locations/slice';
 import { themeSlice } from './theme/slice';
 
 export const store = configureStore({
   reducer: {
     theme: themeSlice.reducer,
+    iot: combineReducers({
+      locations: LocationsSlice.reducer,
+    }),
   },
 });
 

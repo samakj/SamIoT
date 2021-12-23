@@ -1,16 +1,16 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import { LocationType, isLocationType } from "../../../types/iot";
-import { GetLocationsAPIParamsType, GetLocationsParamsType } from "./types";
-import { APILocationType, isAPILocationType } from "./types";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { LocationType } from '../../../types/iot';
+import { GetLocationsAPIParamsType, GetLocationsParamsType } from './types';
+import { APILocationType } from './types';
 
 export class LocationsClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPILocationType(
-    location: LocationType | APILocationType
-  ): APILocationType {
+  toAPILocationType(location: LocationType | APILocationType): APILocationType {
     // Always the same
     // if (isAPILocationType(location)) return {...location};
     return {
@@ -20,9 +20,7 @@ export class LocationsClient extends APIClient {
     };
   }
 
-  static toLocationType(
-    location: LocationType | APILocationType
-  ): LocationType {
+  toLocationType(location: LocationType | APILocationType): LocationType {
     // Always the same
     // if (isLocationType(location)) return {...location};
     return {
