@@ -1,9 +1,7 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import {
-  MeasurementType,
-  isMeasurementType,
-  MeasurementValueTypes,
-} from "../../../types/iot";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { MeasurementType, isMeasurementType, MeasurementValueTypes } from '../../../types/iot';
 import {
   APIMeasurementValueTypes,
   GetAverageMeasurementsAPIParamsType,
@@ -12,17 +10,15 @@ import {
   GetLatestMeasurementsParamsType,
   GetMeasurementsAPIParamsType,
   GetMeasurementsParamsType,
-} from "./types";
-import { APIMeasurementType, isAPIMeasurementType } from "./types";
+} from './types';
+import { APIMeasurementType, isAPIMeasurementType } from './types';
 
 export class MeasurementsClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPIMeasurementType(
-    measurement: MeasurementType | APIMeasurementType
-  ): APIMeasurementType {
+  toAPIMeasurementType(measurement: MeasurementType | APIMeasurementType): APIMeasurementType {
     if (isAPIMeasurementType(measurement)) return { ...measurement };
     return {
       id: measurement.id,
@@ -40,9 +36,7 @@ export class MeasurementsClient extends APIClient {
     };
   }
 
-  static toMeasurementType(
-    measurement: MeasurementType | APIMeasurementType
-  ): MeasurementType {
+  toMeasurementType(measurement: MeasurementType | APIMeasurementType): MeasurementType {
     if (isMeasurementType(measurement)) return { ...measurement };
     return {
       id: measurement.id,
@@ -74,19 +68,12 @@ export class MeasurementsClient extends APIClient {
     if (params?.locationId != null) _params.location_id = params.locationId;
     if (params?.metricId != null) _params.metric_id = params.metricId;
     if (params?.tags != null) _params.tags = params.tags;
-    if (params?.timestampGte != null)
-      _params.timestamp_gte = params.timestampGte.toISOString();
-    if (params?.timestampLte != null)
-      _params.timestamp_lte = params.timestampLte.toISOString();
+    if (params?.timestampGte != null) _params.timestamp_gte = params.timestampGte.toISOString();
+    if (params?.timestampLte != null) _params.timestamp_lte = params.timestampLte.toISOString();
     if (params?.value != null)
-      _params.value =
-        typeof params.value === "boolean"
-          ? params.value
-          : params.value.toString();
-    if (params?.valueGte != null)
-      _params.value_gte = params.valueGte.toString();
-    if (params?.valueLte != null)
-      _params.value_lte = params.valueLte.toString();
+      _params.value = typeof params.value === 'boolean' ? params.value : params.value.toString();
+    if (params?.valueGte != null) _params.value_gte = params.valueGte.toString();
+    if (params?.valueLte != null) _params.value_lte = params.valueLte.toString();
 
     return this.get<APIMeasurementType[]>(`/v0/measurements/`, {
       params: _params,
@@ -107,9 +94,9 @@ export class MeasurementsClient extends APIClient {
   }
 
   getAverageMeasurements(
-    locationId: MeasurementType["locationId"],
-    metricId: MeasurementType["metricId"],
-    tags: MeasurementType["tags"],
+    locationId: MeasurementType['locationId'],
+    metricId: MeasurementType['metricId'],
+    tags: MeasurementType['tags'],
     params?: GetAverageMeasurementsParamsType
   ) {
     const _params: GetAverageMeasurementsAPIParamsType = {};
@@ -119,7 +106,7 @@ export class MeasurementsClient extends APIClient {
     if (params?.period != null) _params.period = params.period;
 
     return this.get<APIMeasurementType[]>(
-      `/v0/measurements/average/${locationId}/${metricId}/${tags.join(",")}`,
+      `/v0/measurements/average/${locationId}/${metricId}/${tags.join(',')}`,
       {
         params: _params,
       }
