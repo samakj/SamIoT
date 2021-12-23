@@ -1,6 +1,9 @@
 import asyncio
 import logging
 import os
+import re
+from aiohttp.web_middlewares import normalize_path_middleware
+from aiohttp_middlewares.cors import cors_middleware
 from dotenv import load_dotenv
 from aiohttp_pydantic import oas
 
@@ -34,10 +37,17 @@ async def create_app() -> WeatherAPIApplication:
     try:
         app = WeatherAPIApplication(
             middlewares=[
+                cors_middleware(
+                    origins=[re.compile(r"^https?\:\/\/localhost")]
+                ),
                 request_logger(
                     [{"method": "PATCH", "regex": "/v0/devices/[\d]+"}]
                 ),
-                error_handler
+                error_handler,
+                normalize_path_middleware(
+                    append_slash=False,
+                    remove_slash=True
+                ),
             ]
         )
 

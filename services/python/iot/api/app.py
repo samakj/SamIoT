@@ -1,8 +1,12 @@
 import asyncio
 import logging
 import os
+import re
+from aiohttp.web_response import json_response
 from dotenv import load_dotenv
+from aiohttp.web import normalize_path_middleware
 from aiohttp_pydantic import oas
+from aiohttp_middlewares import cors_middleware
 
 from Application import IoTAPIApplication
 from routes.locations import LOCATIONS_V0_ROUTES
@@ -46,10 +50,17 @@ async def create_app() -> IoTAPIApplication:
     try:
         app = IoTAPIApplication(
             middlewares=[
+                cors_middleware(
+                    origins=[re.compile(r"^https?\:\/\/localhost")]
+                ),
                 request_logger(
                     [{"method": "PATCH", "regex": "/v0/devices/[\d]+"}]
                 ),
-                error_handler
+                error_handler,
+                normalize_path_middleware(
+                    append_slash=False,
+                    remove_slash=True
+                ),
             ]
         )
 
