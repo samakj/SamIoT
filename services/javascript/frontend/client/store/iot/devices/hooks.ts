@@ -47,7 +47,7 @@ export const useDevice: UseDeviceType = (identifier) => {
     }
   }, [identifier]);
 
-  return { ...device, lastMessgae: device.lastMessage && new Date(device.lastMessage) };
+  return { ...device, lastMessage: device.lastMessage && new Date(device.lastMessage) };
 };
 
 export const useDevices = (filters?: GetDevicesParamsType): DevicesStateType => {
