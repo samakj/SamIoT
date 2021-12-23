@@ -1,14 +1,16 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import { DeviceType, isDeviceType } from "../../../types/iot";
-import { GetDevicesAPIParamsType, GetDevicesParamsType } from "./types";
-import { APIDeviceType, isAPIDeviceType } from "./types";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { DeviceType, isDeviceType } from '../../../types/iot';
+import { GetDevicesAPIParamsType, GetDevicesParamsType } from './types';
+import { APIDeviceType, isAPIDeviceType } from './types';
 
 export class DevicesClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPIDeviceType(device: DeviceType | APIDeviceType): APIDeviceType {
+  toAPIDeviceType(device: DeviceType | APIDeviceType): APIDeviceType {
     if (isAPIDeviceType(device)) return { ...device };
     return {
       id: device.id,
@@ -20,7 +22,7 @@ export class DevicesClient extends APIClient {
     };
   }
 
-  static toDeviceType(device: DeviceType | APIDeviceType): DeviceType {
+  toDeviceType(device: DeviceType | APIDeviceType): DeviceType {
     if (isDeviceType(device)) return { ...device };
     return {
       id: device.id,
