@@ -1,9 +1,6 @@
 import { APIClient } from "../../../extensions/axios/api-client";
 import { DeviceType, isDeviceType } from "../../../types/iot";
-import {
-  GetDevicesAPIParamsType,
-  GetDevicesParamsType,
-} from "../measurements/types";
+import { GetDevicesAPIParamsType, GetDevicesParamsType } from "./types";
 import { APIDeviceType, isAPIDeviceType } from "./types";
 
 export class DevicesClient extends APIClient {
@@ -12,7 +9,7 @@ export class DevicesClient extends APIClient {
   }
 
   static toAPIDeviceType(device: DeviceType | APIDeviceType): APIDeviceType {
-    if (isAPIDeviceType(device)) return device;
+    if (isAPIDeviceType(device)) return { ...device };
     return {
       id: device.id,
       mac: device.mac,
@@ -24,7 +21,7 @@ export class DevicesClient extends APIClient {
   }
 
   static toDeviceType(device: DeviceType | APIDeviceType): DeviceType {
-    if (isDeviceType(device)) return device;
+    if (isDeviceType(device)) return { ...device };
     return {
       id: device.id,
       mac: device.mac,

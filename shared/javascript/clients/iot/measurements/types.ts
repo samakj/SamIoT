@@ -31,20 +31,3 @@ export const isAPIMeasurementType = (o: any): o is APIMeasurementType =>
   o.metric_id != null &&
   o.tags != null &&
   o.value_type != null;
-
-export interface GetDevicesParamsType {
-  id?: number;
-  mac?: string;
-  ip?: string;
-  locationId?: number;
-  lastMessageGte?: Date;
-  lastMessageLte?: Date;
-}
-export interface GetDevicesAPIParamsType {
-  id?: number;
-  mac?: string;
-  ip?: string;
-  location_id?: number;
-  last_message_gte?: string;
-  last_message_lte?: string;
-}
