@@ -7,4 +7,7 @@ export interface UtilitiesConsumptionType {
 export const isUtilitiesConsumptionType = (
   o: any
 ): o is UtilitiesConsumptionType =>
-  o.id != null && o.timestamp != null && o.consumption != null;
+  o.id != null &&
+  o.timestamp != null &&
+  typeof o.timestamp === "object" &&
+  o.consumption != null;
