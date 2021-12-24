@@ -1,5 +1,6 @@
 /** @format */
 
+import React, { CSSProperties } from 'react';
 import 'styled-components';
 
 export enum ThemeVariants {
@@ -41,6 +42,11 @@ export interface ThemeType {
   text: {
     colour: string[];
   };
+}
+
+export interface StyleProps {
+  className?: string;
+  style?: CSSProperties;
 }
 
 declare module 'styled-components' {
