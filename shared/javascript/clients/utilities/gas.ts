@@ -15,7 +15,7 @@ export class GasClient extends APIClient {
     super(host, port, ssl);
   }
 
-  static toAPIGasConsumptionType(
+  toAPIGasConsumptionType(
     gas: UtilitiesConsumptionType | APIUtilitiesConsumptionType
   ): APIUtilitiesConsumptionType {
     if (isAPIUtilitiesConsumptionType(gas)) return { ...gas };
@@ -26,7 +26,7 @@ export class GasClient extends APIClient {
     };
   }
 
-  static toGasConsumptionType(
+  toGasConsumptionType(
     gas: UtilitiesConsumptionType | APIUtilitiesConsumptionType
   ): UtilitiesConsumptionType {
     if (isUtilitiesConsumptionType(gas)) return { ...gas };

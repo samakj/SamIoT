@@ -15,7 +15,7 @@ export class ElectricClient extends APIClient {
     super(host, port, ssl);
   }
 
-  static toAPIElectricConsumptionType(
+  toAPIElectricConsumptionType(
     electric: UtilitiesConsumptionType | APIUtilitiesConsumptionType
   ): APIUtilitiesConsumptionType {
     if (isAPIUtilitiesConsumptionType(electric)) return { ...electric };
@@ -26,7 +26,7 @@ export class ElectricClient extends APIClient {
     };
   }
 
-  static toElectricConsumptionType(
+  toElectricConsumptionType(
     electric: UtilitiesConsumptionType | APIUtilitiesConsumptionType
   ): UtilitiesConsumptionType {
     if (isUtilitiesConsumptionType(electric)) return { ...electric };

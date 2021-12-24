@@ -7,6 +7,8 @@ import { LocationsSlice } from './iot/locations/slice';
 import { MeasurementsSlice } from './iot/measurements/slice';
 import { MetricsSlice } from './iot/metrics/slice';
 import { themeSlice } from './theme/slice';
+import { ElectricSlice } from './utilities/electric/slice';
+import { GasSlice } from './utilities/gas/slice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,10 @@ export const store = configureStore({
       locations: LocationsSlice.reducer,
       measurements: MeasurementsSlice.reducer,
       metrics: MetricsSlice.reducer,
+    }),
+    utilities: combineReducers({
+      gas: GasSlice.reducer,
+      electric: ElectricSlice.reducer,
     }),
   },
 });
