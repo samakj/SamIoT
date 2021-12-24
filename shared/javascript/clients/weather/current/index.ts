@@ -1,16 +1,15 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import {
-  CurrentWeatherType,
-  isCurrentWeatherType,
-} from "../../../types/weather";
-import { APICurrentWeatherType, isAPICurrentWeatherType } from "./types";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { CurrentWeatherType, isCurrentWeatherType } from '../../../types/weather';
+import { APICurrentWeatherType, isAPICurrentWeatherType } from './types';
 
 export class CurrentWeatherClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPICurrentWeatherType(
+  toAPICurrentWeatherType(
     weather: CurrentWeatherType | APICurrentWeatherType
   ): APICurrentWeatherType {
     if (isAPICurrentWeatherType(weather)) return { ...weather };
@@ -36,9 +35,7 @@ export class CurrentWeatherClient extends APIClient {
     };
   }
 
-  static toCurrentWeatherType(
-    weather: CurrentWeatherType | APICurrentWeatherType
-  ): CurrentWeatherType {
+  toCurrentWeatherType(weather: CurrentWeatherType | APICurrentWeatherType): CurrentWeatherType {
     if (isCurrentWeatherType(weather)) return { ...weather };
     return {
       id: weather.id,

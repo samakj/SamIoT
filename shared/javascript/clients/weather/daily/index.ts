@@ -1,20 +1,20 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import { DailyWeatherType, isDailyWeatherType } from "../../../types/weather";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { DailyWeatherType, isDailyWeatherType } from '../../../types/weather';
 import {
   APIDailyWeatherType,
   GetDailyWeathersAPIParamsType,
   GetDailyWeathersParamsType,
   isAPIDailyWeatherType,
-} from "./types";
+} from './types';
 
 export class DailyWeatherClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPIDailyWeatherType(
-    weather: DailyWeatherType | APIDailyWeatherType
-  ): APIDailyWeatherType {
+  toAPIDailyWeatherType(weather: DailyWeatherType | APIDailyWeatherType): APIDailyWeatherType {
     if (isAPIDailyWeatherType(weather)) return { ...weather };
     return {
       id: weather.id,
@@ -32,10 +32,8 @@ export class DailyWeatherClient extends APIClient {
       temperature_max: weather.temperatureMax.toString(),
       apparent_temperature: weather.apparentTemperature.toString(),
       apparent_temperature_night: weather.apparentTemperatureNight.toString(),
-      apparent_temperature_evening:
-        weather.apparentTemperatureEvening.toString(),
-      apparent_temperature_morning:
-        weather.apparentTemperatureMorning.toString(),
+      apparent_temperature_evening: weather.apparentTemperatureEvening.toString(),
+      apparent_temperature_morning: weather.apparentTemperatureMorning.toString(),
       pressure: weather.pressure,
       humidity: weather.humidity,
       dew_point: weather.dewPoint.toString(),
@@ -52,9 +50,7 @@ export class DailyWeatherClient extends APIClient {
     };
   }
 
-  static toDailyWeatherType(
-    weather: DailyWeatherType | APIDailyWeatherType
-  ): DailyWeatherType {
+  toDailyWeatherType(weather: DailyWeatherType | APIDailyWeatherType): DailyWeatherType {
     if (isDailyWeatherType(weather)) return { ...weather };
     return {
       id: weather.id,
@@ -72,12 +68,8 @@ export class DailyWeatherClient extends APIClient {
       temperatureMax: parseFloat(weather.temperature_max),
       apparentTemperature: parseFloat(weather.apparent_temperature),
       apparentTemperatureNight: parseFloat(weather.apparent_temperature_night),
-      apparentTemperatureEvening: parseFloat(
-        weather.apparent_temperature_evening
-      ),
-      apparentTemperatureMorning: parseFloat(
-        weather.apparent_temperature_morning
-      ),
+      apparentTemperatureEvening: parseFloat(weather.apparent_temperature_evening),
+      apparentTemperatureMorning: parseFloat(weather.apparent_temperature_morning),
       pressure: weather.pressure,
       humidity: weather.humidity,
       dewPoint: parseFloat(weather.dew_point),
@@ -94,14 +86,12 @@ export class DailyWeatherClient extends APIClient {
     };
   }
 
-  getDailyWeather(id: DailyWeatherType["id"]) {
+  getDailyWeather(id: DailyWeatherType['id']) {
     return this.get<APIDailyWeatherType>(`/v0/daily/${id}`);
   }
 
-  getDailyWeatherByTimestamp(timestamp: DailyWeatherType["timestamp"]) {
-    return this.get<APIDailyWeatherType>(
-      `/v0/daily/timestamp/${timestamp.toISOString()}`
-    );
+  getDailyWeatherByTimestamp(timestamp: DailyWeatherType['timestamp']) {
+    return this.get<APIDailyWeatherType>(`/v0/daily/timestamp/${timestamp.toISOString()}`);
   }
 
   getDailyWeathers(params?: GetDailyWeathersParamsType) {
@@ -112,14 +102,10 @@ export class DailyWeatherClient extends APIClient {
       _params.timestamp = Array.isArray(params.timestamp)
         ? params.timestamp.map((t) => t.toISOString())
         : params.timestamp.toISOString();
-    if (params?.timestampGte != null)
-      _params.timestamp_gte = params.timestampGte.toISOString();
-    if (params?.timestampLte != null)
-      _params.timestamp_lte = params.timestampLte.toISOString();
-    if (params?.temperatureGte != null)
-      _params.temperature_gte = params.temperatureGte.toString();
-    if (params?.temperatureLte != null)
-      _params.temperature_lte = params.temperatureLte.toString();
+    if (params?.timestampGte != null) _params.timestamp_gte = params.timestampGte.toISOString();
+    if (params?.timestampLte != null) _params.timestamp_lte = params.timestampLte.toISOString();
+    if (params?.temperatureGte != null) _params.temperature_gte = params.temperatureGte.toString();
+    if (params?.temperatureLte != null) _params.temperature_lte = params.temperatureLte.toString();
     if (params?.temperatureMinGte != null)
       _params.temperature_min_gte = params.temperatureMinGte.toString();
     if (params?.temperatureMinLte != null)
@@ -129,11 +115,9 @@ export class DailyWeatherClient extends APIClient {
     if (params?.temperatureMaxLte != null)
       _params.temperature_max_lte = params.temperatureMaxLte.toString();
     if (params?.apparentTemperatureGte != null)
-      _params.apparent_temperature_gte =
-        params.apparentTemperatureGte.toString();
+      _params.apparent_temperature_gte = params.apparentTemperatureGte.toString();
     if (params?.apparentTemperatureLte != null)
-      _params.apparent_temperature_lte =
-        params.apparentTemperatureLte.toString();
+      _params.apparent_temperature_lte = params.apparentTemperatureLte.toString();
 
     return this.get<APIDailyWeatherType[]>(`/v0/dailyweathers/`, {
       params: _params,

@@ -1,20 +1,20 @@
-import { APIClient } from "../../../extensions/axios/api-client";
-import { HourlyWeatherType, isHourlyWeatherType } from "../../../types/weather";
+/** @format */
+
+import { APIClient } from '../../../extensions/axios/api-client';
+import { HourlyWeatherType, isHourlyWeatherType } from '../../../types/weather';
 import {
   APIHourlyWeatherType,
   GetHourlyWeathersAPIParamsType,
   GetHourlyWeathersParamsType,
   isAPIHourlyWeatherType,
-} from "./types";
+} from './types';
 
 export class HourlyWeatherClient extends APIClient {
   constructor(host: string, port: number | string | null, ssl: boolean) {
     super(host, port, ssl);
   }
 
-  static toAPIHourlyWeatherType(
-    weather: HourlyWeatherType | APIHourlyWeatherType
-  ): APIHourlyWeatherType {
+  toAPIHourlyWeatherType(weather: HourlyWeatherType | APIHourlyWeatherType): APIHourlyWeatherType {
     if (isAPIHourlyWeatherType(weather)) return { ...weather };
     return {
       id: weather.id,
@@ -36,9 +36,7 @@ export class HourlyWeatherClient extends APIClient {
     };
   }
 
-  static toHourlyWeatherType(
-    weather: HourlyWeatherType | APIHourlyWeatherType
-  ): HourlyWeatherType {
+  toHourlyWeatherType(weather: HourlyWeatherType | APIHourlyWeatherType): HourlyWeatherType {
     if (isHourlyWeatherType(weather)) return { ...weather };
     return {
       id: weather.id,
@@ -60,14 +58,12 @@ export class HourlyWeatherClient extends APIClient {
     };
   }
 
-  getHourlyWeather(id: HourlyWeatherType["id"]) {
+  getHourlyWeather(id: HourlyWeatherType['id']) {
     return this.get<APIHourlyWeatherType>(`/v0/hourly/${id}`);
   }
 
-  getHourlyWeatherByTimestamp(timestamp: HourlyWeatherType["timestamp"]) {
-    return this.get<APIHourlyWeatherType>(
-      `/v0/hourly/timestamp/${timestamp.toISOString()}`
-    );
+  getHourlyWeatherByTimestamp(timestamp: HourlyWeatherType['timestamp']) {
+    return this.get<APIHourlyWeatherType>(`/v0/hourly/timestamp/${timestamp.toISOString()}`);
   }
 
   getHourlyWeathers(params?: GetHourlyWeathersParamsType) {
@@ -78,20 +74,14 @@ export class HourlyWeatherClient extends APIClient {
       _params.timestamp = Array.isArray(params.timestamp)
         ? params.timestamp.map((t) => t.toISOString())
         : params.timestamp.toISOString();
-    if (params?.timestampGte != null)
-      _params.timestamp_gte = params.timestampGte.toISOString();
-    if (params?.timestampLte != null)
-      _params.timestamp_lte = params.timestampLte.toISOString();
-    if (params?.temperatureGte != null)
-      _params.temperature_gte = params.temperatureGte.toString();
-    if (params?.temperatureLte != null)
-      _params.temperature_lte = params.temperatureLte.toString();
+    if (params?.timestampGte != null) _params.timestamp_gte = params.timestampGte.toISOString();
+    if (params?.timestampLte != null) _params.timestamp_lte = params.timestampLte.toISOString();
+    if (params?.temperatureGte != null) _params.temperature_gte = params.temperatureGte.toString();
+    if (params?.temperatureLte != null) _params.temperature_lte = params.temperatureLte.toString();
     if (params?.apparentTemperatureGte != null)
-      _params.apparent_temperature_gte =
-        params.apparentTemperatureGte.toString();
+      _params.apparent_temperature_gte = params.apparentTemperatureGte.toString();
     if (params?.apparentTemperatureLte != null)
-      _params.apparent_temperature_lte =
-        params.apparentTemperatureLte.toString();
+      _params.apparent_temperature_lte = params.apparentTemperatureLte.toString();
 
     return this.get<APIHourlyWeatherType[]>(`/v0/hourlyweathers/`, {
       params: _params,

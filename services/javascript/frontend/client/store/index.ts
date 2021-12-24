@@ -9,6 +9,9 @@ import { MetricsSlice } from './iot/metrics/slice';
 import { themeSlice } from './theme/slice';
 import { ElectricSlice } from './utilities/electric/slice';
 import { GasSlice } from './utilities/gas/slice';
+import { CurrentWeatherSlice } from './weather/current/slice';
+import { DailyWeatherSlice } from './weather/daily/slice';
+import { HourlyWeatherSlice } from './weather/hourly/slice';
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +25,11 @@ export const store = configureStore({
     utilities: combineReducers({
       gas: GasSlice.reducer,
       electric: ElectricSlice.reducer,
+    }),
+    weather: combineReducers({
+      current: CurrentWeatherSlice.reducer,
+      hourly: HourlyWeatherSlice.reducer,
+      daily: DailyWeatherSlice.reducer,
     }),
   },
 });
