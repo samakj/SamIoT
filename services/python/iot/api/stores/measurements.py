@@ -221,8 +221,6 @@ class MeasurementsStore(BaseStore):
         if metric_ids is not None:
             filters.append(f"metric_id=ANY(${len(values) + 1})")
             values.append(metric_ids)
-        if filters:
-            filters = [f"({' OR '.join(filters)})"]
         if tags is not None:
             filters.append(f"tags@>${len(values) + 1}")
             values.append(tags)
