@@ -8,7 +8,7 @@ import { getGasConsumption, getGasConsumptions } from './thunks';
 import { GasConsumptionStateType } from './types';
 
 type UseGasConsumptionType = {
-  (id: UtilitiesConsumptionType['id']): UtilitiesConsumptionType | undefined;
+  (id?: UtilitiesConsumptionType['id'] | null): UtilitiesConsumptionType | undefined;
 };
 
 export const useGasConsumption: UseGasConsumptionType = (identifier) => {
@@ -22,6 +22,7 @@ export const useGasConsumption: UseGasConsumptionType = (identifier) => {
 
   useEffect(() => {
     if (consumption) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getGasConsumption(identifier)).then(
         (action) =>
@@ -35,13 +36,14 @@ export const useGasConsumption: UseGasConsumptionType = (identifier) => {
 };
 
 export const useGasConsumptions = (
-  filters?: GetUtilitiesConsumptionsParamsType
+  filters?: GetUtilitiesConsumptionsParamsType | null
 ): GasConsumptionStateType => {
   const [ids, setIds] = useState<UtilitiesConsumptionType['id'][]>();
   const dispatch = useDispatch();
   const allGasConsumptions = useSelector((state) => state.utilities.gas.consumption);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getGasConsumptions(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

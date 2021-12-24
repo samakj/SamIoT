@@ -8,9 +8,9 @@ import { getDevice, getDeviceByIp, getDeviceByMac, getDevices } from './thunks';
 import { DevicesStateType } from './types';
 
 type UseDeviceType = {
-  (id: DeviceType['id']): DeviceType | undefined;
-  (name: DeviceType['ip']): DeviceType | undefined;
-  (name: DeviceType['mac']): DeviceType | undefined;
+  (id?: DeviceType['id'] | null): DeviceType | undefined;
+  (ip?: DeviceType['ip'] | null): DeviceType | undefined;
+  (mac?: DeviceType['mac'] | null): DeviceType | undefined;
 };
 
 export const useDevice: UseDeviceType = (identifier) => {
@@ -22,6 +22,7 @@ export const useDevice: UseDeviceType = (identifier) => {
 
   useEffect(() => {
     if (device) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getDevice(identifier)).then(
         (action) =>
@@ -47,15 +48,16 @@ export const useDevice: UseDeviceType = (identifier) => {
     }
   }, [identifier]);
 
-  return { ...device, lastMessage: device.lastMessage && new Date(device.lastMessage) };
+  return device && { ...device, lastMessage: device.lastMessage && new Date(device.lastMessage) };
 };
 
-export const useDevices = (filters?: GetDevicesParamsType): DevicesStateType => {
+export const useDevices = (filters?: GetDevicesParamsType | null): DevicesStateType => {
   const [ids, setIds] = useState<DeviceType['id'][]>();
   const dispatch = useDispatch();
   const allDevices = useSelector((state) => state.iot.devices.devices);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getDevices(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

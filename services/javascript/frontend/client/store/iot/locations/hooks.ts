@@ -8,8 +8,8 @@ import { getLocation, getLocationByName, getLocations } from './thunks';
 import { LocationsStateType } from './types';
 
 type UseLocationType = {
-  (id: LocationType['id']): LocationType | undefined;
-  (name: LocationType['name']): LocationType | undefined;
+  (id?: LocationType['id'] | null): LocationType | undefined;
+  (name?: LocationType['name'] | null): LocationType | undefined;
 };
 
 export const useLocation: UseLocationType = (identifier) => {
@@ -21,6 +21,7 @@ export const useLocation: UseLocationType = (identifier) => {
 
   useEffect(() => {
     if (location) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getLocation(identifier)).then(
         (action) =>
@@ -40,12 +41,13 @@ export const useLocation: UseLocationType = (identifier) => {
   return location;
 };
 
-export const useLocations = (filters?: GetLocationsParamsType): LocationsStateType => {
+export const useLocations = (filters?: GetLocationsParamsType | null): LocationsStateType => {
   const [ids, setIds] = useState<LocationType['id'][]>();
   const dispatch = useDispatch();
   const allLocations = useSelector((state) => state.iot.locations.locations);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getLocations(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

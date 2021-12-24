@@ -8,8 +8,8 @@ import { getDailyWeather, getDailyWeatherByTimestamp, getDailyWeathers } from '.
 import { DailyWeatherStateType } from './types';
 
 type UseDailyWeatherType = {
-  (id: DailyWeatherType['id']): DailyWeatherType | undefined;
-  (name: DailyWeatherType['timestamp']): DailyWeatherType | undefined;
+  (id?: DailyWeatherType['id'] | null): DailyWeatherType | undefined;
+  (timestamp?: DailyWeatherType['timestamp'] | null): DailyWeatherType | undefined;
 };
 
 export const useDailyWeather: UseDailyWeatherType = (identifier) => {
@@ -21,6 +21,7 @@ export const useDailyWeather: UseDailyWeatherType = (identifier) => {
 
   useEffect(() => {
     if (daily) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getDailyWeather(identifier)).then(
         (action) =>
@@ -48,12 +49,15 @@ export const useDailyWeather: UseDailyWeatherType = (identifier) => {
   };
 };
 
-export const useDailyWeathers = (filters?: GetDailyWeathersParamsType): DailyWeatherStateType => {
+export const useDailyWeathers = (
+  filters?: GetDailyWeathersParamsType | null
+): DailyWeatherStateType => {
   const [ids, setIds] = useState<DailyWeatherType['id'][]>();
   const dispatch = useDispatch();
   const allDailyWeathers = useSelector((state) => state.weather.daily.daily);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getDailyWeathers(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

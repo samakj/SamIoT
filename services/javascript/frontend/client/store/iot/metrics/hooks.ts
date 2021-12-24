@@ -8,9 +8,9 @@ import { getMetric, getMetricByAbbreviation, getMetricByName, getMetrics } from 
 import { MetricsStateType } from './types';
 
 type UseMetricType = {
-  (id: MetricType['id']): MetricType | undefined;
-  (name: MetricType['name']): MetricType | undefined;
-  (name: MetricType['abbreviation']): MetricType | undefined;
+  (id?: MetricType['id'] | null): MetricType | undefined;
+  (name?: MetricType['name'] | null): MetricType | undefined;
+  (abbreviation?: MetricType['abbreviation'] | null): MetricType | undefined;
 };
 
 export const useMetric: UseMetricType = (identifier) => {
@@ -22,6 +22,7 @@ export const useMetric: UseMetricType = (identifier) => {
 
   useEffect(() => {
     if (metric) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getMetric(identifier)).then(
         (action) =>
@@ -46,12 +47,13 @@ export const useMetric: UseMetricType = (identifier) => {
   return metric;
 };
 
-export const useMetrics = (filters?: GetMetricsParamsType): MetricsStateType => {
+export const useMetrics = (filters?: GetMetricsParamsType | null): MetricsStateType => {
   const [ids, setIds] = useState<MetricType['id'][]>();
   const dispatch = useDispatch();
   const allMetrics = useSelector((state) => state.iot.metrics.metrics);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getMetrics(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

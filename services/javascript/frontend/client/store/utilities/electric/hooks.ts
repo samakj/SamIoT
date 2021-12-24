@@ -8,7 +8,7 @@ import { getElectricConsumption, getElectricConsumptions } from './thunks';
 import { ElectricConsumptionStateType } from './types';
 
 type UseElectricConsumptionType = {
-  (id: UtilitiesConsumptionType['id']): UtilitiesConsumptionType | undefined;
+  (id?: UtilitiesConsumptionType['id'] | null): UtilitiesConsumptionType | undefined;
 };
 
 export const useElectricConsumption: UseElectricConsumptionType = (identifier) => {
@@ -22,6 +22,7 @@ export const useElectricConsumption: UseElectricConsumptionType = (identifier) =
 
   useEffect(() => {
     if (consumption) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getElectricConsumption(identifier)).then(
         (action) =>
@@ -35,13 +36,14 @@ export const useElectricConsumption: UseElectricConsumptionType = (identifier) =
 };
 
 export const useElectricConsumptions = (
-  filters?: GetUtilitiesConsumptionsParamsType
+  filters?: GetUtilitiesConsumptionsParamsType | null
 ): ElectricConsumptionStateType => {
   const [ids, setIds] = useState<UtilitiesConsumptionType['id'][]>();
   const dispatch = useDispatch();
   const allElectricConsumptions = useSelector((state) => state.utilities.electric.consumption);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getElectricConsumptions(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

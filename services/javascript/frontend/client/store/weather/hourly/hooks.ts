@@ -8,8 +8,8 @@ import { getHourlyWeather, getHourlyWeatherByTimestamp, getHourlyWeathers } from
 import { HourlyWeatherStateType } from './types';
 
 type UseHourlyWeatherType = {
-  (id: HourlyWeatherType['id']): HourlyWeatherType | undefined;
-  (name: HourlyWeatherType['timestamp']): HourlyWeatherType | undefined;
+  (id?: HourlyWeatherType['id'] | null): HourlyWeatherType | undefined;
+  (timestamp?: HourlyWeatherType['timestamp'] | null): HourlyWeatherType | undefined;
 };
 
 export const useHourlyWeather: UseHourlyWeatherType = (identifier) => {
@@ -21,6 +21,7 @@ export const useHourlyWeather: UseHourlyWeatherType = (identifier) => {
 
   useEffect(() => {
     if (hourly) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getHourlyWeather(identifier)).then(
         (action) =>
@@ -42,13 +43,14 @@ export const useHourlyWeather: UseHourlyWeatherType = (identifier) => {
 };
 
 export const useHourlyWeathers = (
-  filters?: GetHourlyWeathersParamsType
+  filters?: GetHourlyWeathersParamsType | null
 ): HourlyWeatherStateType => {
   const [ids, setIds] = useState<HourlyWeatherType['id'][]>();
   const dispatch = useDispatch();
   const allHourlyWeathers = useSelector((state) => state.weather.hourly.hourly);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getHourlyWeathers(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&

@@ -18,7 +18,7 @@ import {
 import { MeasurementsStateType } from './types';
 
 type UseMeasurementType = {
-  (id: MeasurementType['id']): MeasurementType | undefined;
+  (id?: MeasurementType['id'] | null): MeasurementType | undefined;
 };
 
 export const useMeasurement: UseMeasurementType = (identifier) => {
@@ -32,6 +32,7 @@ export const useMeasurement: UseMeasurementType = (identifier) => {
 
   useEffect(() => {
     if (measurement) return;
+    if (identifier == null) return;
     if (typeof identifier === 'number')
       dispatch(getMeasurement(identifier)).then(
         (action) =>
@@ -41,15 +42,23 @@ export const useMeasurement: UseMeasurementType = (identifier) => {
       );
   }, [identifier]);
 
-  return { ...measurement, timestamp: measurement.timestamp && new Date(measurement.timestamp) };
+  return (
+    measurement && {
+      ...measurement,
+      timestamp: measurement.timestamp && new Date(measurement.timestamp),
+    }
+  );
 };
 
-export const useMeasurements = (filters?: GetMeasurementsParamsType): MeasurementsStateType => {
+export const useMeasurements = (
+  filters?: GetMeasurementsParamsType | null
+): MeasurementsStateType => {
   const [ids, setIds] = useState<MeasurementType['id'][]>();
   const dispatch = useDispatch();
   const allMeasurements = useSelector((state) => state.iot.measurements.measurements);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getMeasurements(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&
@@ -78,13 +87,14 @@ export const useMeasurements = (filters?: GetMeasurementsParamsType): Measuremen
 };
 
 export const useLatestMeasurements = (
-  filters?: GetLatestMeasurementsParamsType
+  filters?: GetLatestMeasurementsParamsType | null
 ): MeasurementsStateType => {
   const [keys, setKeys] = useState<string[]>();
   const dispatch = useDispatch();
   const allLatest = useSelector((state) => state.iot.measurements.latest);
 
   useEffect(() => {
+    if (filters == null) return;
     dispatch(getLatestMeasurements(filters)).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&
@@ -112,16 +122,17 @@ export const useLatestMeasurements = (
   return measurements;
 };
 export const useAverageMeasurements = (
-  locationId: MeasurementType['locationId'],
-  metricId: MeasurementType['metricId'],
-  tags: MeasurementType['tags'],
-  filters?: GetAverageMeasurementsParamsType
+  locationId?: MeasurementType['locationId'] | null,
+  metricId?: MeasurementType['metricId'] | null,
+  tags?: MeasurementType['tags'] | null,
+  filters?: GetAverageMeasurementsParamsType | null
 ): MeasurementsStateType => {
   const [keys, setKeys] = useState<string[]>();
   const dispatch = useDispatch();
   const allAverage = useSelector((state) => state.iot.measurements.averages);
 
   useEffect(() => {
+    if (locationId == null || metricId == null || tags == null || filters == null) return;
     dispatch(getAverageMeasurements({ ...filters, locationId, metricId, tags })).then(
       (action) =>
         action.meta.requestStatus === 'fulfilled' &&
