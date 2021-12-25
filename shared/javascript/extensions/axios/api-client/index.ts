@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-
+import qs from "qs";
 export class APIClient {
   host: string;
   port?: number | string;
@@ -21,6 +21,8 @@ export class APIClient {
     this.axiosInstance = axios.create({
       baseURL: this.httpBaseUrl,
       timeout: 1000,
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
     });
   }
 
