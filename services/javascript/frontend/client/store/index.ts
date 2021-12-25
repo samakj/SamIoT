@@ -13,29 +13,31 @@ import { CurrentWeatherSlice } from './weather/current/slice';
 import { DailyWeatherSlice } from './weather/daily/slice';
 import { HourlyWeatherSlice } from './weather/hourly/slice';
 
-export const store = configureStore({
-  reducer: {
-    theme: themeSlice.reducer,
-    iot: combineReducers({
-      devices: DevicesSlice.reducer,
-      locations: LocationsSlice.reducer,
-      measurements: MeasurementsSlice.reducer,
-      metrics: MetricsSlice.reducer,
-    }),
-    utilities: combineReducers({
-      gas: GasSlice.reducer,
-      electric: ElectricSlice.reducer,
-    }),
-    weather: combineReducers({
-      current: CurrentWeatherSlice.reducer,
-      hourly: HourlyWeatherSlice.reducer,
-      daily: DailyWeatherSlice.reducer,
-    }),
-  },
-});
+export const createStore = <S>(preloadedState: S) =>
+  configureStore({
+    reducer: {
+      theme: themeSlice.reducer,
+      iot: combineReducers({
+        devices: DevicesSlice.reducer,
+        locations: LocationsSlice.reducer,
+        measurements: MeasurementsSlice.reducer,
+        metrics: MetricsSlice.reducer,
+      }),
+      utilities: combineReducers({
+        gas: GasSlice.reducer,
+        electric: ElectricSlice.reducer,
+      }),
+      weather: combineReducers({
+        current: CurrentWeatherSlice.reducer,
+        hourly: HourlyWeatherSlice.reducer,
+        daily: DailyWeatherSlice.reducer,
+      }),
+    },
+    preloadedState,
+  });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type Dispatch = typeof store.dispatch;
+export type RootState = ReturnType<ReturnType<typeof createStore>['getState']>;
+export type Dispatch = ReturnType<typeof createStore>['dispatch'];
 export const useDispatch = () => _useDispatch<Dispatch>();
 export const useSelector = <Selected = unknown>(
   selector: (state: RootState) => Selected,

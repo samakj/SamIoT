@@ -11,6 +11,7 @@
   </head>
   <body>
     <div id="root"><%- component %></div>
+    <script>window.__PRELOADED_STATE__ = <%- preloadedState %></script>
     <script defer="defer" src="<%= assets["client.js"] %>"></script>
   </body>
 </html>

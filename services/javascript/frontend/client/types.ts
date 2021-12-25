@@ -1,5 +1,8 @@
 /** @format */
 
+import { DeepPartial } from 'redux';
+import { RootState } from './store';
+
 export interface ServerRoutingPropsType {
   ssr: boolean;
   url: string;
@@ -14,3 +17,9 @@ export const isServerRoutingPropsType = (
 export type RoutingPropsType = {} | ServerRoutingPropsType;
 
 export type AppPropsType = RoutingPropsType;
+
+declare global {
+  interface Window {
+    __PRELOADED_STATE__?: DeepPartial<RootState>;
+  }
+}

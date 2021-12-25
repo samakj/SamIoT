@@ -1,8 +1,7 @@
 /** @format */
 
 import React from 'react';
-import { store } from 'client/store';
-import { Provider, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { RootState } from 'client/store';
 import { GlobalStyle } from 'client/style';
@@ -32,16 +31,14 @@ export const Router = (props: React.PropsWithChildren<RoutingPropsType>) =>
 export const App = (props: AppPropsType) => {
   return (
     <>
-      <Provider store={store}>
-        <ThemeWrapper>
-          <Router {...props}>
-            <Routes>
-              {OverviewRoute}
-              {WeatherRoute}
-            </Routes>
-          </Router>
-        </ThemeWrapper>
-      </Provider>
+      <ThemeWrapper>
+        <Router {...props}>
+          <Routes>
+            {OverviewRoute}
+            {WeatherRoute}
+          </Routes>
+        </Router>
+      </ThemeWrapper>
     </>
   );
 };
