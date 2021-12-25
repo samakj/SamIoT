@@ -10,6 +10,7 @@ import { TemperatureSummaryCardPropsType } from './types';
 import { useLatestMeasurements } from 'client/store/iot/measurements/hooks';
 import { transparentize } from 'polished';
 import { LocationType } from 'shared/javascript/types/iot';
+import { DAY_IN_MS, HOUR_IN_MS, MINUTE_IN_MS, SECOND_IN_MS } from 'shared/javascript/static/times';
 import { Camera, Tv, Book, Tag } from 'react-feather';
 
 const HeaderContainer = styled.div`
@@ -52,6 +53,12 @@ const TemperatureGrid = styled.div`
     text-transform: capitalize;
     margin: 0;
   }
+`;
+
+const TimestampElement = styled.div`
+  font-size: 0.875rem;
+  opacity: 0.6;
+  text-transform: none;
 `;
 
 const ICON_MAP = {
@@ -108,6 +115,28 @@ export const TemperatureSummaryCard = ({ locations, metrics }: TemperatureSummar
     [latestTemperatures, metrics, temperatureMetricId]
   );
 
+  const getLocationLatestTimestamp = useCallback(
+    (locationId: LocationType['id']) => {
+      if (latestTemperatures == null) return '...';
+
+      const timestamp = Object.values(latestTemperatures).find(
+        (measurement) => measurement.locationId === locationId
+      )?.timestamp;
+
+      if (timestamp == null) return undefined;
+
+      const dt = +new Date() - +timestamp;
+      let content = `Last change ${Math.ceil(dt / DAY_IN_MS)}h ago`;
+      if (dt <= MINUTE_IN_MS - SECOND_IN_MS)
+        content = `Last change ${Math.ceil(dt / SECOND_IN_MS)}s ago`;
+      if (dt <= HOUR_IN_MS - MINUTE_IN_MS)
+        content = `Last change ${Math.ceil(dt / MINUTE_IN_MS)}m ago`;
+      if (dt <= DAY_IN_MS - HOUR_IN_MS) content = `Last change ${Math.ceil(dt / HOUR_IN_MS)}h ago`;
+      return <TimestampElement title={timestamp.toISOString()}>{content}</TimestampElement>;
+    },
+    [latestTemperatures]
+  );
+
   return (
     <Card>
       <HeaderContainer>
@@ -130,7 +159,10 @@ export const TemperatureSummaryCard = ({ locations, metrics }: TemperatureSummar
                 backgroundOpacity={0.05}
               />
               <H3>{getLocationLatestTemperature(locationId)}</H3>
-              <p>{locations[locationId]?.name?.replace('-', ' ')}</p>
+              <p>
+                {locations[locationId]?.name?.replace('-', ' ')}
+                {getLocationLatestTimestamp(locationId)}
+              </p>
             </TemperatureGrid>
           ))}
       </ContentContainer>
