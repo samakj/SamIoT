@@ -278,8 +278,9 @@ class MeasurementsAverageV0View(PydanticView):
                 "Measurement store not initialised before querying data."
             )
 
-        _end = end or datetime.utcnow().replace(minute=0, second=0, microsecond=0)
-        _start = start or (_end - timedelta(days=1))
+        _end = end or datetime.utcnow().replace(
+            minute=0, second=0, microsecond=0, tzinfo=None)
+        _start = (start or (_end - timedelta(days=1))).replace(tzinfo=None)
         _period = timedelta(seconds=period or 3600)
 
         cache = CachedJSONResponse(
