@@ -9,6 +9,7 @@ import { Route } from 'react-router-dom';
 import { TemperatureSummaryCard } from 'client/components/cards/temperature-summary';
 import { useLocations } from 'client/store/iot/locations/hooks';
 import { useMetrics } from 'client/store/iot/metrics/hooks';
+import { BoilerSummaryCard } from 'client/components/cards/boiler-summary';
 
 const ALL_LOCATIONS_FILTERS = {};
 const ALL_METRICS_FILTERS = {};
@@ -21,10 +22,7 @@ const Overview = () => {
     <ContentGrid>
       <HeaderBar title="Overview" />
       <TemperatureSummaryCard locations={locations} metrics={metrics} />
-      <Card>
-        <H2>Normal Card</H2>
-        <p>This is a test card with some content.</p>
-      </Card>
+      <BoilerSummaryCard locations={locations} metrics={metrics} />
       <SmallCard>
         <H2>Small Card</H2>
         <p>This is a test card with some content.</p>

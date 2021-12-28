@@ -11,7 +11,8 @@ import { useLatestMeasurements } from 'client/store/iot/measurements/hooks';
 import { transparentize } from 'polished';
 import { LocationType } from 'shared/javascript/types/iot';
 import { DAY_IN_MS, HOUR_IN_MS, MINUTE_IN_MS, SECOND_IN_MS } from 'shared/javascript/static/times';
-import { Camera, Tv, Book, Tag } from 'react-feather';
+import { Camera, Tv, Book } from 'react-feather';
+import { mdiBedDoubleOutline } from '@mdi/js';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -64,7 +65,7 @@ const TimestampElement = styled.div`
 const ICON_MAP = {
   'camera-room': Camera,
   'living-room': Tv,
-  'master-bedroom': Tag,
+  'master-bedroom': mdiBedDoubleOutline,
   study: Book,
 };
 
