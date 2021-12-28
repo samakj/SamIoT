@@ -58,11 +58,15 @@ export const getAverageMeasurements = createAsyncThunk(
       tags: MeasurementType['tags'];
     }
   ) => {
+    const _filters: GetAverageMeasurementsParamsType = { ...filters };
+
+    if (filters.period) _filters.period = filters.period / 1000;
+
     const response = await IoTClient.measurements.getAverageMeasurements(
       filters.locationId,
       filters.metricId,
       filters.tags,
-      filters
+      _filters
     );
     return response.data.map((apiAverage) => {
       const average = IoTClient.measurements.toMeasurementAverageType(apiAverage);
