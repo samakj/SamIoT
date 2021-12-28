@@ -11,7 +11,7 @@ export interface IconButtonContainerPropsType {
 }
 
 export interface IconButtonPropsType extends StyleProps {
-  Icon: Icon;
+  Icon: Icon | string;
   colour: string;
   size?: number;
   backgroundColour?: string;

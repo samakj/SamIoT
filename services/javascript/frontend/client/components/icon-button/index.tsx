@@ -4,6 +4,7 @@ import { transparentize } from 'polished';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { IconButtonContainerPropsType, IconButtonPropsType } from './types';
+import { Icon as MDIcon } from '@mdi/react';
 
 export const IconButtonContainer = styled.div<IconButtonContainerPropsType>`
   height: ${({ size }) => size.toFixed(3)}rem;
@@ -45,7 +46,11 @@ export const IconButton = ({
     backgroundOpacity={backgroundOpacity}
     {...rest}
   >
-    <Icon color={colour} size={`${(size / 2).toFixed(3)}rem`} />
+    {typeof Icon === 'string' ? (
+      <MDIcon path={Icon} color={colour} size={`${(size / 2).toFixed(3)}rem`} />
+    ) : (
+      <Icon color={colour} size={`${(size / 2).toFixed(3)}rem`} />
+    )}
   </IconButtonContainer>
 );
 
