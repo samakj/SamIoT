@@ -56,7 +56,8 @@ const TemperatureGrid = styled.div`
   }
 `;
 
-const TimestampElement = styled.div`
+const TimestampElement = styled.span`
+  display: block;
   font-size: 0.875rem;
   opacity: 0.6;
   text-transform: none;
@@ -127,7 +128,7 @@ export const TemperatureSummaryCard = ({ locations, metrics }: TemperatureSummar
       if (timestamp == null) return undefined;
 
       const dt = +new Date() - +timestamp;
-      let content = `Last change ${Math.ceil(dt / DAY_IN_MS)}h ago`;
+      let content = `Last change ${Math.ceil(dt / DAY_IN_MS)}d ago`;
       if (dt <= MINUTE_IN_MS - SECOND_IN_MS)
         content = `Last change ${Math.ceil(dt / SECOND_IN_MS)}s ago`;
       if (dt <= HOUR_IN_MS - MINUTE_IN_MS)

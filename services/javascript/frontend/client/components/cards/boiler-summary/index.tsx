@@ -12,6 +12,7 @@ import { transparentize } from 'polished';
 import { LocationType } from 'shared/javascript/types/iot';
 import { DAY_IN_MS, HOUR_IN_MS, MINUTE_IN_MS, SECOND_IN_MS } from 'shared/javascript/static/times';
 import { mdiCampfire, mdiFire, mdiWaterOutline } from '@mdi/js';
+import { TankTemperatureGraph } from './graph';
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -55,7 +56,12 @@ const BoilerGrid = styled.div`
   }
 `;
 
-const TimestampElement = styled.div`
+const BoilerStateHeader = styled(H3)<{ state: boolean }>`
+  color: ${({ state, theme }) => (state ? theme.colours.success : undefined)};
+`;
+
+const TimestampElement = styled.span`
+  display: block;
   font-size: 0.875rem;
   opacity: 0.6;
   text-transform: none;
@@ -67,6 +73,8 @@ const TemperatureGraphContainer = styled.div`
   grid-template-columns: 1fr auto;
   grid-template-areas: 'graph latest';
   grid-column: 1/-1;
+  grid-gap: 2rem;
+  margin: 0 -1rem -2.5rem -2.5rem;
   align-items: center;
 `;
 
@@ -113,30 +121,36 @@ export const BoilerSummaryCard = ({ locations, metrics }: HeatingSummaryCardProp
     () => (temperatureMetricId ? { metric_id: temperatureMetricId, tags: ['tank'] } : undefined),
     [temperatureMetricId]
   );
-  const tankTemperatureAverageFilters = useMemo(() => {
-    if (!temperatureMetricId) return undefined;
-    const period = 5 * MINUTE_IN_MS;
-    const end = new Date(Math.floor(+new Date() / period) * period);
-    const start = new Date(+end - 1.5 * HOUR_IN_MS);
 
-    return {
-      location_id: babyRoomLocationId,
-      metric_id: temperatureMetricId,
-      tags: ['tank'],
-      start,
-      end,
-      period,
-    };
-  }, [temperatureMetricId, babyRoomLocationId]);
+  const heatingLatestState = useLatestMeasurements(heatingStateFilters);
+  const hotWaterLatestState = useLatestMeasurements(hotWaterStateFilters);
+  const tankTemperatureLatestState = useLatestMeasurements(tankTemperatureFilters);
 
-  const heatingState = useLatestMeasurements(heatingStateFilters);
-  const hotWaterState = useLatestMeasurements(hotWaterStateFilters);
-  const tankTemperatureLatest = useLatestMeasurements(tankTemperatureFilters);
-  const tankTemperatureAverages = useAverageMeasurements(
-    tankTemperatureAverageFilters?.location_id,
-    tankTemperatureAverageFilters?.metric_id,
-    tankTemperatureAverageFilters?.tags,
-    tankTemperatureAverageFilters
+  const tankTemperatureLatest = useMemo(
+    () =>
+      (tankTemperatureLatestState &&
+        Object.values(tankTemperatureLatestState).length === 1 &&
+        Object.values(tankTemperatureLatestState)[0]) ||
+      undefined,
+    [tankTemperatureLatestState]
+  );
+
+  const hotWaterLatest = useMemo(
+    () =>
+      (hotWaterLatestState &&
+        Object.values(hotWaterLatestState).length === 1 &&
+        Object.values(hotWaterLatestState)[0]) ||
+      undefined,
+    [hotWaterLatestState]
+  );
+
+  const heatingLatest = useMemo(
+    () =>
+      (heatingLatestState &&
+        Object.values(heatingLatestState).length === 1 &&
+        Object.values(heatingLatestState)[0]) ||
+      undefined,
+    [heatingLatestState]
   );
 
   const getTimeDelta = useCallback((date?: Date) => {
@@ -148,8 +162,6 @@ export const BoilerSummaryCard = ({ locations, metrics }: HeatingSummaryCardProp
     if (dt <= DAY_IN_MS - HOUR_IN_MS) content = `${Math.ceil(dt / HOUR_IN_MS)}h`;
     return <TimestampElement title={date.toISOString()}>{content}</TimestampElement>;
   }, []);
-
-  console.log(tankTemperatureLatest);
 
   return (
     <Card>
@@ -166,39 +178,57 @@ export const BoilerSummaryCard = ({ locations, metrics }: HeatingSummaryCardProp
         <BoilerGrid>
           <IconButton
             Icon={ICON_MAP['heating']}
-            colour={theme.colours.foreground}
+            colour={heatingLatest?.value ? theme.colours.red : theme.colours.foreground}
             size={3}
             backgroundOpacity={0.05}
           />
-          <H3>ON</H3>
+          <BoilerStateHeader state={heatingLatest?.value}>
+            {heatingLatest?.value ? 'ON' : 'OFF'}
+          </BoilerStateHeader>
           <p>
             Heating
-            <TimestampElement>Since 9:02</TimestampElement>
+            <TimestampElement>
+              Since{' '}
+              {heatingLatest?.timestamp?.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }) || '--:--'}
+            </TimestampElement>
           </p>
         </BoilerGrid>
         <BoilerGrid>
           <IconButton
             Icon={ICON_MAP['hot-water']}
-            colour={theme.colours.foreground}
+            colour={hotWaterLatest?.value ? theme.colours.blue : theme.colours.foreground}
             size={3}
             backgroundOpacity={0.05}
           />
-          <H3>ON</H3>
+          <BoilerStateHeader state={hotWaterLatest?.value}>
+            {hotWaterLatest?.value ? 'ON' : 'OFF'}
+          </BoilerStateHeader>
           <p>
             Hot Water
-            <TimestampElement>Since 9:02</TimestampElement>
+            <TimestampElement>
+              Since{' '}
+              {hotWaterLatest?.timestamp?.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }) || '--:--'}
+            </TimestampElement>
           </p>
         </BoilerGrid>
         <TemperatureGraphContainer>
-          <div />
+          <TankTemperatureGraph
+            locations={locations}
+            metrics={metrics}
+            latest={tankTemperatureLatest}
+          />
           <h2>
-            {(tankTemperatureLatest &&
-              Object.values(tankTemperatureLatest)[0]?.value?.toFixed(1)) ||
-              '--.-'}
+            {tankTemperatureLatest?.value?.toFixed(1) || '--.-'}
             {metrics?.[temperatureMetricId]?.unit}
-            {getTimeDelta(
-              tankTemperatureLatest && Object.values(tankTemperatureLatest)[0]?.timestamp
-            )}
+            {getTimeDelta(tankTemperatureLatest?.timestamp)}
           </h2>
         </TemperatureGraphContainer>
       </ContentContainer>

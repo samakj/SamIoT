@@ -44,6 +44,15 @@
     "@mdi/js": "^6.5.95",
     "@mdi/react": "^1.5.0",
     "@reduxjs/toolkit": "^1.7.1",
+    "@visx/axis": "^2.4.0",
+    "@visx/event": "^2.1.2",
+    "@visx/gradient": "^2.1.0",
+    "@visx/grid": "^2.4.0",
+    "@visx/group": "^2.1.0",
+    "@visx/responsive": "^2.4.1",
+    "@visx/scale": "^2.2.2",
+    "@visx/shape": "^2.4.0",
+    "@visx/tooltip": "^2.2.2",
     "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
@@ -55,6 +64,7 @@
     "react-redux": "^7.2.6",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
+    "react-use": "^17.3.1",
     "styled-components": "^5.3.3",
     "universal-cookie": "^4.0.4"
   }
