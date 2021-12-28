@@ -10,7 +10,7 @@ import { useMeasure } from 'react-use';
 import styled from 'styled-components';
 import { Group } from '@visx/group';
 import { AreaClosed, Circle, Line, LinePath } from '@visx/shape';
-import { curveCardinal } from '@visx/curve';
+import { curveMonotoneX } from '@visx/curve';
 import { TooltipWithBounds, useTooltip, defaultStyles } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { Text } from '@visx/text';
@@ -32,6 +32,8 @@ const GraphSVG = styled.svg`
 
 const bisectDate = bisector<MeasurementAverageType, Date>((point) => new Date(point.start)).left;
 
+const TOOLTIP_TRANSITION = '100ms';
+
 export const TankTemperatureGraph = ({
   locations,
   metrics,
@@ -45,6 +47,7 @@ export const TankTemperatureGraph = ({
     ...defaultStyles,
     backgroundColor: theme.colours.background,
     color: theme.colours.foreground,
+    transition: TOOLTIP_TRANSITION,
   });
   const { tooltipData, showTooltip, hideTooltip } = useTooltip<MeasurementAverageType>();
 
@@ -85,15 +88,18 @@ export const TankTemperatureGraph = ({
   const sortedTankTemperatureAverages = useMemo(() => {
     if (!tankTemperatureAverages || !latest) return [];
     const averages = Object.values(tankTemperatureAverages);
-    return averages.sort((measurementA, measurementB) => {
-      if (measurementA.timestamp > measurementB.timestamp) return 1;
-      if (measurementA.timestamp < measurementB.timestamp) return -1;
-      return 0;
-    });
+    return [
+      ...averages.sort((measurementA, measurementB) => {
+        if (measurementA.timestamp > measurementB.timestamp) return 1;
+        if (measurementA.timestamp < measurementB.timestamp) return -1;
+        return 0;
+      }),
+      { start: new Date(), average: latest.value },
+    ];
   }, [tankTemperatureAverages, latest]);
 
-  const getDate = useCallback((average: MeasurementAverageType) => average.start, []);
-  const getValue = useCallback((average: MeasurementAverageType) => new Date(average.average), []);
+  const getDate = useCallback((average: MeasurementAverageType) => new Date(average.start), []);
+  const getValue = useCallback((average: MeasurementAverageType) => average.average, []);
 
   const domain = useMemo(
     () =>
@@ -127,7 +133,12 @@ export const TankTemperatureGraph = ({
     [domain, margin]
   );
   const temperatureScale = useMemo(
-    () => scaleLinear({ domain: domain.temperature, range: [range.bottom, range.top] }),
+    () =>
+      scaleLinear({
+        domain: domain.temperature,
+        range: [range.bottom - 24, range.top + 16],
+        nice: true,
+      }),
     [domain, margin]
   );
 
@@ -166,71 +177,80 @@ export const TankTemperatureGraph = ({
           toOpacity={0}
           toOffset={0.9}
         />
-        <Group>
-          <Group>
-            {sortedTankTemperatureAverages.length && (
-              <>
-                <AreaClosed<MeasurementAverageType>
-                  data={sortedTankTemperatureAverages}
-                  x={(point) => timestampScale(getDate(point))}
-                  y={(point) => temperatureScale(getValue(point))}
-                  yScale={temperatureScale}
-                  curve={curveCardinal}
-                  fill="url(#gradient)"
-                />
-                <LinePath<MeasurementAverageType>
-                  data={sortedTankTemperatureAverages}
-                  x={(point) => timestampScale(getDate(point))}
-                  y={(point) => temperatureScale(getValue(point))}
-                  curve={curveCardinal}
-                  stroke={theme.colours.foreground}
-                  strokeWidth={2}
-                />
-              </>
-            )}
-          </Group>
-          {tooltipData && (
-            <Group>
-              <Line
-                from={{ x: timestampScale(tooltipData.start), y: range.top }}
-                to={{ x: timestampScale(tooltipData.start), y: range.bottom - 16 }}
-                stroke={transparentize(0.8, theme.colours.foreground)}
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                pointerEvents="none"
-              />
-              <Circle
-                cx={timestampScale(tooltipData.start)}
-                cy={temperatureScale(tooltipData.average)}
-                r={4}
-                fill={theme.colours.foreground}
-                pointerEvents="none"
-              />
-              <Text
-                x={
+        {sortedTankTemperatureAverages.length && (
+          <>
+            <AreaClosed<MeasurementAverageType>
+              data={sortedTankTemperatureAverages}
+              x={(point) => timestampScale(getDate(point))}
+              y={(point) => temperatureScale(getValue(point))}
+              yScale={temperatureScale}
+              curve={curveMonotoneX}
+              fill="url(#gradient)"
+            />
+            <LinePath<MeasurementAverageType>
+              data={sortedTankTemperatureAverages}
+              x={(point) => timestampScale(getDate(point))}
+              y={(point) => temperatureScale(getValue(point))}
+              curve={curveMonotoneX}
+              stroke={theme.colours.foreground}
+              strokeWidth={2}
+            />
+          </>
+        )}
+        {tooltipData && (
+          <>
+            <Line
+              from={{ x: 0, y: range.top }}
+              to={{ x: 0, y: range.bottom - 16 }}
+              stroke={transparentize(0.8, theme.colours.foreground)}
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              pointerEvents="none"
+              style={{
+                transition: TOOLTIP_TRANSITION,
+                transform: `translateX(${timestampScale(tooltipData.start)}px)`,
+              }}
+            />
+            <Circle
+              cx={0}
+              cy={0}
+              r={4}
+              fill={theme.colours.foreground}
+              pointerEvents="none"
+              style={{
+                transition: TOOLTIP_TRANSITION,
+                transform: `translate(${timestampScale(tooltipData.start)}px, ${temperatureScale(
+                  tooltipData.average
+                )}px)`,
+              }}
+            />
+            <Text
+              x={0}
+              y={range.bottom - 2}
+              fill={theme.colours.foreground}
+              textAnchor="middle"
+              verticalAnchor="end"
+              pointerEvents="none"
+              style={{
+                transition: TOOLTIP_TRANSITION,
+                transform: `translateX(${
                   timestampScale(tooltipData.start) +
                   (tooltipData.start === sortedTankTemperatureAverages[0]?.start ? 16 : 0)
-                }
-                y={range.bottom - 2}
-                fill={theme.colours.foreground}
-                textAnchor="middle"
-                verticalAnchor="end"
-                pointerEvents="none"
-              >
-                {tooltipData?.start?.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                })}
-              </Text>
-            </Group>
-          )}
-        </Group>
+                }px)`,
+              }}
+            >
+              {tooltipData?.start?.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })}
+            </Text>
+          </>
+        )}
       </GraphSVG>
       {tooltipData && (
         <>
           <TooltipWithBounds
-            key={Math.random()}
             top={temperatureScale(tooltipData.average) - 24}
             left={timestampScale(tooltipData.start)}
             style={tooltipStyles}
