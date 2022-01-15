@@ -125,12 +125,12 @@ export const TankTemperatureGraph = ({
       right: width - margin.right,
       bottom: height - margin.bottom,
     }),
-    [height, width]
+    [height, width, margin]
   );
 
   const timestampScale = useMemo(
     () => scaleTime({ domain: domain.timestamp, range: [range.left, range.right - 24] }),
-    [domain, margin]
+    [domain, range]
   );
   const temperatureScale = useMemo(
     () =>
@@ -139,7 +139,7 @@ export const TankTemperatureGraph = ({
         range: [range.bottom - 24, range.top + 16],
         nice: true,
       }),
-    [domain, margin]
+    [domain, range]
   );
 
   const onPointerMove = (event: React.PointerEvent<SVGElement>) => {
@@ -201,7 +201,7 @@ export const TankTemperatureGraph = ({
           <>
             <Line
               from={{ x: 0, y: range.top }}
-              to={{ x: 0, y: range.bottom - 16 }}
+              to={{ x: 0, y: range.bottom - 20 }}
               stroke={transparentize(0.8, theme.colours.foreground)}
               strokeWidth={2}
               strokeDasharray="5 5"
@@ -226,7 +226,7 @@ export const TankTemperatureGraph = ({
             />
             <Text
               x={0}
-              y={range.bottom - 2}
+              y={range.bottom - 8}
               fill={theme.colours.foreground}
               textAnchor="middle"
               verticalAnchor="end"
