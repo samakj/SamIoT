@@ -22,6 +22,9 @@ __pycache__/
 /**/*.srl
 /**/*.csr
 
+# VSCode
+/**/.vscode
+
 # Shared Folder
 /services/**/shared
 /shared/**/shared

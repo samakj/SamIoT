@@ -3,6 +3,7 @@
 source ./env.sh
 
 root=$(pwd)
+devices="$root/devices"
 services="$root/services"
 javascript="$services/javascript"
 postgres="$services/postgres"
@@ -227,4 +228,24 @@ LOCATION_LONGITUDE="$LOCATION_LONGITUDE"
 
 OWM_API_KEY="$OWM_API_KEY"
 EOF
-cp "$weather/scraper/.env" "$weather/scraper/env.sh"
+
+cp "$devices/.env" "$devices/env.sh"
+echo "Writing devices env files."
+cat > "$devices/.env" <<- EOF
+# Wifi
+
+PATTY_SSID="$PATTY_SSID"
+PATTY_PASS="$PATTY_PASS"
+SELMA_SSID="$SELMA_SSID"
+SELMA_PASS="$SELMA_PASS"
+VALE_SSID="$VALE_SSID"
+VALE_PASS="$VALE_PASS"
+
+# Devices
+
+SOLAR_CONTROLLER_IP_LOCATION=$SOLAR_CONTROLLER_IP_LOCATION
+SOLAR_CONTROLLER_HOSTNAME="$SOLAR_CONTROLLER_HOSTNAME"
+SOLAR_CONTROLLER_LOCATION="$SOLAR_CONTROLLER_LOCATION"
+SOLAR_CONTROLLER_OTA_PASS="$SOLAR_CONTROLLER_OTA_PASS"
+EOF
+cp "$devices/.env" "$devices/env.sh"

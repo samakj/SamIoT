@@ -1,0 +1,8 @@
+# PlatformIO
+.pio
+
+# config files
+config.h
+
+# Linked libs
+/**/lib/
