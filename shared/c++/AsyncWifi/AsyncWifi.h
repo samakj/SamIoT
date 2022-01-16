@@ -38,7 +38,7 @@ class AsyncWifiClass {
 
         std::string ssid = SSID_NULL_VALUE;
         float strength = STRENGTH_NULL_VALUE;
-        int strengthUpdatePeriod = 1;
+        int strengthUpdatePeriod = 10;
         std::vector<ConnectCallback> connectCallbacks;
         std::vector<SsidCallback> ssidCallbacks;
         std::vector<StrengthCallback> strengthCallbacks;
