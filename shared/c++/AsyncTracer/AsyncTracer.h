@@ -180,6 +180,9 @@ class AsyncTracer
         void checkRemoteBatteryTemperature();
         void checkSystemVoltage();
 
+        void preTransmission();
+        void postTransmission();
+
 };
 
 #endif

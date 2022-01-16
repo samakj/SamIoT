@@ -108,6 +108,10 @@ void AsyncTracer::setSystemVoltageCallback(
 
 void AsyncTracer::setup()
 {
+    pinMode(re, OUTPUT);
+    pinMode(de, OUTPUT);
+    postTransmission();
+
     client = new ModbusMaster();
     client->begin(address, *serial);
     Log.infof(
@@ -143,7 +147,9 @@ void AsyncTracer::loop()
 
 boolean AsyncTracer::getCoil(uint16_t address, boolean defaultValue)
 {
+    preTransmission();
     uint8_t response = client->readCoils(address, 1);
+    postTransmission();
 
     if (response == client->ku8MBSuccess)
     {
@@ -155,7 +161,9 @@ boolean AsyncTracer::getCoil(uint16_t address, boolean defaultValue)
 
 float AsyncTracer::get8BitRegister(uint16_t address, float multiplier, float defaultValue)
 {
+    preTransmission();
     uint8_t response = client->readInputRegisters(address, 1);
+    postTransmission();
 
     if (response == client->ku8MBSuccess)
     {
@@ -167,7 +175,9 @@ float AsyncTracer::get8BitRegister(uint16_t address, float multiplier, float def
 
 float AsyncTracer::get16BitRegister(uint16_t address, float multiplier, float defaultValue)
 {
+    preTransmission();
     uint8_t response = client->readInputRegisters(address, 2);
+    postTransmission();
 
     if (response == client->ku8MBSuccess)
     {
@@ -344,3 +354,15 @@ void AsyncTracer::checkSystemVoltage()
         if (systemVoltageCallback != nullptr) systemVoltageCallback(systemVoltage);
     }
 };
+
+void AsyncTracer::preTransmission()
+{
+  digitalWrite(re, HIGH);
+  digitalWrite(de, HIGH);
+}
+
+void AsyncTracer::postTransmission()
+{
+  digitalWrite(re, LOW);
+  digitalWrite(de, LOW);
+}
