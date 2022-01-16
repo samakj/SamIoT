@@ -9,7 +9,6 @@
 
 #include <Log.h>
 #include <TimeUtils.h>
-#include <ValuePurgatory.h>
 
 
 class AsyncDHT
@@ -30,15 +29,12 @@ class AsyncDHT
     
         TemperatureCallback temperatureCallback = nullptr;
         HumidityCallback humidityCallback = nullptr;
-        
+
         int readPeriod = 2000;
         int lastReadMillis = 0;
         int readCount = 0;
         
     private:
-        ValuePurgatory<float>* _temperaturePurgatory = nullptr;
-        ValuePurgatory<float>* _humidityPurgatory = nullptr;
-
         int _runInLogNo = 0;
         
     public:

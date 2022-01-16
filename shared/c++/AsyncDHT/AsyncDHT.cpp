@@ -29,30 +29,6 @@ void AsyncDHT::setHumidityCallback(
 
 void AsyncDHT::setup()
 {
-    _temperaturePurgatory = new ValuePurgatory<float>(
-        TEMPERATURE_NULL_VALUE,
-        TEMPERATURE_NULL_VALUE,
-        10,
-        0,
-        10,
-        0.25,
-        [this](float newValue, float oldValue){
-            if (temperatureCallback != nullptr) temperatureCallback(newValue);
-            temperature = newValue;
-        }
-    );
-    _humidityPurgatory = new ValuePurgatory<float>(
-        HUMIDITY_NULL_VALUE,
-        HUMIDITY_NULL_VALUE,
-        10,
-        0,
-        10,
-        0.5,
-        [this](float newValue, float oldValue){
-            if (humidityCallback != nullptr) humidityCallback(newValue);
-            humidity = newValue;
-        }
-    );
     client = new DHT(pinNo, type);
     client->begin();     
     Log.infof("DHT sensor initialised on pin %d\n", pinNo);
@@ -76,14 +52,8 @@ void AsyncDHT::checkTemperature()
     
     if (!isnan(newTemperature)) 
     {
-        if (_temperaturePurgatory->isRunningIn() && !(readCount % 5))
-        {
-            Log.debugf(
-                "DHT sensor running in, %s remaining...\n",
-                _temperaturePurgatory->runInInfo().c_str()
-            );
-        }
-        _temperaturePurgatory->addValue(newTemperature);
+        temperature = newTemperature;
+        if (temperatureCallback != nullptr) temperatureCallback(temperature);
     }
 };
 
@@ -93,6 +63,7 @@ void AsyncDHT::checkHumidity()
 
     if (!isnan(newHumidity)) 
     {
-        _humidityPurgatory->addValue(newHumidity);
+        humidity = newHumidity;
+        if (humidityCallback != nullptr) humidityCallback(humidity);
     }
 }
