@@ -56,7 +56,6 @@ void LogClass::log(int _level, const char* message, const char* start, const cha
             end,
             "\033[00m"
         );
-        #ifdef _TELNETSTREAM_H_
         if (TelnetStream.available())
         {
             TelnetStream.printf(
@@ -68,9 +67,8 @@ void LogClass::log(int _level, const char* message, const char* start, const cha
                 message,
                 end,
                 "\033[00m"
-            )
+            );
         }
-        #endif
     }
 };
 

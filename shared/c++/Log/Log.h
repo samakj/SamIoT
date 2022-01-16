@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <algorithm>
 #include <string>
+#include <TelnetStream.h>
 
 #include <TimeUtils.h>
 
