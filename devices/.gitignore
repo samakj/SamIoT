@@ -3,6 +3,7 @@
 
 # config files
 config.h
+platformio.ini
 
 # Linked libs
 /**/lib/
