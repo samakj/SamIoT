@@ -97,7 +97,8 @@ float AsyncWifiClass::getConnectedNetworkStrength()
         float _strength = (255 + WiFi.RSSI()) / 255.0f;
         if (_strength != strength)
         {
-            _strengthPurgatory->addValue(_strength);
+            strength = _strength;
+            for (StrengthCallback callback : strengthCallbacks) callback(strength);
         }
         _lastStrengthUpdate = millis();
     }
@@ -222,18 +223,6 @@ void AsyncWifiClass::_connect(
 {
     strength = STRENGTH_NULL_VALUE;
     ssid = SSID_NULL_VALUE;
-    _strengthPurgatory = new ValuePurgatory<float>(
-        STRENGTH_NULL_VALUE,
-        STRENGTH_NULL_VALUE,
-        0,
-        0,
-        10,
-        0.005,
-        [this](float newValue, float oldValue){
-            for (StrengthCallback callback : strengthCallbacks) callback(strength);
-            strength = newValue;
-        }
-    );
 
     int start = millis();
     int loop = 0;

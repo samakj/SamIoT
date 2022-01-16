@@ -13,7 +13,6 @@
 
 #include <Log.h>
 #include <TimeUtils.h>
-#include <ValuePurgatory.h>
 
 static std::string SSID_NULL_VALUE = "";
 static float STRENGTH_NULL_VALUE = -1.0f;
@@ -46,7 +45,6 @@ class AsyncWifiClass {
 
     private:
         unsigned long _lastStrengthUpdate = 0;
-        ValuePurgatory<float>* _strengthPurgatory = nullptr;
     
     public:
         AsyncWifiClass (const AsyncWifiClass&) = delete;
