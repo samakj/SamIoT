@@ -50,7 +50,7 @@ void AsyncDHT::checkTemperature()
 {
     float newTemperature = client->readTemperature();
     
-    if (!isnan(newTemperature)) 
+    if (!isnan(newTemperature) && abs(newTemperature - temperature) > 0.15) 
     {
         temperature = newTemperature;
         if (temperatureCallback != nullptr) temperatureCallback(temperature);
@@ -61,7 +61,7 @@ void AsyncDHT::checkHumidity()
 {
     float newHumidity = client->readHumidity();
 
-    if (!isnan(newHumidity)) 
+    if (!isnan(newHumidity) && abs(newHumidity - humidity) > 0.25) 
     {
         humidity = newHumidity;
         if (humidityCallback != nullptr) humidityCallback(humidity);
