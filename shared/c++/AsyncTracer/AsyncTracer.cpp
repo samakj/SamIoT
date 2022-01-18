@@ -2,16 +2,12 @@
 
 AsyncTracer::AsyncTracer(
     HardwareSerial* _serial,
-    uint8_t _ro,
-    uint8_t _re,
-    uint8_t _de,
-    uint8_t _di,
+    uint8_t _tx,
+    uint8_t _rx,
     uint8_t _address
 ) : serial(_serial),
-    ro(_ro),
-    re(_re),
-    de(_de),
-    di(_di),
+    tx(_tx),
+    rx(_rx),
     address(_address)
 {}
 
@@ -106,12 +102,8 @@ void AsyncTracer::setSystemVoltageCallback(
     systemVoltageCallback = _systemVoltageCallback;
 };
 
-void AsyncTracer::setup()
+void AsyncTracer::setup(void (*preTransmission)(), void (*postTransmission)())
 {
-    pinMode(re, OUTPUT);
-    pinMode(de, OUTPUT);
-    postTransmission();
-
     client = new ModbusMaster();
     client->begin(address, *serial);
     Log.infof(
@@ -123,70 +115,59 @@ void AsyncTracer::setup()
 void AsyncTracer::loop()
 {
     if (!client) setup();
-    if (TimeUtils.millisSince(lastReadMillis) > (long unsigned int)readPeriod)
+    if (TimeUtils.millisSince(lastReadMillis) > (long unsigned int)readPeriod && !jobQueue.size())
     {
-        checkPVVoltage();
-        checkPVCurrent();
-        checkPVPower();
-        checkBatteryChargingVoltage();
-        checkBatteryChargingCurrent();
-        checkBatteryChargingPower();
-        checkLoadVoltage();
-        checkLoadCurrent();
-        checkLoadPower();
-        checkBatteryTemperature();
-        checkCaseTemperature();
-        checkHeatSinkTemperature();
-        checkBatteryPercentage();
-        checkRemoteBatteryTemperature();
-        checkSystemVoltage();
+        if (pvVoltageCallback != nullptr) jobQueue.push_back("checkPVVoltage");
+        if (pvCurrentCallback != nullptr) jobQueue.push_back("checkPVCurrent");
+        if (pvPowerCallback != nullptr) jobQueue.push_back("checkPVPower");
+        if (batteryChargingVoltageCallback != nullptr) jobQueue.push_back("checkBatteryChargingVoltage");
+        if (batteryChargingCurrentCallback != nullptr) jobQueue.push_back("checkBatteryChargingCurrent");
+        if (batteryChargingPowerCallback != nullptr) jobQueue.push_back("checkBatteryChargingPower");
+        if (loadVoltageCallback != nullptr) jobQueue.push_back("checkLoadVoltage");
+        if (loadCurrentCallback != nullptr) jobQueue.push_back("checkLoadCurrent");
+        if (loadPowerCallback != nullptr) jobQueue.push_back("checkLoadPower");
+        if (batteryTemperatureCallback != nullptr) jobQueue.push_back("checkBatteryTemperature");
+        if (caseTemperatureCallback != nullptr) jobQueue.push_back("checkCaseTemperature");
+        if (heatSinkTemperatureCallback != nullptr) jobQueue.push_back("checkHeatSinkTemperature");
+        if (batteryPercentageCallback != nullptr) jobQueue.push_back("checkBatteryPercentage");
+        if (remoteBatteryTemperatureCallback != nullptr) jobQueue.push_back("checkRemoteBatteryTemperature");
+        if (systemVoltageCallback != nullptr) jobQueue.push_back("checkSystemVoltage");
         lastReadMillis = millis();
         readCount++;
     }
+    checkJobQueue();
 };
 
 boolean AsyncTracer::getCoil(uint16_t address, boolean defaultValue)
 {
-    preTransmission();
     uint8_t response = client->readCoils(address, 1);
-    postTransmission();
-
     if (response == client->ku8MBSuccess)
-    {
         return client->getResponseBuffer(0x00);
-    }
 
+    Log.warnf("Failed to get coil at 0x%02X: 0x%02X\n", address, response);
     return defaultValue;
 };
 
 float AsyncTracer::get8BitRegister(uint16_t address, float multiplier, float defaultValue)
 {
-    preTransmission();
     uint8_t response = client->readInputRegisters(address, 1);
-    postTransmission();
-
     if (response == client->ku8MBSuccess)
-    {
         return client->getResponseBuffer(0x00) / multiplier;
-    }
 
+    Log.warnf("Failed to get 8 bit register at 0x%02X: 0x%02X\n", address, response);
     return defaultValue;
 };
 
 float AsyncTracer::get16BitRegister(uint16_t address, float multiplier, float defaultValue)
 {
-    preTransmission();
     uint8_t response = client->readInputRegisters(address, 2);
-    postTransmission();
-
     if (response == client->ku8MBSuccess)
-    {
         return (
             client->getResponseBuffer(0x00) |
             client->getResponseBuffer(0x01) << 16
         ) / multiplier;
-    }
 
+    Log.warnf("Failed to get 16 bit register at 0x%02X: 0x%02X\n", address, response);
     return defaultValue;
 };
 
@@ -194,7 +175,7 @@ void AsyncTracer::checkPVVoltage()
 {
     float newPVVoltage = get8BitRegister(PV_VOLTAGE, 100.0f);
 
-    if (!isnan(newPVVoltage) && newPVVoltage != pvVoltage)
+    if (!isnan(newPVVoltage) && abs(newPVVoltage - pvVoltage) > 0.05)
     {
         pvVoltage = newPVVoltage;
         if (pvVoltageCallback != nullptr) pvVoltageCallback(pvVoltage);
@@ -205,7 +186,7 @@ void AsyncTracer::checkPVCurrent()
 {
     float newPVCurrent = get8BitRegister(PV_CURRENT, 100.0f);
 
-    if (!isnan(newPVCurrent) && newPVCurrent != pvCurrent)
+    if (!isnan(newPVCurrent) && abs(newPVCurrent - pvCurrent) > 0.05)
     {
         pvCurrent = newPVCurrent;
         if (pvCurrentCallback != nullptr) pvCurrentCallback(pvCurrent);
@@ -216,7 +197,7 @@ void AsyncTracer::checkPVPower()
 {
     float newPVPower = get16BitRegister(PV_POWER, 100.0f);
 
-    if (!isnan(newPVPower) && newPVPower != pvPower)
+    if (!isnan(newPVPower) && abs(newPVPower - pvPower) > 0.05)
     {
         pvPower = newPVPower;
         if (pvPowerCallback != nullptr) pvPowerCallback(pvPower);
@@ -227,7 +208,7 @@ void AsyncTracer::checkBatteryChargingVoltage()
 {
     float newBatteryChargingVoltage = get8BitRegister(BATTERY_CHARGING_VOLTAGE, 100.0f);
 
-    if (!isnan(newBatteryChargingVoltage) && newBatteryChargingVoltage != batteryChargingVoltage)
+    if (!isnan(newBatteryChargingVoltage) && abs(newBatteryChargingVoltage - batteryChargingVoltage) > 0.05)
     {
         batteryChargingVoltage = newBatteryChargingVoltage;
         if (batteryChargingVoltageCallback != nullptr) batteryChargingVoltageCallback(batteryChargingVoltage);
@@ -238,7 +219,7 @@ void AsyncTracer::checkBatteryChargingCurrent()
 {
     float newBatteryChargingCurrent = get8BitRegister(BATTERY_CHARGING_CURRENT, 100.0f);
 
-    if (!isnan(newBatteryChargingCurrent) && newBatteryChargingCurrent != batteryChargingCurrent)
+    if (!isnan(newBatteryChargingCurrent) && abs(newBatteryChargingCurrent - batteryChargingCurrent) > 0.05)
     {
         batteryChargingCurrent = newBatteryChargingCurrent;
         if (batteryChargingCurrentCallback != nullptr) batteryChargingCurrentCallback(batteryChargingCurrent);
@@ -249,7 +230,7 @@ void AsyncTracer::checkBatteryChargingPower()
 {
     float newBatteryChargingPower = get16BitRegister(BATTERY_CHARGING_POWER, 100.0f);
 
-    if (!isnan(newBatteryChargingPower) && newBatteryChargingPower != batteryChargingPower)
+    if (!isnan(newBatteryChargingPower) && abs(newBatteryChargingPower - batteryChargingPower) > 0.05)
     {
         batteryChargingPower = newBatteryChargingPower;
         if (batteryChargingPowerCallback != nullptr) batteryChargingPowerCallback(batteryChargingPower);
@@ -260,7 +241,7 @@ void AsyncTracer::checkLoadVoltage()
 {
     float newLoadVoltage = get8BitRegister(LOAD_VOLTAGE, 100.0f);
 
-    if (!isnan(newLoadVoltage) && newLoadVoltage != loadVoltage)
+    if (!isnan(newLoadVoltage) && abs(newLoadVoltage - loadVoltage) > 0.05)
     {
         loadVoltage = newLoadVoltage;
         if (loadVoltageCallback != nullptr) loadVoltageCallback(loadVoltage);
@@ -271,7 +252,7 @@ void AsyncTracer::checkLoadCurrent()
 {
     float newLoadCurrent = get8BitRegister(LOAD_CURRENT, 100.0f);
 
-    if (!isnan(newLoadCurrent) && newLoadCurrent != loadCurrent)
+    if (!isnan(newLoadCurrent) && abs(newLoadCurrent - loadCurrent) > 0.05)
     {
         loadCurrent = newLoadCurrent;
         if (loadCurrentCallback != nullptr) loadCurrentCallback(loadCurrent);
@@ -282,7 +263,7 @@ void AsyncTracer::checkLoadPower()
 {
     float newLoadPower = get16BitRegister(LOAD_POWER, 100.0f);
 
-    if (!isnan(newLoadPower) && newLoadPower != loadPower)
+    if (!isnan(newLoadPower) && abs(newLoadPower - loadPower) > 0.05)
     {
         loadPower = newLoadPower;
         if (loadPowerCallback != nullptr) loadPowerCallback(loadPower);
@@ -293,7 +274,7 @@ void AsyncTracer::checkBatteryTemperature()
 {
     float newBatteryTemperature = get8BitRegister(BATTERY_TEMPERATURE, 100.0f);
 
-    if (!isnan(newBatteryTemperature) && newBatteryTemperature != batteryTemperature)
+    if (!isnan(newBatteryTemperature) && abs(newBatteryTemperature - batteryTemperature) > 0.05)
     {
         batteryTemperature = newBatteryTemperature;
         if (batteryTemperatureCallback != nullptr) batteryTemperatureCallback(batteryTemperature);
@@ -304,7 +285,7 @@ void AsyncTracer::checkCaseTemperature()
 {
     float newCaseTemperature = get8BitRegister(CASE_TEMPERATURE, 100.0f);
 
-    if (!isnan(newCaseTemperature) && newCaseTemperature != caseTemperature)
+    if (!isnan(newCaseTemperature) && abs(newCaseTemperature - caseTemperature) > 0.05)
     {
         caseTemperature = newCaseTemperature;
         if (caseTemperatureCallback != nullptr) caseTemperatureCallback(caseTemperature);
@@ -315,7 +296,7 @@ void AsyncTracer::checkHeatSinkTemperature()
 {
     float newHeatSinkTemperature = get8BitRegister(HEAT_SINK_TEMPERATURE, 100.0f);
 
-    if (!isnan(newHeatSinkTemperature) && newHeatSinkTemperature != heatSinkTemperature)
+    if (!isnan(newHeatSinkTemperature) && abs(newHeatSinkTemperature - heatSinkTemperature) > 0.05)
     {
         heatSinkTemperature = newHeatSinkTemperature;
         if (heatSinkTemperatureCallback != nullptr) heatSinkTemperatureCallback(heatSinkTemperature);
@@ -324,9 +305,9 @@ void AsyncTracer::checkHeatSinkTemperature()
 
 void AsyncTracer::checkBatteryPercentage()
 {
-    float newBatteryPercentage = get8BitRegister(BATTERY_PERCENTAGE, 100.0f);
+    float newBatteryPercentage = get8BitRegister(BATTERY_PERCENTAGE, 100.0f) * 100;
 
-    if (!isnan(newBatteryPercentage) && newBatteryPercentage != batteryPercentage)
+    if (!isnan(newBatteryPercentage) && abs(newBatteryPercentage - batteryPercentage) > 0.05)
     {
         batteryPercentage = newBatteryPercentage;
         if (batteryPercentageCallback != nullptr) batteryPercentageCallback(batteryPercentage);
@@ -337,7 +318,7 @@ void AsyncTracer::checkRemoteBatteryTemperature()
 {
     float newRemoteBatteryTemperature = get8BitRegister(REMOTE_BATTERY_TEMPERATURE, 100.0f);
 
-    if (!isnan(newRemoteBatteryTemperature) && newRemoteBatteryTemperature != remoteBatteryTemperature)
+    if (!isnan(newRemoteBatteryTemperature) && abs(newRemoteBatteryTemperature - remoteBatteryTemperature) > 0.05)
     {
         remoteBatteryTemperature = newRemoteBatteryTemperature;
         if (remoteBatteryTemperatureCallback != nullptr) remoteBatteryTemperatureCallback(remoteBatteryTemperature);
@@ -348,21 +329,34 @@ void AsyncTracer::checkSystemVoltage()
 {
     float newSystemVoltage = get8BitRegister(SYSTEM_VOLTAGE, 100.0f);
 
-    if (!isnan(newSystemVoltage) && newSystemVoltage != systemVoltage)
+    if (!isnan(newSystemVoltage) && abs(newSystemVoltage - systemVoltage) > 0.05)
     {
         systemVoltage = newSystemVoltage;
         if (systemVoltageCallback != nullptr) systemVoltageCallback(systemVoltage);
     }
 };
 
-void AsyncTracer::preTransmission()
+void AsyncTracer::checkJobQueue()
 {
-  digitalWrite(re, HIGH);
-  digitalWrite(de, HIGH);
-}
+    if (!jobQueue.size()) return;
 
-void AsyncTracer::postTransmission()
-{
-  digitalWrite(re, LOW);
-  digitalWrite(de, LOW);
+    std::string job = jobQueue.front();
+
+    if (job == "checkPVVoltage") checkPVVoltage();
+    if (job == "checkPVCurrent") checkPVCurrent();
+    if (job == "checkPVPower") checkPVPower();
+    if (job == "checkBatteryChargingVoltage") checkBatteryChargingVoltage();
+    if (job == "checkBatteryChargingCurrent") checkBatteryChargingCurrent();
+    if (job == "checkBatteryChargingPower") checkBatteryChargingPower();
+    if (job == "checkLoadVoltage") checkLoadVoltage();
+    if (job == "checkLoadCurrent") checkLoadCurrent();
+    if (job == "checkLoadPower") checkLoadPower();
+    if (job == "checkBatteryTemperature") checkBatteryTemperature();
+    if (job == "checkCaseTemperature") checkCaseTemperature();
+    if (job == "checkHeatSinkTemperature") checkHeatSinkTemperature();
+    if (job == "checkBatteryPercentage") checkBatteryPercentage();
+    if (job == "checkRemoteBatteryTemperature") checkRemoteBatteryTemperature();
+    if (job == "checkSystemVoltage") checkSystemVoltage();
+
+    jobQueue.pop_front();
 }

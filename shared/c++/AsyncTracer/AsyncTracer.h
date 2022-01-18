@@ -3,6 +3,7 @@
 
 #include <ModbusMaster.h>
 #include <functional>
+#include <deque>
 
 #include <Log.h>
 #include <TimeUtils.h>
@@ -49,10 +50,8 @@ class AsyncTracer
 
         ModbusMaster* client;
         HardwareSerial* serial;
-        uint8_t ro;
-        uint8_t re;
-        uint8_t de;
-        uint8_t di;
+        uint8_t tx;
+        uint8_t rx;
         uint8_t address;
 
         float pvVoltage = NULL_RESPONSE_VALUE;
@@ -90,15 +89,15 @@ class AsyncTracer
         int readPeriod = 2000;
         int lastReadMillis = 0;
         int readCount = 0;
+
     private:
+        std::deque<std::string> jobQueue = {};
 
     public:
         AsyncTracer(
             HardwareSerial* _serial,
-            uint8_t _ro,
-            uint8_t _re,
-            uint8_t _de,
-            uint8_t _di,
+            uint8_t _tx,
+            uint8_t _rx,
             uint8_t _address
         );
 
@@ -148,7 +147,7 @@ class AsyncTracer
             SystemVoltageCallback _systemVoltageCallback = nullptr
         );
 
-        void setup();
+        void setup(void (*preTransmission)() = nullptr, void (*postTransmission)() = nullptr);
         void loop();
 
     private:
@@ -180,9 +179,7 @@ class AsyncTracer
         void checkRemoteBatteryTemperature();
         void checkSystemVoltage();
 
-        void preTransmission();
-        void postTransmission();
-
+        void checkJobQueue();
 };
 
 #endif

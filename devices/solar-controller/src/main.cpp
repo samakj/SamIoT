@@ -14,10 +14,13 @@
 #include <Log.h>
 #include <TimeUtils.h>
 
-HardwareSerial ModbusSerial(2);
+int MODBUS_TX = 23;
+int MODBUS_RX = 22;
+HardwareSerial ModbusSerial(1);
 DeviceState State;
 AsyncDHT DHTSensor(15, DHT22);
-AsyncTracer Tracer(&ModbusSerial, 22, 19, 21, 23, 1);
+AsyncTracer Tracer(&ModbusSerial, MODBUS_TX, MODBUS_RX, 0x01);
+
 
 void onWifiConnect(std::string ssid)
 {
@@ -164,7 +167,7 @@ void onSystemVoltageChange(float systemVoltage)
 void setup()
 {  
     Serial.begin(115200);
-    ModbusSerial.begin(115200, SERIAL_8N1, 22, 23);
+    ModbusSerial.begin(115200, SERIAL_8N1, MODBUS_RX, MODBUS_TX);
 
     Log.info("---------------- SETTING UP ----------------");
     AsyncWifi.addConnectCallback(onWifiConnect);
@@ -199,7 +202,6 @@ void setup()
     Tracer.setBatteryPercentageCallback(onBatteryPercentageChange);
     Tracer.setRemoteBatteryTemperatureCallback(onRemoteBatteryTemperatureChange);
     Tracer.setSystemVoltageCallback(onSystemVoltageChange);
-    Tracer.setup();
     Log.info("-------------- SETUP COMPLETE --------------");
 };
 
