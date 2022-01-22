@@ -21,7 +21,6 @@
 void setup()
 {  
     Serial.begin(115200);
-    // ModbusSerial.begin(115200, SERIAL_8N1, MODBUS_RX, MODBUS_TX);
 
     Log.info("---------------- SETTING UP ----------------");
     AsyncWifi.addConnectCallback(onWifiConnect);
@@ -37,54 +36,22 @@ void setup()
     AsyncWifi.connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
     AsyncWifi.getConnectedNetworkStrength();
 
-    // Tracer.setPVVoltageCallback(onPVVoltageChange);
-    // Tracer.setPVCurrentCallback(onPVCurrentChange);
-    // Tracer.setPVPowerCallback(onPVPowerChange);
-    // Tracer.setBatteryChargingVoltageCallback(onBatteryChargingVoltageChange);
-    // Tracer.setBatteryChargingCurrentCallback(onBatteryChargingCurrentChange);
-    // Tracer.setBatteryChargingPowerCallback(onBatteryChargingPowerChange);
-    // Tracer.setLoadVoltageCallback(onLoadVoltageChange);
-    // Tracer.setLoadCurrentCallback(onLoadCurrentChange);
-    // Tracer.setLoadPowerCallback(onLoadPowerChange);
-    // Tracer.setBatteryTemperatureCallback(onBatteryTemperatureChange);
-    // Tracer.setCaseTemperatureCallback(onCaseTemperatureChange);
-    // Tracer.setHeatSinkTemperatureCallback(onHeatSinkTemperatureChange);
-    // Tracer.setBatteryPercentageCallback(onBatteryPercentageChange);
-    // Tracer.setRemoteBatteryTemperatureCallback(onRemoteBatteryTemperatureChange);
-    // Tracer.setSystemVoltageCallback(onSystemVoltageChange);
-    // Tracer.setup();
-
-    PZEM1.setVoltageCallback(onPZEM1VoltageChange);
-    PZEM1.setCurrentCallback(onPZEM1CurrentChange);
-    PZEM1.setPowerCallback(onPZEM1PowerChange);
-    PZEM1.setEnergyCallback(onPZEM1EnergyChange);
-    PZEM1.setFrequencyCallback(onPZEM1FrequencyChange);
-    PZEM1.setPowerFactorCallback(onPZEM1PowerFactorChange);
-    PZEM1.setup();
-
-    PZEM2.setVoltageCallback(onPZEM2VoltageChange);
-    PZEM2.setCurrentCallback(onPZEM2CurrentChange);
-    PZEM2.setPowerCallback(onPZEM2PowerChange);
-    PZEM2.setEnergyCallback(onPZEM2EnergyChange);
-    PZEM2.setFrequencyCallback(onPZEM2FrequencyChange);
-    PZEM2.setPowerFactorCallback(onPZEM2PowerFactorChange);
-    PZEM2.setup();
-
-    PZEM3.setVoltageCallback(onPZEM3VoltageChange);
-    PZEM3.setCurrentCallback(onPZEM3CurrentChange);
-    PZEM3.setPowerCallback(onPZEM3PowerChange);
-    PZEM3.setEnergyCallback(onPZEM3EnergyChange);
-    PZEM3.setFrequencyCallback(onPZEM3FrequencyChange);
-    PZEM3.setPowerFactorCallback(onPZEM3PowerFactorChange);
-    PZEM3.setup();
-
-    PZEM4.setVoltageCallback(onPZEM4VoltageChange);
-    PZEM4.setCurrentCallback(onPZEM4CurrentChange);
-    PZEM4.setPowerCallback(onPZEM4PowerChange);
-    PZEM4.setEnergyCallback(onPZEM4EnergyChange);
-    PZEM4.setFrequencyCallback(onPZEM4FrequencyChange);
-    PZEM4.setPowerFactorCallback(onPZEM4PowerFactorChange);
-    PZEM4.setup();
+    Tracer.setPVVoltageCallback(onPVVoltageChange);
+    Tracer.setPVCurrentCallback(onPVCurrentChange);
+    Tracer.setPVPowerCallback(onPVPowerChange);
+    Tracer.setBatteryChargingVoltageCallback(onBatteryChargingVoltageChange);
+    Tracer.setBatteryChargingCurrentCallback(onBatteryChargingCurrentChange);
+    Tracer.setBatteryChargingPowerCallback(onBatteryChargingPowerChange);
+    Tracer.setLoadVoltageCallback(onLoadVoltageChange);
+    Tracer.setLoadCurrentCallback(onLoadCurrentChange);
+    Tracer.setLoadPowerCallback(onLoadPowerChange);
+    Tracer.setBatteryTemperatureCallback(onBatteryTemperatureChange);
+    Tracer.setCaseTemperatureCallback(onCaseTemperatureChange);
+    Tracer.setHeatSinkTemperatureCallback(onHeatSinkTemperatureChange);
+    Tracer.setBatteryPercentageCallback(onBatteryPercentageChange);
+    Tracer.setRemoteBatteryTemperatureCallback(onRemoteBatteryTemperatureChange);
+    Tracer.setSystemVoltageCallback(onSystemVoltageChange);
+    Tracer.setup();
 
     Relay1.setOutputCallback(onRelay1Change);
     Relay2.setOutputCallback(onRelay2Change);
@@ -146,25 +113,8 @@ void loop()
     ExecutionTimer.end("Server");
 
     ExecutionTimer.start("Tracer");
-    // Tracer.loop();
+    Tracer.loop();
     ExecutionTimer.end("Tracer");
-
-    ExecutionTimer.start("PZEM1");
-    PZEM1.loop();
-    ExecutionTimer.end("PZEM1");
-
-    ExecutionTimer.start("PZEM2");
-    PZEM2.loop();
-    ExecutionTimer.end("PZEM2");
-
-    ExecutionTimer.start("PZEM3");
-    PZEM3.loop();
-    ExecutionTimer.end("PZEM3");
-
-    ExecutionTimer.start("PZEM4");
-    PZEM4.loop();
-    ExecutionTimer.end("PZEM4");
-
     
     ExecutionTimer.start("OTA");
     AsyncOTA.loop();

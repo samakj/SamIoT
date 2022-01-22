@@ -2,8 +2,6 @@
 #define Device_Server_h
 
 #include <Arduino.h>
-#include <AsyncJson.h>
-#include <ArduinoJson.h>
 
 #ifdef ESP8266
 #include <ESPAsyncTCP.h>
