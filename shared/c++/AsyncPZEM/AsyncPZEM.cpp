@@ -84,7 +84,7 @@ void AsyncPZEM::checkVoltage()
 {
     float newVoltage = client->voltage();
 
-    if (!isnan(newVoltage) && newVoltage != voltage)
+    if (!isnan(newVoltage) && abs(newVoltage - voltage) > 0.1)
     {
         voltage = newVoltage;
         if (voltageCallback != nullptr) voltageCallback(voltage);
@@ -95,7 +95,7 @@ void AsyncPZEM::checkCurrent()
 {
     float newCurrent = client->current();
 
-    if (!isnan(newCurrent) && newCurrent != current)
+    if (!isnan(newCurrent) && abs(newCurrent - current) > 0.01)
     {
         current = newCurrent;
         if (currentCallback != nullptr) currentCallback(current);
@@ -106,7 +106,7 @@ void AsyncPZEM::checkPower()
 {
     float newPower = client->power();
 
-    if (!isnan(newPower) && newPower != power)
+    if (!isnan(newPower) && abs(newPower - power) > 0.1)
     {
         power = newPower;
         if (powerCallback != nullptr) powerCallback(power);
@@ -115,9 +115,9 @@ void AsyncPZEM::checkPower()
 
 void AsyncPZEM::checkEnergy()
 {
-    float newEnergy = client->energy();
+    float newEnergy = client->energy() * 1000;
 
-    if (!isnan(newEnergy) && newEnergy != energy)
+    if (!isnan(newEnergy) && abs(newEnergy - energy) > 1)
     {
         energy = newEnergy;
         if (energyCallback != nullptr) energyCallback(energy);
@@ -128,7 +128,7 @@ void AsyncPZEM::checkFrequency()
 {
     float newFrequency = client->frequency();
 
-    if (!isnan(newFrequency) && newFrequency != frequency)
+    if (!isnan(newFrequency) && abs(newFrequency - frequency) > 0.1)
     {
         frequency = newFrequency;
         if (frequencyCallback != nullptr) frequencyCallback(frequency);
@@ -139,7 +139,7 @@ void AsyncPZEM::checkPowerFactor()
 {
     float newPowerFactor = client->pf();
 
-    if (!isnan(newPowerFactor) && newPowerFactor != powerFactor)
+    if (!isnan(newPowerFactor) && abs(newPowerFactor - powerFactor) > 0.02)
     {
         powerFactor = newPowerFactor;
         if (powerFactorCallback != nullptr) powerFactorCallback(powerFactor);
