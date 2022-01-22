@@ -102,6 +102,9 @@ void setup()
     Relay7.setup();
     Relay8.setup();
 
+    InverterRelay.setOutputCallback(onInverterRelayChange);
+    InverterRelay.setup();
+
     State.set(getRelayOutputState(Relay1.state, RELAY_1_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_1_TAGS);
     State.set(getRelayOutputState(Relay2.state, RELAY_2_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_2_TAGS);
     State.set(getRelayOutputState(Relay3.state, RELAY_3_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_3_TAGS);
@@ -110,6 +113,7 @@ void setup()
     State.set(getRelayOutputState(Relay6.state, RELAY_6_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_6_TAGS);
     State.set(getRelayOutputState(Relay7.state, RELAY_7_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_7_TAGS);
     State.set(getRelayOutputState(Relay8.state, RELAY_8_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_8_TAGS);
+    State.set(getRelayOutputState(InverterRelay.state, INVERTER_RELAY_NC, false), MEASUREMENT, "on", INVERTER_RELAY_TAGS);
 
 
     DeviceServer.addHttpEndpoint( "/relay/1", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay1);
@@ -120,6 +124,7 @@ void setup()
     DeviceServer.addHttpEndpoint( "/relay/6", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay6);
     DeviceServer.addHttpEndpoint( "/relay/7", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay7);
     DeviceServer.addHttpEndpoint( "/relay/8", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay8);
+    DeviceServer.addHttpEndpoint( "/inverter", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setInverterRelay);
     Log.info("-------------- SETUP COMPLETE --------------");
 };
 
@@ -173,6 +178,7 @@ void loop()
     Relay6.loop();
     Relay7.loop();
     Relay8.loop();
+    InverterRelay.loop();
 
     ExecutionTimer.end("Loop");
     ExecutionTimer.loop();

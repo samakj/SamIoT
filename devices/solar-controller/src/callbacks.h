@@ -374,4 +374,11 @@ void onRelay8Change(bool state)
     Log.infof("Relay8 changed to %s\n", getRelayOutputState(state, RELAY_8_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
+void onInverterRelayChange(bool state)
+{
+    DeviceServer.sendMeasurement(getRelayOutputState(state, INVERTER_RELAY_NC, false), "on", INVERTER_RELAY_TAGS);
+    State.set(getRelayOutputState(state, INVERTER_RELAY_NC, false), MEASUREMENT, "on", INVERTER_RELAY_TAGS);
+    Log.infof("Invterer relay changed to %s\n", getRelayOutputState(state, INVERTER_RELAY_NC, false) ? "HIGH" : "LOW");
+};
+
 #endif

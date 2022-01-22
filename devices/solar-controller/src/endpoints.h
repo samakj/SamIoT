@@ -16,6 +16,7 @@ bool RELAY_5_NC = false;
 bool RELAY_6_NC = false;
 bool RELAY_7_NC = false;
 bool RELAY_8_NC = false;
+bool INVERTER_RELAY_NC = true;
 
 bool getRelayCoilState(bool output, bool nc, bool inverted)
 {
@@ -244,6 +245,32 @@ void setRelay8(
         buffer,
         "{\"on\":%s}",
         getRelayOutputState(digitalRead(Relay8.pinNo), RELAY_8_NC, INVERTED_RELAYS) ?
+            "true" :
+            "false"
+    );
+    return request->send(200, "application/json", buffer);
+}
+
+void setInverterRelay(
+    AsyncWebServerRequest* request,
+    uint8_t* data,
+    size_t len,
+    size_t index,
+    size_t total
+)
+{ 
+    InverterRelay.setPinState(
+        getRelayCoilState(
+            getBooleanFromBodyData(data, len),
+            INVERTER_RELAY_NC,
+            false
+        )
+    );
+    char buffer[64];
+    sprintf(
+        buffer,
+        "{\"on\":%s}",
+        getRelayOutputState(digitalRead(InverterRelay.pinNo), INVERTER_RELAY_NC, false) ?
             "true" :
             "false"
     );

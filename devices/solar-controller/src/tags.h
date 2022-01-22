@@ -54,5 +54,6 @@ std::vector<std::string> RELAY_5_TAGS = {"relay5"};
 std::vector<std::string> RELAY_6_TAGS = {"relay6"};
 std::vector<std::string> RELAY_7_TAGS = {"relay7"};
 std::vector<std::string> RELAY_8_TAGS = {"relay8"};
+std::vector<std::string> INVERTER_RELAY_TAGS = {"inverter"};
 
 #endif

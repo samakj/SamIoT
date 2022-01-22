@@ -28,5 +28,6 @@ AsyncOutput Relay5(4, HIGH);
 AsyncOutput Relay6(0, HIGH);
 AsyncOutput Relay7(2, HIGH);
 AsyncOutput Relay8(15, HIGH);
+AsyncOutput InverterRelay(13, LOW);
 
 #endif
