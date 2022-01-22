@@ -46,13 +46,13 @@ std::vector<std::string> PZEM4_POWER_TAGS = {"PZEM4"};
 std::vector<std::string> PZEM4_ENERGY_TAGS = {"PZEM4"};
 std::vector<std::string> PZEM4_FREQUENCY_TAGS = {"PZEM4"};
 std::vector<std::string> PZEM4_POWER_FACTOR_TAGS = {"PZEM4"};
-std::vector<std::string> RELAY1_TAGS = {"relay1"};
-std::vector<std::string> RELAY2_TAGS = {"relay2"};
-std::vector<std::string> RELAY3_TAGS = {"relay3"};
-std::vector<std::string> RELAY4_TAGS = {"relay4"};
-std::vector<std::string> RELAY5_TAGS = {"relay5"};
-std::vector<std::string> RELAY6_TAGS = {"relay6"};
-std::vector<std::string> RELAY7_TAGS = {"relay7"};
-std::vector<std::string> RELAY8_TAGS = {"relay8"};
+std::vector<std::string> RELAY_1_TAGS = {"relay1"};
+std::vector<std::string> RELAY_2_TAGS = {"relay2"};
+std::vector<std::string> RELAY_3_TAGS = {"relay3"};
+std::vector<std::string> RELAY_4_TAGS = {"relay4"};
+std::vector<std::string> RELAY_5_TAGS = {"relay5"};
+std::vector<std::string> RELAY_6_TAGS = {"relay6"};
+std::vector<std::string> RELAY_7_TAGS = {"relay7"};
+std::vector<std::string> RELAY_8_TAGS = {"relay8"};
 
 #endif

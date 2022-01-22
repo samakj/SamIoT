@@ -2,7 +2,8 @@
 #define callbacks_h
 
 #include "config.h"
-#include "state.h"
+#include "defs.h"
+#include "endpoints.h"
 #include "tags.h"
 #include <AsyncOTA.h>
 #include <DeviceServer.h>
@@ -319,58 +320,58 @@ void onSystemVoltageChange(float systemVoltage)
 
 void onRelay1Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY1_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY1_TAGS);
-    Log.infof("Relay1 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_1_NC, INVERTED_RELAYS), "on", RELAY_1_TAGS);
+    State.set(getRelayOutputState(state, RELAY_1_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_1_TAGS);
+    Log.infof("Relay1 changed to %s\n", getRelayOutputState(state, RELAY_1_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay2Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY2_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY2_TAGS);
-    Log.infof("Relay2 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_2_NC, INVERTED_RELAYS), "on", RELAY_2_TAGS);
+    State.set(getRelayOutputState(state, RELAY_2_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_2_TAGS);
+    Log.infof("Relay2 changed to %s\n", getRelayOutputState(state, RELAY_2_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay3Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY3_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY3_TAGS);
-    Log.infof("Relay3 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_3_NC, INVERTED_RELAYS), "on", RELAY_3_TAGS);
+    State.set(getRelayOutputState(state, RELAY_3_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_3_TAGS);
+    Log.infof("Relay3 changed to %s\n", getRelayOutputState(state, RELAY_3_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay4Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY4_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY4_TAGS);
-    Log.infof("Relay4 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_4_NC, INVERTED_RELAYS), "on", RELAY_4_TAGS);
+    State.set(getRelayOutputState(state, RELAY_4_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_4_TAGS);
+    Log.infof("Relay4 changed to %s\n", getRelayOutputState(state, RELAY_4_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay5Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY5_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY5_TAGS);
-    Log.infof("Relay5 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_5_NC, INVERTED_RELAYS), "on", RELAY_5_TAGS);
+    State.set(getRelayOutputState(state, RELAY_5_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_5_TAGS);
+    Log.infof("Relay5 changed to %s\n", getRelayOutputState(state, RELAY_5_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay6Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY6_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY6_TAGS);
-    Log.infof("Relay6 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_6_NC, INVERTED_RELAYS), "on", RELAY_6_TAGS);
+    State.set(getRelayOutputState(state, RELAY_6_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_6_TAGS);
+    Log.infof("Relay6 changed to %s\n", getRelayOutputState(state, RELAY_6_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay7Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY7_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY7_TAGS);
-    Log.infof("Relay7 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_7_NC, INVERTED_RELAYS), "on", RELAY_7_TAGS);
+    State.set(getRelayOutputState(state, RELAY_7_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_7_TAGS);
+    Log.infof("Relay7 changed to %s\n", getRelayOutputState(state, RELAY_7_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 void onRelay8Change(bool state)
 {
-    DeviceServer.sendMeasurement(state, "on", RELAY8_TAGS);
-    State.set(state, MEASUREMENT, "on", RELAY8_TAGS);
-    Log.infof("Relay8 changed to %s\n", state ? "HIGH" : "LOW");
+    DeviceServer.sendMeasurement(getRelayOutputState(state, RELAY_8_NC, INVERTED_RELAYS), "on", RELAY_8_TAGS);
+    State.set(getRelayOutputState(state, RELAY_8_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_8_TAGS);
+    Log.infof("Relay8 changed to %s\n", getRelayOutputState(state, RELAY_8_NC, INVERTED_RELAYS) ? "HIGH" : "LOW");
 };
 
 #endif

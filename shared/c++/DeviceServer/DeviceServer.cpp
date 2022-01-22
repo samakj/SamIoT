@@ -146,6 +146,10 @@ static AsyncWebSocket websocket("/ws");
 
 DeviceServerClass DeviceServerClass::_instance;
 
+void DeviceServerClass::BAD_REQUEST (AsyncWebServerRequest* request) { request->send(400); }
+void DeviceServerClass::BAD_UPLOAD (AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) { request->send(400); }
+void DeviceServerClass::BAD_BODY (AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) { request->send(400); }
+
 DeviceServerClass& DeviceServerClass::getInstance()
 {
     return _instance;
@@ -205,8 +209,18 @@ void DeviceServerClass::addWifiConnectCallback()
     usingWifiCallback = true;
     Log.debug("Adding server Wifi connect callback.");
     AsyncWifi.addConnectCallback([this](std::string ssid) { setup(); });
-}
+};
 
+void DeviceServerClass::addHttpEndpoint(
+    const char* uri,
+    WebRequestMethod method,
+    ArRequestHandlerFunction onRequest,
+    ArUploadHandlerFunction onUpload,
+    ArBodyHandlerFunction onBody
+)
+{
+    http.on(uri, method, onRequest, onUpload, onBody);
+};
 
 void DeviceServerClass::setState(DeviceState* _state)
 {

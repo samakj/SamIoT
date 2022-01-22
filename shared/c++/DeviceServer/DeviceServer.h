@@ -103,8 +103,13 @@ class DeviceState {
         );
 };
 
+
 class DeviceServerClass {
     public:
+        static void BAD_REQUEST (AsyncWebServerRequest* request);
+        static void BAD_UPLOAD (AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final);
+        static void BAD_BODY (AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+        
         bool isOnline = false;
         std::string location = "";
         std::string mac = "";
@@ -121,6 +126,13 @@ class DeviceServerClass {
         void setup();
         void loop();
         void addWifiConnectCallback();
+        void addHttpEndpoint(
+            const char* uri,
+            WebRequestMethod method,
+            ArRequestHandlerFunction onRequest = BAD_REQUEST,
+            ArUploadHandlerFunction onUpload = BAD_UPLOAD,
+            ArBodyHandlerFunction onBody = BAD_BODY
+        );
         void setState(DeviceState* _state);
         void setLocation(std::string _location);
 

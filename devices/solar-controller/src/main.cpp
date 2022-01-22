@@ -2,7 +2,9 @@
 
 #include "callbacks.h"
 #include "config.h"
-#include "state.h"
+#include "defs.h"
+#include "endpoints.h"
+#include "tags.h"
 #include <AsyncDHT.h>
 #include <AsyncNTP.h>
 #include <AsyncOTA.h>
@@ -14,26 +16,6 @@
 #include <ExecutionTimer.h>
 #include <Log.h>
 #include <TimeUtils.h>
-
-uint8_t PZEM_SERIAL_1_TX = 22;
-uint8_t PZEM_SERIAL_1_RX = 23;
-uint8_t PZEM_SERIAL_2_TX = 14;
-uint8_t PZEM_SERIAL_2_RX = 27;
-HardwareSerial PZEMSerial1(1);
-HardwareSerial PZEMSerial2(2);
-// AsyncTracer Tracer(&ModbusSerial, MODBUS_TX, MODBUS_RX, 0x01);
-AsyncPZEM PZEM1(&PZEMSerial1, PZEM_SERIAL_1_RX, PZEM_SERIAL_1_TX, 0x11);
-AsyncPZEM PZEM2(&PZEMSerial1, PZEM_SERIAL_1_RX, PZEM_SERIAL_1_TX, 0x12);
-AsyncPZEM PZEM3(&PZEMSerial2, PZEM_SERIAL_2_RX, PZEM_SERIAL_2_TX, 0x13);
-AsyncPZEM PZEM4(&PZEMSerial2, PZEM_SERIAL_2_RX, PZEM_SERIAL_2_TX, 0x14);
-AsyncOutput Relay1(21, HIGH);
-AsyncOutput Relay2(19, HIGH);
-AsyncOutput Relay3(18, HIGH);
-AsyncOutput Relay4(5, HIGH);
-AsyncOutput Relay5(4, HIGH);
-AsyncOutput Relay6(0, HIGH);
-AsyncOutput Relay7(2, HIGH);
-AsyncOutput Relay8(15, HIGH);
 
 
 void setup()
@@ -120,13 +102,24 @@ void setup()
     Relay7.setup();
     Relay8.setup();
 
-    State.set(Relay1.state, MEASUREMENT, "on", RELAY1_TAGS);
-    State.set(Relay2.state, MEASUREMENT, "on", RELAY2_TAGS);
-    State.set(Relay3.state, MEASUREMENT, "on", RELAY3_TAGS);
-    State.set(Relay4.state, MEASUREMENT, "on", RELAY4_TAGS);
-    State.set(Relay6.state, MEASUREMENT, "on", RELAY6_TAGS);
-    State.set(Relay7.state, MEASUREMENT, "on", RELAY7_TAGS);
-    State.set(Relay8.state, MEASUREMENT, "on", RELAY8_TAGS);
+    State.set(getRelayOutputState(Relay1.state, RELAY_1_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_1_TAGS);
+    State.set(getRelayOutputState(Relay2.state, RELAY_2_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_2_TAGS);
+    State.set(getRelayOutputState(Relay3.state, RELAY_3_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_3_TAGS);
+    State.set(getRelayOutputState(Relay4.state, RELAY_4_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_4_TAGS);
+    State.set(getRelayOutputState(Relay5.state, RELAY_5_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_5_TAGS);
+    State.set(getRelayOutputState(Relay6.state, RELAY_6_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_6_TAGS);
+    State.set(getRelayOutputState(Relay7.state, RELAY_7_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_7_TAGS);
+    State.set(getRelayOutputState(Relay8.state, RELAY_8_NC, INVERTED_RELAYS), MEASUREMENT, "on", RELAY_8_TAGS);
+
+
+    DeviceServer.addHttpEndpoint( "/relay/1", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay1);
+    DeviceServer.addHttpEndpoint( "/relay/2", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay2);
+    DeviceServer.addHttpEndpoint( "/relay/3", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay3);
+    DeviceServer.addHttpEndpoint( "/relay/4", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay4);
+    DeviceServer.addHttpEndpoint( "/relay/5", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay5);
+    DeviceServer.addHttpEndpoint( "/relay/6", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay6);
+    DeviceServer.addHttpEndpoint( "/relay/7", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay7);
+    DeviceServer.addHttpEndpoint( "/relay/8", HTTP_POST, DeviceServer.BAD_REQUEST, DeviceServer.BAD_UPLOAD, setRelay8);
     Log.info("-------------- SETUP COMPLETE --------------");
 };
 
