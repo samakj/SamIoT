@@ -21,6 +21,7 @@
 void setup()
 {  
     Serial.begin(115200);
+    TracerSerial.begin(115200, SERIAL_8N1, TRACER_RX, TRACER_TX);
 
     Log.info("---------------- SETTING UP ----------------");
     AsyncWifi.addConnectCallback(onWifiConnect);
