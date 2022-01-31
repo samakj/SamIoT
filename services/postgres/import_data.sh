@@ -4,7 +4,7 @@ source ./init_roles.sh
 services="$(dirname "$(pwd)")"
 root="$(dirname $services)"
 
-export PGPASSWORD=$IOT_PASS
+export PGPASSWORD=$POSTGRES_PASS
 if [ -f "$root/data/iot/devices.csv" ]; 
 then
     echo "\nImporting iot devices data...\n"
