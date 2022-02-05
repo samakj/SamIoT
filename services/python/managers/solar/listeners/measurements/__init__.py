@@ -18,6 +18,10 @@ class MeasurementsListener:
         self.event_handlers = EventHandlers(iot_client)
     
     async def start(self) -> None:
+        await self.event_handlers.update_metrics()
+        await self.event_handlers.update_devices()
+        await self.event_handlers.get_relay_states()
+        
         self.websocket = await self.iot_client.measurements.listen_measurements(
             socket_id="solar_manager",
             name="Solar Manager",

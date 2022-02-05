@@ -80,6 +80,28 @@ class EventHandlers:
         if identifier not in self.devices.keys():
             await self.update_devices()
         return self.devices.get(identifier)
+    
+    async def get_relay_states(self) -> None:
+        on_metric = await self.get_metric("on")
+
+        if on_metric is None:
+            LOG.error("Failed to get on metric.")
+            return
+        
+        for measurement in await self.iot_client.measurements.get_latest_measurements(
+            tags="solar",
+            metric_id=on_metric.id
+        ):
+            if INVERTER_TAG in measurement.tags:
+                self.inverter_status = measurement.value
+                LOG.info(f"Inverter initialised as {'ON' if measurement.value else 'OFF' }")
+            if f"relay{SOLAR_DEVICES_NO}" in measurement.tags:
+                self.solar_devices_status = measurement.value
+                LOG.info(f"Solar devices initialised as {'ON' if measurement.value else 'OFF' }")
+            if f"relay{EXCESS_POWER_DEVICES_NO}" in measurement.tags:
+                self.excess_power_devices_status = measurement.value
+                LOG.info(f"Excess power devices initialised as {'ON' if measurement.value else 'OFF' }")
+            
 
     def connect(self) -> EventCallback:
         async def callback(weboscket: Websocket) -> None:
