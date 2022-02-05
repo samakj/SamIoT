@@ -37,5 +37,5 @@ def serialise_json(object: Any, *args: Any, **kwargs: Any) -> str:
     return json.dumps(to_json_serialisable(object), *args, **kwargs)
 
 
-def parse_json(object: Any, *args: Any, **kwargs: Any) -> str:
+def parse_json(object: Any, *args: Any, **kwargs: Any) -> Any:
     return json.loads(object, *args, **kwargs)

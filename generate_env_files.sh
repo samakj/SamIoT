@@ -9,6 +9,7 @@ javascript="$services/javascript"
 postgres="$services/postgres"
 python="$services/python"
 iot="$python/iot"
+managers="$python/managers"
 utilities="$python/utilities"
 weather="$python/weather"
 
@@ -114,6 +115,28 @@ IOT_CACHE_USER="$IOT_CACHE_USER"
 IOT_CACHE_PASS="$IOT_CACHE_PASS"
 EOF
 cp "$iot/forager/.env" "$iot/forager/env.sh"
+
+echo "Writing manager/solar service env files."
+cat > "$managers/solar/.env" <<- EOF
+# API
+
+IOT_API_HOST="$IOT_API_HOST"
+IOT_API_PORT=$IOT_API_PORT
+
+# Solar Manager
+
+SOLAR_MANAGER_HOST="$SOLAR_MANAGER_HOST"
+SOLAR_MANAGER_PORT=$SOLAR_MANAGER_PORT
+
+# Cache
+
+SOLAR_MANAGER_CACHE_HOST="$SOLAR_MANAGER_CACHE_HOST"
+SOLAR_MANAGER_CACHE_PORT=$SOLAR_MANAGER_CACHE_PORT
+SOLAR_MANAGER_CACHE_NAME="$SOLAR_MANAGER_CACHE_NAME"
+SOLAR_MANAGER_CACHE_USER="$SOLAR_MANAGER_CACHE_USER"
+SOLAR_MANAGER_CACHE_PASS="$SOLAR_MANAGER_CACHE_PASS"
+EOF
+cp "$managers/solar/.env" "$managers/solar/env.sh"
 
 
 

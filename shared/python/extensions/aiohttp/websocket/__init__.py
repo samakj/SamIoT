@@ -43,8 +43,8 @@ class Websocket:
     on_close: Optional[EventWithMessageCallback]
 
     websocket: Optional[ClientWebSocketResponse]
-    task: Optional[Task[Any]]
-    watchdog_task: Optional[Task[Any]]
+    task: Optional[Task]
+    watchdog_task: Optional[Task]
 
     def __init__(
         self,
@@ -224,7 +224,7 @@ class Websocket:
                 await asyncio.sleep(5)
             self.watchdog_task = None
 
-    async def start_websocket(self) -> Task[Any]:
+    async def start_websocket(self) -> Task:
         LOG.info(f"Starting {f'{self.name} ' if self.name else ''}websocket.")
         return (
             self.task
@@ -232,7 +232,7 @@ class Websocket:
             asyncio.create_task(self._create_websocket())
         )
 
-    async def start_watchdog(self) -> Task[Any]:
+    async def start_watchdog(self) -> Task:
         LOG.info(f"Starting {f'{self.name} ' if self.name else ''}watchdog.")
         return (
             self.watchdog_task
