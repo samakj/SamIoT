@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 from typing import Dict, Optional, Union
 
 from aiohttp import ClientSession
@@ -33,6 +34,8 @@ class EventHandlers:
     inverter_status: Optional[bool]
     solar_devices_status: Optional[bool]
     excess_power_devices_status: Optional[bool]
+    
+    last_percentage_report: int
 
     def __init__(
         self,
@@ -46,6 +49,8 @@ class EventHandlers:
         self.inverter_status = None
         self.solar_devices_status = None
         self.excess_power_devices_status = None
+        
+        self.last_percentage_report = 0
 
     async def update_metrics(self) -> None:
         metrics = {}
@@ -80,6 +85,23 @@ class EventHandlers:
         if identifier not in self.devices.keys():
             await self.update_devices()
         return self.devices.get(identifier)
+
+    async def print_latest_measurement(self) -> None:
+        percentage_metric = await self.get_metric("percentage")
+        
+        if percentage_metric is None:
+            LOG.error("Failed to get percentage metric.")
+            return
+        
+        latest = await self.iot_client.measurements.get_latest_measurements(
+            metric_id=percentage_metric.id,
+            tags=["solar", "battery"]
+        )
+        
+        if not len(latest):
+            LOG.warn("Latest battery measurement not found")
+        
+        LOG.info(f"Battery percentage: {int(latest[0].value)}%")
     
     async def get_relay_states(self) -> None:
         on_metric = await self.get_metric("on")
@@ -128,6 +150,11 @@ class EventHandlers:
             measurement: Measurement = Measurement.parse_obj(data["data"])
             percentage_metric = await self.get_metric("percentage")
             on_metric = await self.get_metric("on")
+            
+            interval_no = int(datetime.utcnow().timestamp() / timedelta(minutes=10).total_seconds())
+            if interval_no != self.last_percentage_report:
+                self.last_percentage_report = interval_no
+                await self.print_latest_measurement()
             
             if percentage_metric is None:
                 LOG.error("Failed to get percentage metric.")
