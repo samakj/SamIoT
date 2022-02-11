@@ -131,18 +131,7 @@ std::string MeasurementsState::serialise(std::string additionalProps = "")
     {
         if (len)
             output += ",";
-
-        output += "{";
-        output += serialiseKey(it->first);
-        output += ",";
-        output += "\"value\":null";
-
-        if (additionalProps.size())
-        {
-            output += ",";
-            output += additionalProps;
-        }
-        output += "}";
+        output += serialiseNull(it->second, it->first, additionalProps);
         len += 1;
     }
 
@@ -150,19 +139,7 @@ std::string MeasurementsState::serialise(std::string additionalProps = "")
     {
         if (len)
             output += ",";
-
-        output += "{";
-        output += serialiseKey(it->first);
-        output += ",";
-        output += "\"value\":";
-        output += it->second ? "true" : "false";
-
-        if (additionalProps.size())
-        {
-            output += ",";
-            output += additionalProps;
-        }
-        output += "}";
+        output += serialiseBool(it->second, it->first, additionalProps);
         len += 1;
     }
 
@@ -170,23 +147,7 @@ std::string MeasurementsState::serialise(std::string additionalProps = "")
     {
         if (len)
             output += ",";
-
-        output += "{";
-        output += serialiseKey(it->first);
-        output += ",";
-        output += "\"value\":";
-
-        char buff[64];
-        sprintf("%d", it->second);
-
-        output += buff;
-
-        if (additionalProps.size())
-        {
-            output += ",";
-            output += additionalProps;
-        }
-        output += "}";
+        output += serialiseInt(it->second, it->first, additionalProps);
         len += 1;
     }
 
@@ -194,23 +155,7 @@ std::string MeasurementsState::serialise(std::string additionalProps = "")
     {
         if (len)
             output += ",";
-
-        output += "{";
-        output += serialiseKey(it->first);
-        output += ",";
-        output += "\"value\":";
-
-        char buff[64];
-        sprintf("%f", it->second);
-
-        output += buff;
-
-        if (additionalProps.size())
-        {
-            output += ",";
-            output += additionalProps;
-        }
-        output += "}";
+        output += serialiseFloat(it->second, it->first, additionalProps);
         len += 1;
     }
 
@@ -218,19 +163,7 @@ std::string MeasurementsState::serialise(std::string additionalProps = "")
     {
         if (len)
             output += ",";
-
-        output += "{";
-        output += serialiseKey(it->first);
-        output += ",";
-        output += "\"value\":";
-        output += it->second;
-
-        if (additionalProps.size())
-        {
-            output += ",";
-            output += additionalProps;
-        }
-        output += "}";
+        output += serialiseString(it->second, it->first, additionalProps);
         len += 1;
     }
 
@@ -268,6 +201,253 @@ std::string MeasurementsState::serialiseKey(std::string key)
     }
 
     output += "]";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseKey(std::string metric = "", std::vector<std::string> tags = {})
+{
+    std::string output = "";
+
+    output += "\"metric\":\"";
+
+    if (metric != DEVICE_STATE_KEY_EMPTY)
+        output += metric;
+
+    output += "\",";
+
+    output += "\"tags\":[";
+
+    if (tags.size())
+    {
+        std::vector<std::string> tags = split(keySplit[1], DEVICE_STATE_TAGS_SEPERATOR);
+        int i = 0;
+        for (auto &it : tags)
+        {
+            if (i)
+                output += ",";
+            output += "\"";
+            output += it->first;
+            output += "\"";
+            i += 1
+        }
+    }
+
+    output += "]";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::string key = "", std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(key);
+    output += ",";
+    output += "\"value\":null";
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(metric, tags);
+    output += ",";
+    output += "\"value\":null";
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseBool(bool value, std::string key = "", std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(key);
+    output += ",";
+    output += "\"value\":";
+    output += value ? "true" : "false";
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseBool(bool value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(metric, tags);
+    output += ",";
+    output += "\"value\":";
+    output += value ? "true" : "false";
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseInt(int value, std::string key = "", std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(key);
+    output += ",";
+    output += "\"value\":";
+
+    char buff[64];
+    sprintf("%d", it->second);
+
+    output += buff;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseInt(int value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(metric, tags);
+    output += ",";
+    output += "\"value\":";
+
+    char buff[64];
+    sprintf("%d", it->second);
+
+    output += buff;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseFloat(float value, std::string key = "", std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(key);
+    output += ",";
+    output += "\"value\":";
+
+    char buff[64];
+    sprintf("%f", it->second);
+
+    output += buff;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseFloat(float value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(metric, tags);
+    output += ",";
+    output += "\"value\":";
+
+    char buff[64];
+    sprintf("%f", it->second);
+
+    output += buff;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseString(std::string value, std::string key = "", std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(key);
+    output += ",";
+    output += "\"value\":";
+    output += value;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
+
+    return output;
+};
+
+std::string MeasurementsState::serialiseString(std::string value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+{
+    std::string output = "";
+
+    output += "{";
+    output += serialiseKey(metric, tags);
+    output += ",";
+    output += "\"value\":";
+    output += value;
+
+    if (additionalProps.size())
+    {
+        output += ",";
+        output += additionalProps;
+    }
+    output += "}";
 
     return output;
 };
