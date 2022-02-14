@@ -9,6 +9,10 @@
       "skipLibCheck": true,
       "strict": true,
       "strictNullChecks": true,
-      "noImplicitAny": true
+      "noImplicitAny": true,
+      "paths": {
+        "react": ["node_modules/preact/compat/"],
+        "react-dom": ["node_modules/preact/compat/"]
+      } 
     }
   }

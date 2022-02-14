@@ -11,7 +11,7 @@ module.exports = (api) => {
         '@babel/plugin-transform-react-jsx',
         {
           runtime: 'automatic',
-          importSource: 'preact',
+          importSource: 'preact/compat',
         },
       ],
       [
@@ -20,7 +20,9 @@ module.exports = (api) => {
           root: ['.'],
           alias: {
             react: 'preact/compat',
+            'react-dom/test-utils': 'preact/test-utils',
             'react-dom': 'preact/compat',
+            'react/jsx-runtime': 'preact/jsx-runtime',
           },
         },
       ],

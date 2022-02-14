@@ -1,13 +1,13 @@
 {
-    "compilerOptions": {
-      "target": "es2017",
-      "baseUrl": "./",
-      "paths": {
-        "client/*": ["client/*"],
-        "shared/*": ["shared/*"],
-      },
-      "moduleResolution": "node",
-      "jsx": "react"
+  "compilerOptions": {
+    "target": "es2017",
+    "baseUrl": "./",
+    "paths": {
+      "client/*": ["client/*"],
+      "shared/*": ["shared/*"],
     },
-    "exclude": ["node_modules", "data"]
-  }
+    "moduleResolution": "node",
+    "jsx": "react"
+  },
+  "exclude": ["node_modules", "data"]
+}
