@@ -7,3 +7,4 @@ platformio.ini
 
 # Linked libs
 /**/lib/
+/**/shared/

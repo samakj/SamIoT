@@ -29,3 +29,5 @@ ln -s "$DeviceServer" "$solar_controller/lib"
 ln -s "$ExecutionTimer" "$solar_controller/lib"
 ln -s "$Log" "$solar_controller/lib"
 ln -s "$TimeUtils" "$solar_controller/lib"
+
+ln -s "$shared" "$solar_controller/shared"

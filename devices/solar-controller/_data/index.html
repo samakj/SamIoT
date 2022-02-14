@@ -1,0 +1,81 @@
+<html>
+<head>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">Solar Controller</h1>
+        <section id="measurements">
+            <h2 class="section-title">Measurement data</h2>
+            <div id="loading" class="measurement-item">Loading...</div>
+        </section>
+        <div id="wifi"></div>
+        <section id="socket">
+            <h2 class="section-title">Socket data</h2>
+            <div id="page" class="socket-item">
+                <h3>Page</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Load</td>
+                            <td class="load">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="connection" class="socket-item">
+                <h3>Connection</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Start</td>
+                            <td class="start">-</td>
+                        </tr>
+                        <tr>
+                            <th>Dur.</td>
+                            <td class="duration">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="reconnects" class="socket-item">
+                <h3>Reconnects</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Count</td>
+                            <td class="count">-</td>
+                        </tr>
+                        <tr>
+                            <th>Rate</td>
+                            <td class="rate">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="messages" class="socket-item">
+                <h3>Messages</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Count</td>
+                            <td class="count">-</td>
+                        </tr>
+                        <tr>
+                            <th>Last</td>
+                            <td class="last">-</td>
+                        </tr>
+                        <tr>
+                            <th>Since Last</td>
+                            <td class="since-last">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="toggles"></section>
+        <section id="terminal"></section>
+    </div>
+    <script type="text/javascript" src="/static/script.js"></script>
+</body>
+</html>

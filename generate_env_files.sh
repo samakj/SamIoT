@@ -274,3 +274,27 @@ SOLAR_CONTROLLER_LOCATION="$SOLAR_CONTROLLER_LOCATION"
 SOLAR_CONTROLLER_OTA_PASS="$SOLAR_CONTROLLER_OTA_PASS"
 EOF
 cp "$devices/.env" "$devices/env.sh"
+
+echo "Writing devices/solar-controller device env files."
+cat > "$devices/solar-controller/.env" <<- EOF
+# Frontend
+
+FRONTEND_HOST="$FRONTEND_HOST"
+FRONTEND_PORT=$FRONTEND_PORT
+
+# IoT API
+
+IOT_API_HOST="$IOT_API_HOST"
+IOT_API_PORT=$IOT_API_PORT
+
+# Utilities API
+
+UTILITIES_API_HOST="$UTILITIES_API_HOST"
+UTILITIES_API_PORT=$UTILITIES_API_PORT
+
+# Weather API
+
+WEATHER_API_HOST="$WEATHER_API_HOST"
+WEATHER_API_PORT=$WEATHER_API_PORT
+EOF
+cp "$devices/solar-controller/.env" "$devices/solar-controller/env.sh"
