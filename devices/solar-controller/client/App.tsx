@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StaticThemeWrapper } from 'shared/javascript/themes';
 import { DevicesHeader } from 'shared/javascript/react/components/Headers';
 import { Wrapper2Rem } from 'shared/javascript/react/components/wrappers';
@@ -30,11 +30,14 @@ import { Battery } from 'shared/javascript/react/components/icons/battery';
 import { Wifi } from 'shared/javascript/react/components/icons/wifi';
 import { IoTClient } from './clients/iot';
 import { MetricsStateType } from './types';
+import { DeviceWebsocket } from 'shared/javascript/clients/device-websocket';
 
 export const App = () => {
+  const websocket = useRef(new DeviceWebsocket('/ws'));
   const [metrics, setMetrics] = useState<MetricsStateType>();
 
   useEffect(() => {
+    websocket.current.start();
     IoTClient.metrics.getMetrics().then((metricsResponse) =>
       setMetrics(
         metricsResponse.data.reduce(
@@ -48,6 +51,7 @@ export const App = () => {
         )
       )
     );
+    return () => websocket.stop();
   }, []);
 
   console.log(metrics);
