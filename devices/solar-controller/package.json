@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npm run build:client",
     "build:client": "NODE_ENV=development webpack --config webpack.config.client.js",
+    "build:prod": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "start:dev": "NODE_ENV=development node --inspect -r dotenv/config ./dev/index.js"
   },
   "author": "",
@@ -26,6 +27,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-app": "^10.0.1",
     "clean-webpack-plugin": "^4.0.0",
+    "compression-webpack-plugin": "^9.2.0",
     "copy-webpack-plugin": "^10.2.0",
     "cross-spawn": "^7.0.3",
     "prettier": "^2.5.1",
