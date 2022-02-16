@@ -5,5 +5,7 @@
 .vscode/ipch
 
 node_modules
+build
+!build/index.html
 data
 !data/index.html

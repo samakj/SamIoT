@@ -12,7 +12,7 @@ module.exports = {
   },
   mode: 'production',
   output: {
-    path: path.resolve(__dirname + '/data/js'),
+    path: path.resolve(__dirname + '/build/js'),
     filename: '[name].js',
     publicPath: '',
   },
