@@ -44,7 +44,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      protectWebpackAssets: false,
+      cleanAfterEveryBuildPatterns: ['*.LICENSE.*', 'client.js'],
+    }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({
         IOT_API_HOST: process.env.IOT_API_HOST,
