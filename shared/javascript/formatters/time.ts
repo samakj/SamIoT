@@ -31,7 +31,7 @@ export const prettyTimeDelta = (
   if (months) return `${months}m ${days ? `${days}d` : ''}`;
   if (days) return `${days}d ${hours ? `${hours}h` : ''}`;
   if (hours) return `${hours}h ${minutes ? `${minutes}m` : ''}`;
-  if (minutes) return `${minutes}h ${seconds ? `${seconds}s` : ''}`;
+  if (minutes) return `${minutes}m ${seconds ? `${seconds}s` : ''}`;
   if (seconds >= 10) return `${(totalMs / 1000).toFixed(1)}s`;
   if (seconds) return `${(totalMs / 1000).toFixed(2)}s`;
 

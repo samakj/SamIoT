@@ -142,7 +142,7 @@ export const App = () => {
               {placeholderFloat(latestBatteryCurrentMeasurement?.value)}A
             </MCUWideInfoGridCardValueText>
             <MCUWideInfoGridCardTimeText>
-              {prettyTimeDelta(latestBatteryPercentageMeasurement?.timestamp)} ago
+              {prettyTimeDelta(latestBatteryPercentageMeasurement?.timestamp)}
             </MCUWideInfoGridCardTimeText>
             <MCUWideInfoGridCardValueText>
               {placeholderFloat(latestBatteryTemperatureMeasurement?.value)}c
@@ -157,10 +157,10 @@ export const App = () => {
               {placeholderFloat(latestPanelCurrentMeasurement?.value)}A
             </MCUWideInfoGridCardMediumText>
             <MCUWideInfoGridCardTimeText>
-              {prettyTimeDelta(latestPanelVoltageMeasurement?.timestamp)} ago
+              {prettyTimeDelta(latestPanelVoltageMeasurement?.timestamp)}
             </MCUWideInfoGridCardTimeText>
             <MCUWideInfoGridCardTimeText>
-              {prettyTimeDelta(latestPanelCurrentMeasurement?.timestamp)} ago
+              {prettyTimeDelta(latestPanelCurrentMeasurement?.timestamp)}
             </MCUWideInfoGridCardTimeText>
           </MCUWideInfoMiddleGridCard>
         </MCUCardGrid>
@@ -214,7 +214,7 @@ export const App = () => {
               {placeholderFloat(latestWifiStrengthMeasurement?.value, 0)}%
             </MCUWideInfoGridCardMediumText>
             <MCUWideInfoGridCardTimeText>
-              {prettyTimeDelta(latestWifiStrengthMeasurement?.timestamp)} ago
+              {prettyTimeDelta(latestWifiStrengthMeasurement?.timestamp)}
             </MCUWideInfoGridCardTimeText>
           </MCUWideInfoEvenGridCard>
         </MCUCardGrid>
