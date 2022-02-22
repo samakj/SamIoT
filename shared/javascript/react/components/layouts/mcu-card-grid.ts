@@ -1,5 +1,7 @@
-import styled from "styled-components";
-import { transparentize } from "polished";
+/** @format */
+
+import styled from 'styled-components';
+import { transparentize } from 'polished';
 
 export const MCUCardGrid = styled.div`
   display: grid;
@@ -26,11 +28,10 @@ export const MCUButtonCard = styled(MCUCard)`
   grid-template-rows: 1fr auto;
   cursor: pointer;
   transition: background-color 300ms;
-  grid-template-areas: "icon" "title";
+  grid-template-areas: 'icon' 'title';
 
   &:hover {
-    background-color: ${({ theme }) =>
-      transparentize(0.8, theme.colours.white)};
+    background-color: ${({ theme }) => transparentize(0.8, theme.colours.white)};
   }
 `;
 
@@ -40,9 +41,7 @@ export const MCUButtonCardIconContainer = styled.div<{ isActive?: boolean }>`
   font-size: 1.75rem;
   line-height: 1.75rem;
   color: ${({ theme, isActive }) =>
-    isActive
-      ? theme.colours.success
-      : transparentize(0.5, theme.colours.white)};
+    isActive ? theme.colours.success : transparentize(0.5, theme.colours.white)};
 `;
 
 export const MCUButtonCardTitle = styled.div`
@@ -93,4 +92,5 @@ export const MCUWideInfoGridCardValueText = styled.div`
 
 export const MCUWideInfoGridCardTimeText = styled.div`
   color: ${({ theme }) => transparentize(0.5, theme.colours.white)};
+  font-size: 0.875rem;
 `;
