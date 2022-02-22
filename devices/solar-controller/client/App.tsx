@@ -241,36 +241,14 @@ export const App = () => {
         </MCUCardGrid>
         <Horizontal2RemSpacer />
         <MCUTerminalView>
-          <MCUTerminalMeasurementLine>
-            <MCUTerminalLineCell>2022-02-14 21:57:34</MCUTerminalLineCell>
-            <MCUTerminalLineCell>solar, battery, remote</MCUTerminalLineCell>
-            <MCUTerminalLineCell>temperature</MCUTerminalLineCell>
-            <MCUTerminalLineCell>0.8</MCUTerminalLineCell>
-          </MCUTerminalMeasurementLine>
-          <MCUTerminalMeasurementLine>
-            <MCUTerminalLineCell>2022-02-14 21:57:34</MCUTerminalLineCell>
-            <MCUTerminalLineCell>solar, load</MCUTerminalLineCell>
-            <MCUTerminalLineCell>power</MCUTerminalLineCell>
-            <MCUTerminalLineCell>0.8</MCUTerminalLineCell>
-          </MCUTerminalMeasurementLine>
-          <MCUTerminalMeasurementLine>
-            <MCUTerminalLineCell>2022-02-14 21:57:34</MCUTerminalLineCell>
-            <MCUTerminalLineCell>solar, load</MCUTerminalLineCell>
-            <MCUTerminalLineCell>power</MCUTerminalLineCell>
-            <MCUTerminalLineCell>0.8</MCUTerminalLineCell>
-          </MCUTerminalMeasurementLine>
-          <MCUTerminalMeasurementLine>
-            <MCUTerminalLineCell>2022-02-14 21:57:34</MCUTerminalLineCell>
-            <MCUTerminalLineCell>solar, load</MCUTerminalLineCell>
-            <MCUTerminalLineCell>power</MCUTerminalLineCell>
-            <MCUTerminalLineCell>0.8</MCUTerminalLineCell>
-          </MCUTerminalMeasurementLine>
-          <MCUTerminalMeasurementLine>
-            <MCUTerminalLineCell>2022-02-14 21:57:34</MCUTerminalLineCell>
-            <MCUTerminalLineCell>solar, load</MCUTerminalLineCell>
-            <MCUTerminalLineCell>power</MCUTerminalLineCell>
-            <MCUTerminalLineCell>0.8</MCUTerminalLineCell>
-          </MCUTerminalMeasurementLine>
+          {websocket.current.messageStack.map((message) => (
+            <MCUTerminalMeasurementLine key={+new Date(message.date)}>
+              <MCUTerminalLineCell>{new Date(message.date).toLocaleString()}</MCUTerminalLineCell>
+              <MCUTerminalLineCell>{message.data?.tags?.join(', ')}</MCUTerminalLineCell>
+              <MCUTerminalLineCell>{message.data?.metric}</MCUTerminalLineCell>
+              <MCUTerminalLineCell>{message.data?.value}</MCUTerminalLineCell>
+            </MCUTerminalMeasurementLine>
+          ))}
         </MCUTerminalView>
       </Wrapper2Rem>
     </StaticThemeWrapper>
