@@ -31,6 +31,12 @@ import { Wifi } from 'shared/javascript/react/components/icons/wifi';
 // import { IoTClient } from './clients/iot';
 import { MetricsStateType } from './types';
 import { DeviceWebsocket, Measurement } from 'shared/javascript/clients/device-websocket';
+import { prettyTimeDelta } from 'shared/javascript/formatters/time';
+
+const placeholderFloat = (value?: string, dp: number = 1): string =>
+  value ? parseFloat(value).toFixed(dp) : '...';
+const placeholderOnOff = (value?: string): string =>
+  !value ? '...' : value === 'true' ? 'ON' : 'OFF';
 
 export const App = () => {
   const [metrics, setMetrics] = useState<MetricsStateType>();
@@ -127,67 +133,36 @@ export const App = () => {
               />
             </MCUWideInfoGridCardIcon>
             <MCUWideInfoGridCardLargeText>
-              {latestBatteryPercentageMeasurement
-                ? parseFloat(latestBatteryPercentageMeasurement.value).toFixed(0)
-                : '...'}
-              %
+              {placeholderFloat(latestBatteryPercentageMeasurement.value, 0)}%
             </MCUWideInfoGridCardLargeText>
             <MCUWideInfoGridCardValueText>
-              {latestBatteryVoltageMeasurement
-                ? parseFloat(latestBatteryVoltageMeasurement.value).toFixed(1)
-                : '...'}
-              V
+              {placeholderFloat(latestBatteryVoltageMeasurement?.value)}V
             </MCUWideInfoGridCardValueText>
             <MCUWideInfoGridCardValueText>
-              {latestBatteryCurrentMeasurement
-                ? parseFloat(latestBatteryCurrentMeasurement.value).toFixed(1)
-                : '...'}
-              A
+              {placeholderFloat(latestBatteryCurrentMeasurement?.value)}A
             </MCUWideInfoGridCardValueText>
             <MCUWideInfoGridCardTimeText>
-              {latestBatteryPercentageMeasurement
-                ? Math.ceil(
-                    (+new Date() - +new Date(latestBatteryPercentageMeasurement.timestamp)) / 1000
-                  )
-                : '...'}
-              s ago
+              {prettyTimeDelta(latestBatteryPercentageMeasurement.timestamp)}s ago
             </MCUWideInfoGridCardTimeText>
             <MCUWideInfoGridCardValueText>
-              {latestBatteryTemperatureMeasurement
-                ? parseFloat(latestBatteryTemperatureMeasurement.value).toFixed(1)
-                : '...'}
-              c
+              {placeholderFloat(latestBatteryTemperatureMeasurement?.value)}c
             </MCUWideInfoGridCardValueText>
           </MCUWideInfoMiddleGridCard>
           <MCUWideInfoMiddleGridCard>
             <MCUWideInfoGridCardIcon></MCUWideInfoGridCardIcon>
             <MCUWideInfoGridCardMediumText>
-              {latestPanelVoltageMeasurement
-                ? parseFloat(latestPanelVoltageMeasurement.value).toFixed(1)
-                : '...'}
-              V
+              {placeholderFloat(latestPanelVoltageMeasurement?.value)}V
             </MCUWideInfoGridCardMediumText>
             <MCUWideInfoGridCardMediumText>
-              {latestPanelCurrentMeasurement
-                ? parseFloat(latestPanelCurrentMeasurement.value).toFixed(1)
-                : '...'}
-              A
+              {placeholderFloat(latestPanelCurrentMeasurement?.value)}A
             </MCUWideInfoGridCardMediumText>
             <MCUWideInfoGridCardTimeText>
-              {latestPanelVoltageMeasurement
-                ? Math.ceil(
-                    (+new Date() - +new Date(latestPanelVoltageMeasurement.timestamp)) / 1000
-                  )
-                : '...'}
-              s ago
+              {prettyTimeDelta(latestPanelVoltageMeasurement.timestamp)}
+              ago
             </MCUWideInfoGridCardTimeText>
             <MCUWideInfoGridCardTimeText>
-              {latestPanelCurrentMeasurement
-                ? Math.ceil(
-                    (+new Date() - +new Date(latestPanelCurrentMeasurement.timestamp)) / 1000
-                  )
-                : '...'}
-              s ago
+              {prettyTimeDelta(latestPanelCurrentMeasurement.timestamp)}
+              ago
             </MCUWideInfoGridCardTimeText>
           </MCUWideInfoMiddleGridCard>
         </MCUCardGrid>
@@ -195,51 +170,31 @@ export const App = () => {
         <MCUCardGrid>
           <MCUButtonCard>
             <MCUButtonCardIconContainer isActive={latestInverterMeasurement?.value === 'true'}>
-              {!latestInverterMeasurement
-                ? '...'
-                : latestInverterMeasurement.value === 'true'
-                ? 'ON'
-                : 'OFF'}
+              {placeholderOnOff(latestInverterMeasurement?.value)}
             </MCUButtonCardIconContainer>
             <MCUButtonCardTitle>Inverter</MCUButtonCardTitle>
           </MCUButtonCard>
           <MCUButtonCard>
             <MCUButtonCardIconContainer isActive={latestPondMeasurement?.value === 'true'}>
-              {!latestPondMeasurement
-                ? '...'
-                : latestPondMeasurement.value === 'true'
-                ? 'ON'
-                : 'OFF'}
+              {placeholderOnOff(latestPondMeasurement?.value)}
             </MCUButtonCardIconContainer>
             <MCUButtonCardTitle>Pond</MCUButtonCardTitle>
           </MCUButtonCard>
           <MCUButtonCard>
             <MCUButtonCardIconContainer isActive={latestSwitchedMeasurement?.value === 'true'}>
-              {!latestSwitchedMeasurement
-                ? '...'
-                : latestSwitchedMeasurement.value === 'true'
-                ? 'ON'
-                : 'OFF'}
+              {placeholderOnOff(latestSwitchedMeasurement?.value)}
             </MCUButtonCardIconContainer>
             <MCUButtonCardTitle>Switched</MCUButtonCardTitle>
           </MCUButtonCard>
           <MCUButtonCard>
             <MCUButtonCardIconContainer isActive={latestSolarMeasurement?.value === 'true'}>
-              {!latestSolarMeasurement
-                ? '...'
-                : latestSolarMeasurement.value === 'true'
-                ? 'ON'
-                : 'OFF'}
+              {placeholderOnOff(latestSolarMeasurement?.value)}
             </MCUButtonCardIconContainer>
             <MCUButtonCardTitle>Solar</MCUButtonCardTitle>
           </MCUButtonCard>
           <MCUButtonCard>
             <MCUButtonCardIconContainer isActive={latestExcessMeasurement?.value === 'true'}>
-              {!latestExcessMeasurement
-                ? '...'
-                : latestExcessMeasurement.value === 'true'
-                ? 'ON'
-                : 'OFF'}
+              {placeholderOnOff(latestExcessMeasurement?.value)}
             </MCUButtonCardIconContainer>
             <MCUButtonCardTitle>Excess</MCUButtonCardTitle>
           </MCUButtonCard>
@@ -258,12 +213,11 @@ export const App = () => {
             </MCUWideInfoGridCardIcon>
             <MCUWideInfoGridCardMediumText style={{ gridColumn: 'span 2' }}>
               {latestSsidMeasurement?.value || '...'}{' '}
-              {latestWifiStrengthMeasurement
-                ? parseFloat(latestWifiStrengthMeasurement.value).toFixed(0)
-                : '...'}
-              %
+              {placeholderFloat(latestWifiStrengthMeasurement?.value, 0)}%
             </MCUWideInfoGridCardMediumText>
-            <MCUWideInfoGridCardTimeText>10m ago</MCUWideInfoGridCardTimeText>
+            <MCUWideInfoGridCardTimeText>
+              {prettyTimeDelta(latestWifiStrengthMeasurement?.timestamp)} ago
+            </MCUWideInfoGridCardTimeText>
           </MCUWideInfoEvenGridCard>
         </MCUCardGrid>
         <Horizontal3RemSpacer />
