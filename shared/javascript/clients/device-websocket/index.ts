@@ -1,12 +1,12 @@
 /** @format */
 
-import { SECOND_IN_MS } from '../../static/times';
+import { SECOND_IN_MS } from "../../static/times";
 
 interface WebsocketCallbacks {
-  open?: (event: WebSocketEventMap['open']) => void;
-  message?: (event: WebSocketEventMap['message']) => void;
-  error?: (event: WebSocketEventMap['error']) => void;
-  close?: (event: WebSocketEventMap['close']) => void;
+  open?: (event: WebSocketEventMap["open"]) => void;
+  message?: (event: WebSocketEventMap["message"]) => void;
+  error?: (event: WebSocketEventMap["error"]) => void;
+  close?: (event: WebSocketEventMap["close"]) => void;
 }
 
 interface WebsocketMeta {
@@ -17,18 +17,20 @@ interface WebsocketMeta {
   messageCount: { [type: string]: number };
 }
 
+export interface Measurement {
+  location: string;
+  mac: string;
+  metric: string;
+  tags: string[];
+  timestamp: string;
+  type: string;
+  value: string;
+}
+
 interface Message {
   date: Date;
   text: string;
-  data?: {
-    location: string;
-    mac: string;
-    metric: string;
-    tags: string[];
-    timestamp: string;
-    type: string;
-    value: string;
-  };
+  data?: Measurement;
 }
 
 export class DeviceWebsocket {
@@ -42,7 +44,7 @@ export class DeviceWebsocket {
   messageStack: Message[];
 
   constructor(
-    endpoint: string = '/ws',
+    endpoint: string = "/ws",
     callbacks: WebsocketCallbacks = {},
     maxStackSize: number = 1000,
     keepPingMessages: boolean = false
@@ -68,11 +70,11 @@ export class DeviceWebsocket {
       date: new Date(),
       text: `Connecting to websocket at ${this.endpoint}.`,
     });
-    this.websocket = new WebSocket(`ws://${location.pathname}${this.endpoint}`);
-    this.websocket.onopen = this.open;
-    this.websocket.onmessage = this.message;
-    this.websocket.onerror = this.error;
-    this.websocket.onclose = this.close;
+    this.websocket = new WebSocket(this.endpoint); //`ws://${location.pathname}${this.endpoint}`);
+    this.websocket.onopen = this.open.bind(this);
+    this.websocket.onmessage = this.message.bind(this);
+    this.websocket.onerror = this.error.bind(this);
+    this.websocket.onclose = this.close.bind(this);
   }
 
   stop() {
@@ -87,7 +89,7 @@ export class DeviceWebsocket {
   }
 
   open(event: Event) {
-    this.callbacks.open(event);
+    this.callbacks?.open?.(event);
     this.meta.lastConnect = new Date();
     this.meta.reconnectCount += 1;
     this.messageStack.push({
@@ -97,7 +99,7 @@ export class DeviceWebsocket {
   }
 
   message(event: MessageEvent) {
-    this.callbacks.message(event);
+    this.callbacks?.message?.(event);
 
     const now = new Date();
     this.meta.lastMessage = now;
@@ -113,15 +115,16 @@ export class DeviceWebsocket {
       console.warn(`Failed to pass message data as json:\n${event.data}`);
     }
 
-    const type = message.data?.type || 'text';
+    const type = message.data?.type || "text";
     this.meta.messageCount[type] = this.meta.messageCount[type] || 0;
     this.meta.messageCount[type] += 1;
 
-    if (type != 'ping' || this.keepPingMessages) this.messageStack.push(message);
+    if (type != "ping" || this.keepPingMessages)
+      this.messageStack.push(message);
   }
 
   error(event: Event) {
-    this.callbacks.error(event);
+    this.callbacks?.error?.(event);
     this.messageStack.push({
       date: new Date(),
       text: `Connection to websocket at ${this.endpoint} errored.`,
@@ -129,7 +132,7 @@ export class DeviceWebsocket {
   }
 
   close(event: CloseEvent) {
-    this.callbacks.close(event);
+    this.callbacks?.close?.(event);
     this.messageStack.push({
       date: new Date(),
       text: `Connection to websocket at ${this.endpoint} closed.`,
@@ -142,7 +145,10 @@ export class DeviceWebsocket {
       +new Date() - +this.meta.attemptingReconnect < 10 * SECOND_IN_MS
     )
       return;
-    if (this?.meta?.lastMessage && +new Date() - +this.meta.lastMessage > 15 * SECOND_IN_MS) {
+    if (
+      this?.meta?.lastMessage &&
+      +new Date() - +this.meta.lastMessage > 15 * SECOND_IN_MS
+    ) {
       this.messageStack.push({
         date: new Date(),
         text: `No message from ${this.endpoint} in last 15s, assuming dead.`,
@@ -162,7 +168,7 @@ export class DeviceWebsocket {
     this.meta.reconnectCount++;
     this.messageStack.push({
       date: new Date(),
-      text: 'Attempting to reconnect in 1s.',
+      text: "Attempting to reconnect in 1s.",
     });
     setTimeout(this.start, 1000);
   }
