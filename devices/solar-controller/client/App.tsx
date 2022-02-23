@@ -32,6 +32,7 @@ import { Wifi } from 'shared/javascript/react/components/icons/wifi';
 import { MetricsStateType } from './types';
 import { DeviceWebsocket, Measurement } from 'shared/javascript/clients/device-websocket';
 import { prettyTimeDelta } from 'shared/javascript/formatters/time';
+import { HOUR_IN_MS } from 'shared/javascript/static/times';
 
 const placeholderFloat = (value?: string, dp: number = 1): string =>
   value ? parseFloat(value).toFixed(dp) : '...';
@@ -223,18 +224,39 @@ export const App = () => {
           <MCUWideInfoEvenGridCard>
             <MCUWideInfoGridCardIcon></MCUWideInfoGridCardIcon>
             <MCUWideInfoGridCardMediumText style={{ gridColumn: 'span 2' }}>
-              12,345/h
+              {websocket.current?.meta?.startDate &&
+              websocket.current?.meta?.messageCount?.measurement > 50
+                ? Math.ceil(
+                    (HOUR_IN_MS * (websocket.current?.meta?.messageCount?.measurement || 0)) /
+                      (+new Date() - +websocket.current?.meta?.startDate)
+                  ).toLocaleString()
+                : '...'}
+              /h
             </MCUWideInfoGridCardMediumText>
-            <MCUWideInfoGridCardValueText>12,345</MCUWideInfoGridCardValueText>
-            <MCUWideInfoGridCardValueText>987ms</MCUWideInfoGridCardValueText>
+            <MCUWideInfoGridCardValueText>
+              {websocket.current?.meta?.messageCount?.measurement?.toLocaleString()}
+            </MCUWideInfoGridCardValueText>
+            <MCUWideInfoGridCardValueText>
+              {prettyTimeDelta(websocket.current?.meta?.lastMessage)}
+            </MCUWideInfoGridCardValueText>
           </MCUWideInfoEvenGridCard>
           <MCUWideInfoEvenGridCard>
             <MCUWideInfoGridCardIcon></MCUWideInfoGridCardIcon>
             <MCUWideInfoGridCardMediumText style={{ gridColumn: 'span 2' }}>
-              5m 41s
+              {prettyTimeDelta(websocket.current?.meta?.lastConnect)}
             </MCUWideInfoGridCardMediumText>
-            <MCUWideInfoGridCardValueText>2</MCUWideInfoGridCardValueText>
-            <MCUWideInfoGridCardValueText>0.2/h</MCUWideInfoGridCardValueText>
+            <MCUWideInfoGridCardValueText>
+              {websocket.current?.meta?.reconnectCount}
+            </MCUWideInfoGridCardValueText>
+            <MCUWideInfoGridCardValueText>
+              {websocket.current?.meta?.startDate
+                ? (
+                    (HOUR_IN_MS * (websocket.current?.meta?.reconnectCount || 0)) /
+                    (+new Date() - +websocket.current?.meta?.startDate)
+                  ).toFixed(2)
+                : '...'}
+              /h
+            </MCUWideInfoGridCardValueText>
           </MCUWideInfoEvenGridCard>
         </MCUCardGrid>
         <Horizontal2RemSpacer />
