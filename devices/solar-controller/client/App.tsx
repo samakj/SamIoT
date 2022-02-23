@@ -239,8 +239,8 @@ export const App = () => {
         </MCUCardGrid>
         <Horizontal2RemSpacer />
         <MCUTerminalView>
-          {websocket.current.messageStack.map((message) => (
-            <MCUTerminalMeasurementLine key={+new Date(message.date)}>
+          {websocket.current.messageStack.reverse().map((message, index) => (
+            <MCUTerminalMeasurementLine key={index}>
               <MCUTerminalLineCell>{new Date(message.date).toLocaleString()}</MCUTerminalLineCell>
               <MCUTerminalLineCell>{message.data?.tags?.join(', ')}</MCUTerminalLineCell>
               <MCUTerminalLineCell>{message.data?.metric}</MCUTerminalLineCell>
