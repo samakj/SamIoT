@@ -27,3 +27,19 @@ export const MCUTerminalLineCell = styled.div`
   padding: 0.125rem 0.75rem;
   overflow: hidden;
 `;
+
+export const MCUTerminalToggle = styled.div<{ isActive?: boolean }>`
+  display: inline-block;
+  margin: 0.125rem 0.5rem 0 0;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: ${({ theme, isActive }) => (isActive ? theme.colours.black : theme.colours.white)};
+  background-color: ${({ theme, isActive }) =>
+    isActive ? theme.colours.white : theme.colours.black};
+  transition: color 300ms, background-color 300ms;
+  cursor: pointer;
+`;

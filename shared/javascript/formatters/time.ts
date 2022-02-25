@@ -18,6 +18,8 @@ export const prettyTimeDelta = (
   dateA = new Date(dateA);
   dateB = dateB ? new Date(dateB) : new Date();
 
+  if (dateA > dateB) console.log(dateA, dateB);
+
   const totalMs = +dateB - +dateA;
   const milliseconds = Math.floor(totalMs % SECOND_IN_MS);
   const seconds = Math.floor((totalMs % MINUTE_IN_MS) / SECOND_IN_MS);

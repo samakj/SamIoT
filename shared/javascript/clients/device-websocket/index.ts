@@ -47,7 +47,7 @@ export class DeviceWebsocket {
   constructor(
     endpoint: string = '/ws',
     callbacks: WebsocketCallbacks = {},
-    maxStackSize: number = 1000,
+    maxStackSize: number = 100,
     keepPingMessages: boolean = false
   ) {
     this.endpoint = endpoint;
@@ -68,10 +68,13 @@ export class DeviceWebsocket {
   start() {
     if (this.websocket) this.stop();
 
-    this.messageStack.push({
-      date: new Date(),
-      text: `Connecting to websocket at ${this.endpoint}.`,
-    });
+    this.messageStack = [
+      ...this.messageStack,
+      {
+        date: new Date(),
+        text: `Connecting to websocket at ${this.endpoint}.`,
+      },
+    ];
     this.meta.startDate = new Date();
     this.websocket = new WebSocket(this.endpoint); //`ws://${location.pathname}${this.endpoint}`);
     this.websocket.onopen = this.open.bind(this);
@@ -82,10 +85,13 @@ export class DeviceWebsocket {
 
   stop() {
     if (this.websocket) {
-      this.messageStack.push({
-        date: new Date(),
-        text: `Closing connection to websocket at ${this.endpoint}.`,
-      });
+      this.messageStack = [
+        ...this.messageStack,
+        {
+          date: new Date(),
+          text: `Closing connection to websocket at ${this.endpoint}.`,
+        },
+      ];
       this.websocket.close();
       this.websocket = null;
     }
@@ -95,10 +101,13 @@ export class DeviceWebsocket {
     this.callbacks?.open?.(event);
     this.meta.lastConnect = new Date();
     this.meta.reconnectCount += 1;
-    this.messageStack.push({
-      date: new Date(),
-      text: `Connected to websocket at ${this.endpoint}.`,
-    });
+    this.messageStack = [
+      ...this.messageStack,
+      {
+        date: new Date(),
+        text: `Connected to websocket at ${this.endpoint}.`,
+      },
+    ];
   }
 
   message(event: MessageEvent) {
@@ -122,23 +131,33 @@ export class DeviceWebsocket {
     this.meta.messageCount[type] = this.meta.messageCount[type] || 0;
     this.meta.messageCount[type] += 1;
 
-    if (type != 'ping' || this.keepPingMessages) this.messageStack.push(message);
+    if (type != 'ping' || this.keepPingMessages)
+      this.messageStack = [...this.messageStack, message].slice(
+        Math.max(0, this.messageStack.length - this.maxStackSize + 1),
+        this.messageStack.length + 1
+      );
   }
 
   error(event: Event) {
     this.callbacks?.error?.(event);
-    this.messageStack.push({
-      date: new Date(),
-      text: `Connection to websocket at ${this.endpoint} errored.`,
-    });
+    this.messageStack = [
+      ...this.messageStack,
+      {
+        date: new Date(),
+        text: `Connection to websocket at ${this.endpoint} errored.`,
+      },
+    ];
   }
 
   close(event: CloseEvent) {
     this.callbacks?.close?.(event);
-    this.messageStack.push({
-      date: new Date(),
-      text: `Connection to websocket at ${this.endpoint} closed.`,
-    });
+    this.messageStack = [
+      ...this.messageStack,
+      {
+        date: new Date(),
+        text: `Connection to websocket at ${this.endpoint} closed.`,
+      },
+    ];
   }
 
   checkLastMessageTime = () => {
@@ -148,10 +167,13 @@ export class DeviceWebsocket {
     )
       return;
     if (this?.meta?.lastMessage && +new Date() - +this.meta.lastMessage > 15 * SECOND_IN_MS) {
-      this.messageStack.push({
-        date: new Date(),
-        text: `No message from ${this.endpoint} in last 15s, assuming dead.`,
-      });
+      this.messageStack = [
+        ...this.messageStack,
+        {
+          date: new Date(),
+          text: `No message from ${this.endpoint} in last 15s, assuming dead.`,
+        },
+      ];
       this.reconnect();
     }
   };
@@ -165,10 +187,13 @@ export class DeviceWebsocket {
 
     this.meta.attemptingReconnect = new Date();
     this.meta.reconnectCount++;
-    this.messageStack.push({
-      date: new Date(),
-      text: 'Attempting to reconnect in 1s.',
-    });
+    this.messageStack = [
+      ...this.messageStack,
+      {
+        date: new Date(),
+        text: 'Attempting to reconnect in 1s.',
+      },
+    ];
     setTimeout(this.start, 1000);
   }
 }

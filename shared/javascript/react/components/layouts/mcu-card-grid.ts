@@ -86,11 +86,23 @@ export const MCUWideInfoGridCardMediumText = styled.div`
   line-height: 1.75rem;
 `;
 
+export const MCUWideInfoGridCardMediumRightText = styled(MCUWideInfoGridCardMediumText)`
+  text-align: right;
+`;
+
 export const MCUWideInfoGridCardValueText = styled.div`
   color: ${({ theme }) => transparentize(0.25, theme.colours.white)};
+`;
+
+export const MCUWideInfoGridCardValueRightText = styled(MCUWideInfoGridCardValueText)`
+  text-align: right;
 `;
 
 export const MCUWideInfoGridCardTimeText = styled.div`
   color: ${({ theme }) => transparentize(0.5, theme.colours.white)};
   font-size: 0.875rem;
+`;
+
+export const MCUWideInfoGridCardTimeRightText = styled(MCUWideInfoGridCardTimeText)`
+  text-align: right;
 `;
