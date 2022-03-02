@@ -24,7 +24,7 @@ WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
 WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
 WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
 
-MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD");
 
 #endif
 EOF
@@ -41,11 +41,11 @@ const char LOCATION[24] = "$WATER_BUTT_LOCATION";
 int IP_LOCATION = $WATER_BUTT_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$WATER_BUTT_OTA_PASS";
 
-WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
-WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
-WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
+WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
@@ -62,11 +62,11 @@ const char LOCATION[24] = "$POND_LOCATION";
 int IP_LOCATION = $POND_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$POND_OTA_PASS";
 
-WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
-WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
-WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
+WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
@@ -83,11 +83,11 @@ const char LOCATION[24] = "$AQUAPONICS_LOCATION";
 int IP_LOCATION = $AQUAPONICS_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$AQUAPONICS_OTA_PASS";
 
-WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
-WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
-WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
+WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
