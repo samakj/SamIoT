@@ -4,8 +4,7 @@ AsyncSwitch::AsyncSwitch(
     int _pinNo,
     int _outPin,
     bool _defaultState,
-    SwitchCallback _switchCallback
-)
+    SwitchCallback _switchCallback)
 {
     pinNo = _pinNo;
     outPin = _outPin;
@@ -14,8 +13,7 @@ AsyncSwitch::AsyncSwitch(
 };
 
 void AsyncSwitch::setSwitchCallback(
-    SwitchCallback _switchCallback
-)
+    SwitchCallback _switchCallback)
 {
     switchCallback = _switchCallback;
 };
@@ -23,8 +21,9 @@ void AsyncSwitch::setSwitchCallback(
 void AsyncSwitch::setup()
 {
     pinMode(pinNo, INPUT_PULLUP);
-    if (outPin >= 0) pinMode(outPin, OUTPUT);
-    Log.infof("Switch sensor initialised on pin %d\n", pinNo);
+    if (outPin >= 0)
+        pinMode(outPin, OUTPUT);
+    Sam::Log.infof("Switch sensor initialised on pin %d\n", pinNo);
 };
 
 void AsyncSwitch::loop()

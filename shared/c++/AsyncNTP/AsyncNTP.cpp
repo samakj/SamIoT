@@ -2,14 +2,14 @@
 
 AsyncNTPClass AsyncNTPClass::_instance;
 
-AsyncNTPClass& AsyncNTPClass::getInstance()
+AsyncNTPClass &AsyncNTPClass::getInstance()
 {
     return _instance;
 }
 
 bool AsyncNTPClass::isConnected()
 {
-    return time(nullptr) >  1616000000;
+    return time(nullptr) > 1616000000;
 };
 
 void AsyncNTPClass::addConnectCallback(ConnectCallback callback)
@@ -20,24 +20,27 @@ void AsyncNTPClass::addConnectCallback(ConnectCallback callback)
 void AsyncNTPClass::addWifiConnectCallback()
 {
     usingWifiCallback = true;
-    Log.debug("Adding NTP Wifi connect callback.");
-    AsyncWifi.addConnectCallback([this] (std::string ssid) { connect(); });
+    Sam::Log.debug("Adding NTP Wifi connect callback.");
+    AsyncWifi.addConnectCallback(
+        [this](std::string ssid)
+        { connect(); });
 }
 
 void AsyncNTPClass::connect()
 {
     if (!isConnected())
     {
-        Log.infof("NTP not connected, connecting to %s..\n", server.c_str());
+        Sam::Log.infof("NTP not connected, connecting to %s..\n", server.c_str());
 
-        if (!AsyncWifi.isConnected()) {
-            Log.warn("Wifi not connected, skipping NTP sync.");
+        if (!AsyncWifi.isConnected())
+        {
+            Sam::Log.warn("Wifi not connected, skipping NTP sync.");
             return;
         }
 
         int start = millis();
         int loop = 0;
-        
+
         while (!isConnected())
         {
             int timeSinceStart = (millis() - start) / 1000.;
@@ -48,26 +51,25 @@ void AsyncNTPClass::connect()
             }
             if (timeSinceStart >= maxWait)
             {
-                Log.error("Max wait exceeded.", "\n");
+                Sam::Log.error("Max wait exceeded.", "\n");
                 return;
             }
-            Log.infof(
+            Sam::Log.infof(
                 "Attempting to sync with '%s'... %.1fs\r",
                 server.c_str(),
-                (millis() - start) / 1000.
-            );
+                (millis() - start) / 1000.);
             loop++;
             delay(100);
         }
 
-        Log.info("");
-        Log.infof(
+        Sam::Log.info("");
+        Sam::Log.infof(
             "Synced with '%s'. Time: %s.\n",
             server.c_str(),
-            TimeUtils.getIsoTimestamp().c_str()
-        );
+            TimeUtils.getIsoTimestamp().c_str());
 
-        for (ConnectCallback callback : connectCallbacks) callback();
+        for (ConnectCallback callback : connectCallbacks)
+            callback();
     }
 };
 

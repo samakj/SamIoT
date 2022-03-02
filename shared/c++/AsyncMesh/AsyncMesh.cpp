@@ -8,7 +8,7 @@ void AsyncMeshClass::setup()
 
     if (_wifiCredentials == nullptr)
     {
-        Log.error("No wifi credentials aborting mesh setup.");
+        Sam::Log.error("No wifi credentials aborting mesh setup.");
     }
 
     meshClient = new painlessMesh();
@@ -50,7 +50,7 @@ void AsyncMeshClass::setup()
     meshClient->setContainsRoot(true);
     meshClient->initOTAReceive("bridge");
 
-    Log.infof("Connected to mesh, node id: %d", meshClient->getNodeId());
+    Sam::Log.infof("Connected to mesh, node id: %d", meshClient->getNodeId());
 };
 
 void AsyncMeshClass::loop()
@@ -100,7 +100,9 @@ void AsyncMeshClass::setIpAddress(
     dns2 = _dns2;
 
     if (!WiFi.config(ip, gateway, subnet, dns1, dns2))
-        Log.error("Failed to set IP information.");
+    {
+        Sam::Log.error("Failed to set IP information.");
+    }
 };
 void AsyncMeshClass::setHostname(std::string _hostname)
 {
@@ -151,16 +153,16 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
 {
     if (!wifiCredentials.size())
     {
-        Log.error("Can't find strongest wifi of empty credentials list.");
+        Sam::Log.error("Can't find strongest wifi of empty credentials list.");
         return nullptr;
     }
 
-    Log.infof("Finding strongest of %d networks...\n", wifiCredentials.size());
-    Log.info("Scanning local networks...");
+    Sam::Log.infof("Finding strongest of %d networks...\n", wifiCredentials.size());
+    Sam::Log.info("Scanning local networks...");
 
     int networkCount = WiFi.scanNetworks();
 
-    Log.infof("%d networks found in range.\n", networkCount);
+    Sam::Log.infof("%d networks found in range.\n", networkCount);
 
     WifiCredentials *strongest = nullptr;
     int strengthOfStrongest = 0;
@@ -168,14 +170,14 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
     for (int i = 0; i < networkCount; i++)
     {
         float strength = (255 + WiFi.RSSI(i)) / 2.55;
-        Log.infof(
+        Sam::Log.infof(
             "        '%s' network found with strength %.1f%%.",
             WiFi.SSID(i),
             strength);
         for (WifiCredentials *_credential : wifiCredentials)
             if (_credential->ssid == WiFi.SSID(i).c_str())
             {
-                Log.infof(
+                Sam::Log.infof(
                     "\r[MATCH] '%s' network found with strength %.1f%%.",
                     WiFi.SSID(i),
                     strength);
@@ -185,15 +187,15 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
                     strengthOfStrongest = strength;
                 }
             }
-        Log.infof("\n");
+        Sam::Log.infof("\n");
     }
     if (!strongest)
     {
-        Log.error("None of the provided credentials matched found local networks.");
+        Sam::Log.error("None of the provided credentials matched found local networks.");
     }
     else
     {
-        Log.infof("'%s' found as the strongest.\n", strongest->ssid.c_str());
+        Sam::Log.infof("'%s' found as the strongest.\n", strongest->ssid.c_str());
     }
 
     return strongest;
@@ -322,7 +324,7 @@ void AsyncMeshClass::meshResponse(AsyncWebServerRequest *request)
 
 void AsyncMeshClass::_messageReceivedCallback(const uint32_t &from, const String &message)
 {
-    Log.infof("Mesh message received from %u message = '%s'\n", from, message.c_str());
+    Sam::Log.infof("Mesh message received from %u message = '%s'\n", from, message.c_str());
     if (message.startsWith("INFO?"))
     {
         std::string response = "INFO>";
@@ -341,20 +343,20 @@ void AsyncMeshClass::_messageReceivedCallback(const uint32_t &from, const String
 
 void AsyncMeshClass::_newConnectionCallback(uint32_t nodeId)
 {
-    Log.infof("New mesh connection, nodeId = %u\n", nodeId);
+    Sam::Log.infof("New mesh connection, nodeId = %u\n", nodeId);
 };
 
 void AsyncMeshClass::_changedConnectionCallback()
 {
-    Log.infof("Mesh changed connections\n");
+    Sam::Log.infof("Mesh changed connections\n");
 };
 
 void AsyncMeshClass::_nodeTimeAdjustedCallback(int32_t offset)
 {
-    Log.infof("Adjusted mesh time %u. Offset = %d\n", meshClient->getNodeTime(), offset);
+    Sam::Log.infof("Adjusted mesh time %u. Offset = %d\n", meshClient->getNodeTime(), offset);
 };
 
 void AsyncMeshClass::_nodeDelayReceived(uint32_t nodeId, int32_t delay)
 {
-    Log.infof("Mesh delay from node %u = %d\n", nodeId, delay);
+    Sam::Log.infof("Mesh delay from node %u = %d\n", nodeId, delay);
 };

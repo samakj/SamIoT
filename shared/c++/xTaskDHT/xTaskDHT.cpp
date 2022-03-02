@@ -15,14 +15,14 @@ void xTaskDHT::start()
 {
     if (pinNo == xTaskDHT::PIN_NUMBER_NULL_VALUE)
     {
-        Log.error("DHT sensor pin not set, ignoring.");
+        Sam::Log.error("DHT sensor pin not set, ignoring.");
         return
     }
 
     client = new DHT(pinNo, type);
     client->begin();
     client->begin();
-    Log.infof("DHT sensor initialised on pin %d.\n", pinNo);
+    Sam::Log.infof("DHT sensor initialised on pin %d.\n", pinNo);
 
     char taskName[64];
     sprintf("DHT Update Task, Pin %d", pinNo);
@@ -33,7 +33,7 @@ void xTaskDHT::start()
         this,
         1,
         task);
-    Log.infof("DHT sensor task on pin %d started.\n", pinNo);
+    Sam::Log.infof("DHT sensor task on pin %d started.\n", pinNo);
 };
 
 void xTaskDHT::stop()
@@ -97,13 +97,13 @@ void xTaskDHT::updateTemperature()
     float newTemperature = client->readTemperature();
 
     if (isnan(newTemperature))
-        Log.warnf("DHT sensor on pin %d reported NaN temperature.\n", pinNo);
+        Sam::Log.warnf("DHT sensor on pin %d reported NaN temperature.\n", pinNo);
     else if (abs(newTemperature - temperature) > minTemperatureDifference)
     {
         for (TemperatureCallback callback : temperatureCallbacks)
             callback(newTemperature, temperature);
 
-        Log.infof("Temperature on pin %d changed from %.1f to %.1f", pinNo, temperature, newTemperature);
+        Sam::Log.infof("Temperature on pin %d changed from %.1f to %.1f", pinNo, temperature, newTemperature);
         temperature = newTemperature;
     }
 };
@@ -113,13 +113,13 @@ void xTaskDHT::updateHumidity()
     float newHumidity = client->readHumidity();
 
     if (isnan(newHumidity))
-        Log.warnf("DHT sensor on pin %d reported NaN humidity.\n", pinNo);
+        Sam::Log.warnf("DHT sensor on pin %d reported NaN humidity.\n", pinNo);
     else if (abs(newHumidity - humidity) > minHumidityDifference)
     {
         for (HumidityCallback callback : humidityCallbacks)
             callback(newHumidity, humidity);
 
-        Log.infof("Humidity on pin %d changed from %.1f to %.1f", pinNo, humidity, newHumidity);
+        Sam::Log.infof("Humidity on pin %d changed from %.1f to %.1f", pinNo, humidity, newHumidity);
         humidity = newHumidity;
     }
 };

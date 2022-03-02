@@ -17,9 +17,10 @@
 #endif
 
 #include <ESPAsyncWebServer.h>
+#include <painlessMesh.h>
+
 #include <Log.h>
 #include <TimeUtils.h>
-#include <painlessMesh.h>
 
 struct WifiCredentials
 {
@@ -31,7 +32,7 @@ struct MeshCredentials
 {
     std::string ssid;
     std::string password;
-    uint8_t port;
+    uint16_t port = 5555;
 };
 
 class AsyncMeshClass

@@ -3,8 +3,7 @@
 AsyncHCSR04::AsyncHCSR04(
     int _triggerPin,
     int _echoPin,
-    DistanceCallback _distanceCallback
-)
+    DistanceCallback _distanceCallback)
 {
     triggerPin = _triggerPin;
     echoPin = _echoPin;
@@ -12,8 +11,7 @@ AsyncHCSR04::AsyncHCSR04(
 };
 
 void AsyncHCSR04::setDistanceCallback(
-    DistanceCallback _distanceCallback
-)
+    DistanceCallback _distanceCallback)
 {
     distanceCallback = _distanceCallback;
 };
@@ -33,24 +31,11 @@ void AsyncHCSR04::setup()
 
     pinMode(triggerPin, OUTPUT);
     pinMode(echoPin, INPUT);
-    _distancePurgatory = new ValuePurgatory<float>(
-        DISTANCE_NULL_VALUE,
-        DISTANCE_NULL_VALUE,
-        10,
-        0,
-        10,
-        0.009,
-        [this](float newValue, float oldValue){
-            if (distanceCallback != nullptr) distanceCallback(newValue);
-            distance = newValue;
-        }
-    );
-    Log.infof("HCSR04 sensor initialised on pin %d & %d\n", triggerPin, echoPin);
+    Sam::Log.infof("HCSR04 sensor initialised on pin %d & %d\n", triggerPin, echoPin);
 };
 
 void AsyncHCSR04::loop()
 {
-    if (_distancePurgatory == nullptr) setup();
     if (TimeUtils.millisSince(lastReadMillis) > readPeriod)
     {
         check();
@@ -61,26 +46,17 @@ void AsyncHCSR04::loop()
 
 void AsyncHCSR04::check()
 {
-    if (_distancePurgatory->isRunningIn())
-    {
-        if (!(readCount % 5))
-        {
-            Log.debugf(
-                "HCSR04 sensor running in, %s remaining...\n",
-                _distancePurgatory->runInInfo().c_str()
-            );
-        }
-    }
-
     float newDistance = getMedianDistance();
 
     if (!isnan(newDistance) && newDistance > 0 && newDistance < 3)
     {
-        _distancePurgatory->addValue(newDistance);
+        if (distanceCallback != nullptr)
+            distanceCallback(newDistance);
+        distance = newDistance;
     }
     else if (newDistance <= 0 || newDistance >= 3)
     {
-        Log.debugf("Anomylous Distance of %.3fm reported...\n", newDistance);
+        Sam::Log.debugf("Anomylous Distance of %.3fm reported...\n", newDistance);
     }
 };
 

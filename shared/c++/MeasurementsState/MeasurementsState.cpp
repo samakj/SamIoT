@@ -22,7 +22,7 @@ std::string join(std::vector<std::string> list, char delimeter = ',')
     return out;
 }
 
-std::string MeasurementsState::getdKey(std::string metric, std::vector<std::string> tags)
+std::string MeasurementsState::getKey(std::string metric, std::vector<std::string> tags)
 {
     std::string key = "";
 
@@ -55,21 +55,21 @@ void *MeasurementsState::get(std::string metric, std::vector<std::string> tags)
 
     auto stringValue = stringState.find(key);
     if (stringValue != stringState.end())
-        return stringValue->second;
+        return &stringValue->second;
 
     auto floatValue = floatState.find(key);
     if (floatValue != floatState.end())
-        return floatValue->second;
+        return &floatValue->second;
 
     auto intValue = intState.find(key);
     if (intValue != intState.end())
-        return intValue->second;
+        return &intValue->second;
 
     auto boolValue = boolState.find(key);
     if (boolValue != boolState.end())
-        return boolValue->second;
+        return &boolValue->second;
 
-    return nullptr
+    return nullptr;
 }
 
 void MeasurementsState::set(
@@ -79,7 +79,7 @@ void MeasurementsState::set(
 {
     std::string key = getKey(metric, tags);
     remove(key);
-    nullState[key] = value
+    nullState[key] = value;
 };
 
 void MeasurementsState::set(
@@ -89,7 +89,7 @@ void MeasurementsState::set(
 {
     std::string key = getKey(metric, tags);
     remove(key);
-    boolState[key] = value
+    boolState[key] = value;
 };
 
 void MeasurementsState::set(
@@ -99,7 +99,7 @@ void MeasurementsState::set(
 {
     std::string key = getKey(metric, tags);
     remove(key);
-    intState[key] = value
+    intState[key] = value;
 };
 
 void MeasurementsState::set(
@@ -109,7 +109,7 @@ void MeasurementsState::set(
 {
     std::string key = getKey(metric, tags);
     remove(key);
-    floatState[key] = value
+    floatState[key] = value;
 };
 
 void MeasurementsState::set(
@@ -119,7 +119,7 @@ void MeasurementsState::set(
 {
     std::string key = getKey(metric, tags);
     remove(key);
-    stringState[key] = value
+    stringState[key] = value;
 };
 
 std::string MeasurementsState::serialise(std::string additionalProps)
@@ -131,7 +131,7 @@ std::string MeasurementsState::serialise(std::string additionalProps)
     {
         if (len)
             output += ",";
-        output += serialiseNull(it->second, it->first, additionalProps);
+        output += serialiseNull(it.second, it.first, additionalProps);
         len += 1;
     }
 
@@ -139,7 +139,7 @@ std::string MeasurementsState::serialise(std::string additionalProps)
     {
         if (len)
             output += ",";
-        output += serialiseBool(it->second, it->first, additionalProps);
+        output += serialiseBool(it.second, it.first, additionalProps);
         len += 1;
     }
 
@@ -147,7 +147,7 @@ std::string MeasurementsState::serialise(std::string additionalProps)
     {
         if (len)
             output += ",";
-        output += serialiseInt(it->second, it->first, additionalProps);
+        output += serialiseInt(it.second, it.first, additionalProps);
         len += 1;
     }
 
@@ -155,7 +155,7 @@ std::string MeasurementsState::serialise(std::string additionalProps)
     {
         if (len)
             output += ",";
-        output += serialiseFloat(it->second, it->first, additionalProps);
+        output += serialiseFloat(it.second, it.first, additionalProps);
         len += 1;
     }
 
@@ -163,7 +163,7 @@ std::string MeasurementsState::serialise(std::string additionalProps)
     {
         if (len)
             output += ",";
-        output += serialiseString(it->second, it->first, additionalProps);
+        output += serialiseString(it.second, it.first, additionalProps);
         len += 1;
     }
 
@@ -174,18 +174,18 @@ std::string MeasurementsState::serialise(std::string additionalProps)
 std::string MeasurementsState::serialiseKey(std::string key)
 {
     std::string output = "";
-    std::vector<std::string> keySpilt = split(key, DEVICE_STATE_KEY_SEPERATOR);
+    std::vector<std::string> keySplit = split(key, DEVICE_STATE_KEY_SEPERATOR);
 
     output += "\"metric\":\"";
 
-    if (keySplit[0] != DEVICE_STATE_KEY_EMPTY)
+    if (keySplit[0] != s_DEVICE_STATE_KEY_EMPTY)
         output += keySplit[0];
 
     output += "\",";
 
     output += "\"tags\":[";
 
-    if (keySplit[1] != DEVICE_STATE_KEY_EMPTY)
+    if (keySplit[1] != s_DEVICE_STATE_KEY_EMPTY)
     {
         std::vector<std::string> tags = split(keySplit[1], DEVICE_STATE_TAGS_SEPERATOR);
         int i = 0;
@@ -194,9 +194,9 @@ std::string MeasurementsState::serialiseKey(std::string key)
             if (i)
                 output += ",";
             output += "\"";
-            output += it->first;
+            output += it;
             output += "\"";
-            i += 1
+            i += 1;
         }
     }
 
@@ -211,7 +211,7 @@ std::string MeasurementsState::serialiseKey(std::string metric, std::vector<std:
 
     output += "\"metric\":\"";
 
-    if (metric != DEVICE_STATE_KEY_EMPTY)
+    if (metric != s_DEVICE_STATE_KEY_EMPTY)
         output += metric;
 
     output += "\",";
@@ -220,16 +220,15 @@ std::string MeasurementsState::serialiseKey(std::string metric, std::vector<std:
 
     if (tags.size())
     {
-        std::vector<std::string> tags = split(keySplit[1], DEVICE_STATE_TAGS_SEPERATOR);
         int i = 0;
         for (auto &it : tags)
         {
             if (i)
                 output += ",";
             output += "\"";
-            output += it->first;
+            output += it;
             output += "\"";
-            i += 1
+            i += 1;
         }
     }
 
@@ -343,7 +342,7 @@ std::string MeasurementsState::serialiseInt(
     output += "\"value\":";
 
     char buff[64];
-    sprintf("%d", it->second);
+    sprintf(buff, "%d", value);
 
     output += buff;
 
@@ -371,7 +370,7 @@ std::string MeasurementsState::serialiseInt(
     output += "\"value\":";
 
     char buff[64];
-    sprintf("%d", it->second);
+    sprintf(buff, "%d", value);
 
     output += buff;
 
@@ -398,7 +397,7 @@ std::string MeasurementsState::serialiseFloat(
     output += "\"value\":";
 
     char buff[64];
-    sprintf("%f", it->second);
+    sprintf(buff, "%f", value);
 
     output += buff;
 
@@ -426,7 +425,7 @@ std::string MeasurementsState::serialiseFloat(
     output += "\"value\":";
 
     char buff[64];
-    sprintf("%f", it->second);
+    sprintf(buff, "%f", value);
 
     output += buff;
 

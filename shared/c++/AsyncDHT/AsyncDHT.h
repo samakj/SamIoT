@@ -10,53 +10,49 @@
 #include <Log.h>
 #include <TimeUtils.h>
 
-
 class AsyncDHT
 {
-    public:
-        typedef std::function<void(float temperature)> TemperatureCallback;
-        typedef std::function<void(float humidity)> HumidityCallback;
+public:
+    typedef std::function<void(float temperature)> TemperatureCallback;
+    typedef std::function<void(float humidity)> HumidityCallback;
 
-        float TEMPERATURE_NULL_VALUE = -1000.0f;
-        float HUMIDITY_NULL_VALUE    = -1000.0f;
+    float TEMPERATURE_NULL_VALUE = -1000.0f;
+    float HUMIDITY_NULL_VALUE = -1000.0f;
 
-        DHT* client = nullptr;
-        int pinNo = -1;
-        int type = DHT22;
+    DHT *client = nullptr;
+    int pinNo = -1;
+    int type = DHT22;
 
-        float temperature = TEMPERATURE_NULL_VALUE;
-        float humidity = HUMIDITY_NULL_VALUE;
-    
-        TemperatureCallback temperatureCallback = nullptr;
-        HumidityCallback humidityCallback = nullptr;
+    float temperature = TEMPERATURE_NULL_VALUE;
+    float humidity = HUMIDITY_NULL_VALUE;
 
-        int readPeriod = 2000;
-        int lastReadMillis = 0;
-        int readCount = 0;
-        
-    private:
-        int _runInLogNo = 0;
-        
-    public:
-        AsyncDHT(
-            int _pinNo,
-            int _type = DHT22,
-            TemperatureCallback _temperatureCallback = nullptr,
-            HumidityCallback _humidityCallback = nullptr
-        );
+    TemperatureCallback temperatureCallback = nullptr;
+    HumidityCallback humidityCallback = nullptr;
 
-        void setTemperatureCallback(
-            TemperatureCallback _temperatureCallback = nullptr
-        );
-        void setHumidityCallback(
-            HumidityCallback _humidityCallback = nullptr
-        );
-        void setup();
-        void loop();
+    int readPeriod = 2000;
+    int lastReadMillis = 0;
+    int readCount = 0;
 
-    private:
-        void checkHumidity();
-        void checkTemperature();
+private:
+    int _runInLogNo = 0;
+
+public:
+    AsyncDHT(
+        int _pinNo,
+        int _type = DHT22,
+        TemperatureCallback _temperatureCallback = nullptr,
+        HumidityCallback _humidityCallback = nullptr);
+
+    void setTemperatureCallback(
+        TemperatureCallback _temperatureCallback = nullptr);
+    void setHumidityCallback(
+        HumidityCallback _humidityCallback = nullptr);
+    void setup();
+    void loop();
+
+private:
+    void checkHumidity();
+    void checkTemperature();
 };
 
 #endif

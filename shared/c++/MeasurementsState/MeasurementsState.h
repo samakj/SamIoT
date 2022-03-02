@@ -7,13 +7,16 @@
 #include <unordered_map>
 #include <vector>
 
-class MeasurementState
+class MeasurementsState
 {
 public:
 private:
     char DEVICE_STATE_KEY_SEPERATOR = '|';
     char DEVICE_STATE_TAGS_SEPERATOR = ',';
     char DEVICE_STATE_KEY_EMPTY = '-';
+    std::string s_DEVICE_STATE_KEY_SEPERATOR = "|";
+    std::string s_DEVICE_STATE_TAGS_SEPERATOR = ",";
+    std::string s_DEVICE_STATE_KEY_EMPTY = "-";
 
     std::unordered_map<std::string, std::nullptr_t> nullState = {};
     std::unordered_map<std::string, std::string> stringState = {};
@@ -35,7 +38,7 @@ public:
 
     std::string serialise(std::string additionalProps = "");
     std::string serialiseKey(std::string key);
-    std::string serialiseKey(std::string metric = "", std::vector<std::string> tags = {});
+    std::string serialiseKey(std::string metric, std::vector<std::string> tags);
     std::string serialiseNull(std::nullptr_t value = nullptr, std::string key = "", std::string additionalProps = "");
     std::string serialiseNull(std::nullptr_t value = nullptr, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "");
     std::string serialiseBool(bool value, std::string key = "", std::string additionalProps = "");

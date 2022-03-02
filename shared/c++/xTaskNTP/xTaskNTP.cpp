@@ -16,7 +16,7 @@ void xTaskNTPClass::start()
         this,
         1,
         task);
-    Log.infof("NTP reconnect task started.");
+    Sam::Log.infof("NTP reconnect task started.");
 };
 
 void xTaskNTPClass::stop()
@@ -35,11 +35,11 @@ void xTaskNTPClass::connect(bool force)
     if (!force && isConnected())
         return;
 
-    Log.infof("Connecting to NTP server at %s...\n", server.c_str());
+    Sam::Log.infof("Connecting to NTP server at %s...\n", server.c_str());
 
     if (WiFi.status() != WL_CONNECTED)
     {
-        Log.warn("Wifi not connected, skipping NTP sync.");
+        Sam::Log.warn("Wifi not connected, skipping NTP sync.");
         return;
     }
 
@@ -54,10 +54,10 @@ void xTaskNTPClass::connect(bool force)
             configTime(timezone * 3600, dst * 3600, server.c_str());
         if (timeSinceStart >= maxWait)
         {
-            Log.error("  Max wait exceeded.", "\n");
+            Sam::Log.error("  Max wait exceeded.", "\n");
             return;
         }
-        Log.infof(
+        Sam::Log.infof(
             "Waiting for sync %.1fs...\r",
             server.c_str(),
             (millis() - start) / 1000.);
@@ -65,7 +65,7 @@ void xTaskNTPClass::connect(bool force)
         delay(100);
     } while (!isConnected())
 
-        Log.infof(
+        Sam::Log.infof(
             "Synced with '%s'. Time: %s.\n",
             server.c_str(),
             TimeUtils.getIsoTimestamp().c_str());

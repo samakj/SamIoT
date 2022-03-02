@@ -39,21 +39,21 @@ std::string DeviceState::buildKey(
 
 void DeviceState::print()
 {
-    Log.info("DeviceState");
+    Sam::Log.info("DeviceState");
     for (auto &it : nullState)
-        Log.infof("\t%s = null\n", it.first);
-    Log.info(" ");
+        Sam::Log.infof("\t%s = null\n", it.first);
+    Sam::Log.info(" ");
     for (auto &it : boolState)
-        Log.infof("\t%s = %s\n", it.first, it.second ? "true" : "false");
-    Log.info(" ");
+        Sam::Log.infof("\t%s = %s\n", it.first, it.second ? "true" : "false");
+    Sam::Log.info(" ");
     for (auto &it : stringState)
-        Log.infof("\t%s = \"%s\"\n", it.first, it.second);
-    Log.info(" ");
+        Sam::Log.infof("\t%s = \"%s\"\n", it.first, it.second);
+    Sam::Log.info(" ");
     for (auto &it : intState)
-        Log.infof("\t%s = %d\n", it.first, it.second);
-    Log.info(" ");
+        Sam::Log.infof("\t%s = %d\n", it.first, it.second);
+    Sam::Log.info(" ");
     for (auto &it : floatState)
-        Log.infof("\t%s = %f\n", it.first, it.second);
+        Sam::Log.infof("\t%s = %f\n", it.first, it.second);
 }
 
 void DeviceState::remove(
@@ -171,7 +171,7 @@ void DeviceServerClass::setup()
 {
     mac = AsyncWifi.getMACAddressString();
 
-    Log.info("Starting http & websocket server.");
+    Sam::Log.info("Starting http & websocket server.");
     if (AsyncWifi.isConnected())
     {
         SPIFFS.begin();
@@ -188,9 +188,9 @@ void DeviceServerClass::setup()
     }
     else
     {
-        Log.warn("Wifi not connected, failed to start server.");
+        Sam::Log.warn("Wifi not connected, failed to start server.");
     }
-    Log.info("http & websocket server started.");
+    Sam::Log.info("http & websocket server started.");
 };
 
 void DeviceServerClass::loop()
@@ -204,7 +204,7 @@ void DeviceServerClass::loop()
 void DeviceServerClass::addWifiConnectCallback()
 {
     usingWifiCallback = true;
-    Log.debug("Adding server Wifi connect callback.");
+    Sam::Log.debug("Adding server Wifi connect callback.");
     AsyncWifi.addConnectCallback([this](std::string ssid)
                                  { setup(); });
 };
@@ -652,15 +652,15 @@ void DeviceServerClass::websocketEventHandler(
     {
     case WS_EVT_CONNECT:
         sendState(client);
-        Log.debugf("Client connected to websocket from IP: %s\n", ip.c_str());
+        Sam::Log.debugf("Client connected to websocket from IP: %s\n", ip.c_str());
         break;
     case WS_EVT_DISCONNECT:
-        Log.debugf("Client disconnected from websocket from IP: %s\n", ip.c_str());
+        Sam::Log.debugf("Client disconnected from websocket from IP: %s\n", ip.c_str());
         break;
     case WS_EVT_PONG:
         break;
     case WS_EVT_ERROR:
-        Log.debugf("Client errored on websocket from IP: %s\n", ip.c_str());
+        Sam::Log.debugf("Client errored on websocket from IP: %s\n", ip.c_str());
         break;
     case WS_EVT_DATA:
         if (info->opcode == WS_TEXT)
@@ -668,16 +668,16 @@ void DeviceServerClass::websocketEventHandler(
             if (info->final && info->index == 0 && info->len == len)
             {
                 data[len] = 0;
-                Log.warnf("%s sent text data below, skipping...\n", ip.c_str());
-                Log.warn((char *)data);
+                Sam::Log.warnf("%s sent text data below, skipping...\n", ip.c_str());
+                Sam::Log.warn((char *)data);
             }
             else
-                Log.warnf("%s sent multi-packet text data, skipping...\n", ip.c_str());
+                Sam::Log.warnf("%s sent multi-packet text data, skipping...\n", ip.c_str());
         }
         else
-            Log.warnf("%s sent binary data, skipping...\n", ip.c_str());
+            Sam::Log.warnf("%s sent binary data, skipping...\n", ip.c_str());
         break;
     default:
-        Log.warn("Unhandled websocket event type recieved...");
+        Sam::Log.warn("Unhandled websocket event type recieved...");
     }
 };
