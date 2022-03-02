@@ -73,9 +73,9 @@ void *MeasurementsState::get(std::string metric, std::vector<std::string> tags)
 }
 
 void MeasurementsState::set(
-    std::nullptr value = nullptr,
-    std::string metric = "",
-    std::vector<std::string> tags = {})
+    std::nullptr_t value,
+    std::string metric,
+    std::vector<std::string> tags)
 {
     std::string key = getKey(metric, tags);
     remove(key);
@@ -84,8 +84,8 @@ void MeasurementsState::set(
 
 void MeasurementsState::set(
     bool value,
-    std::string metric = "",
-    std::vector<std::string> tags = {})
+    std::string metric,
+    std::vector<std::string> tags)
 {
     std::string key = getKey(metric, tags);
     remove(key);
@@ -94,8 +94,8 @@ void MeasurementsState::set(
 
 void MeasurementsState::set(
     int value,
-    std::string metric = "",
-    std::vector<std::string> tags = {})
+    std::string metric,
+    std::vector<std::string> tags)
 {
     std::string key = getKey(metric, tags);
     remove(key);
@@ -104,8 +104,8 @@ void MeasurementsState::set(
 
 void MeasurementsState::set(
     float value,
-    std::string metric = "",
-    std::vector<std::string> tags = {})
+    std::string metric,
+    std::vector<std::string> tags)
 {
     std::string key = getKey(metric, tags);
     remove(key);
@@ -114,15 +114,15 @@ void MeasurementsState::set(
 
 void MeasurementsState::set(
     std::string value,
-    std::string metric = "",
-    std::vector<std::string> tags = {})
+    std::string metric,
+    std::vector<std::string> tags)
 {
     std::string key = getKey(metric, tags);
     remove(key);
     stringState[key] = value
 };
 
-std::string MeasurementsState::serialise(std::string additionalProps = "")
+std::string MeasurementsState::serialise(std::string additionalProps)
 {
     std::string output = "[";
     int len = 0;
@@ -205,7 +205,7 @@ std::string MeasurementsState::serialiseKey(std::string key)
     return output;
 };
 
-std::string MeasurementsState::serialiseKey(std::string metric = "", std::vector<std::string> tags = {})
+std::string MeasurementsState::serialiseKey(std::string metric, std::vector<std::string> tags)
 {
     std::string output = "";
 
@@ -238,7 +238,10 @@ std::string MeasurementsState::serialiseKey(std::string metric = "", std::vector
     return output;
 };
 
-std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::string key = "", std::string additionalProps = "")
+std::string MeasurementsState::serialiseNull(
+    std::nullptr_t value,
+    std::string key,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -257,7 +260,11 @@ std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::
     return output;
 };
 
-std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+std::string MeasurementsState::serialiseNull(
+    std::nullptr_t value,
+    std::string metric,
+    std::vector<std::string> tags,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -276,7 +283,10 @@ std::string MeasurementsState::serialiseNull(std::nullptr value = nullptr, std::
     return output;
 };
 
-std::string MeasurementsState::serialiseBool(bool value, std::string key = "", std::string additionalProps = "")
+std::string MeasurementsState::serialiseBool(
+    bool value,
+    std::string key,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -296,7 +306,11 @@ std::string MeasurementsState::serialiseBool(bool value, std::string key = "", s
     return output;
 };
 
-std::string MeasurementsState::serialiseBool(bool value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+std::string MeasurementsState::serialiseBool(
+    bool value,
+    std::string metric,
+    std::vector<std::string> tags,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -316,7 +330,10 @@ std::string MeasurementsState::serialiseBool(bool value, std::string metric = ""
     return output;
 };
 
-std::string MeasurementsState::serialiseInt(int value, std::string key = "", std::string additionalProps = "")
+std::string MeasurementsState::serialiseInt(
+    int value,
+    std::string key,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -340,7 +357,11 @@ std::string MeasurementsState::serialiseInt(int value, std::string key = "", std
     return output;
 };
 
-std::string MeasurementsState::serialiseInt(int value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+std::string MeasurementsState::serialiseInt(
+    int value,
+    std::string metric,
+    std::vector<std::string> tags,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -364,7 +385,10 @@ std::string MeasurementsState::serialiseInt(int value, std::string metric = "", 
     return output;
 };
 
-std::string MeasurementsState::serialiseFloat(float value, std::string key = "", std::string additionalProps = "")
+std::string MeasurementsState::serialiseFloat(
+    float value,
+    std::string key,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -388,7 +412,11 @@ std::string MeasurementsState::serialiseFloat(float value, std::string key = "",
     return output;
 };
 
-std::string MeasurementsState::serialiseFloat(float value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+std::string MeasurementsState::serialiseFloat(
+    float value,
+    std::string metric,
+    std::vector<std::string> tags,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -412,7 +440,10 @@ std::string MeasurementsState::serialiseFloat(float value, std::string metric = 
     return output;
 };
 
-std::string MeasurementsState::serialiseString(std::string value, std::string key = "", std::string additionalProps = "")
+std::string MeasurementsState::serialiseString(
+    std::string value,
+    std::string key,
+    std::string additionalProps)
 {
     std::string output = "";
 
@@ -432,7 +463,11 @@ std::string MeasurementsState::serialiseString(std::string value, std::string ke
     return output;
 };
 
-std::string MeasurementsState::serialiseString(std::string value, std::string metric = "", std::vector<std::string> tags = {}, std::string additionalProps = "")
+std::string MeasurementsState::serialiseString(
+    std::string value,
+    std::string metric,
+    std::vector<std::string> tags,
+    std::string additionalProps)
 {
     std::string output = "";
 
