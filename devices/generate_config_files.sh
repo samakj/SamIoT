@@ -24,6 +24,8 @@ WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
 WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
 WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
 
+MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+
 #endif
 EOF
 
@@ -32,7 +34,7 @@ cat > "$water_butt/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncWifi.h>
+#include <AsyncMesh.h>
 
 const char HOSTNAME[24] = "$WATER_BUTT_HOSTNAME";
 const char LOCATION[24] = "$WATER_BUTT_LOCATION";
@@ -43,6 +45,8 @@ WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
 WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
 WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
 
+MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+
 #endif
 EOF
 
@@ -51,7 +55,7 @@ cat > "$pond/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncWifi.h>
+#include <AsyncMesh.h>
 
 const char HOSTNAME[24] = "$POND_HOSTNAME";
 const char LOCATION[24] = "$POND_LOCATION";
@@ -62,6 +66,8 @@ WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
 WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
 WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
 
+MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
+
 #endif
 EOF
 
@@ -70,7 +76,7 @@ cat > "$aquaponics/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncWifi.h>
+#include <AsyncMesh.h>
 
 const char HOSTNAME[24] = "$AQUAPONICS_HOSTNAME";
 const char LOCATION[24] = "$AQUAPONICS_LOCATION";
@@ -80,6 +86,8 @@ const char OTA_PASSWORD[24] = "$AQUAPONICS_OTA_PASS";
 WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
 WifiCredentials Selma("$SELMA_SSID", "$SELMA_PASS");
 WifiCredentials TheVale("$VALE_SSID", "$VALE_PASS");
+
+MeshCredentials Marge("$MESH_SSID", "$MESH_PASSWORD")
 
 #endif
 EOF
