@@ -8,37 +8,49 @@ void AsyncMeshClass::setup()
 
     if (_wifiCredentials == nullptr)
     {
-        Log.error("No wifi credentials aborting mesh setup.")
+        Log.error("No wifi credentials aborting mesh setup.");
     }
 
     meshClient = new painlessMesh();
-    meshClient.init(
-        meshCredentials.ssid.c_str(),
-        meshCredentials.password.c_str(),
-        meshCredentials.port,
+    meshClient->init(
+        meshCredentials->ssid.c_str(),
+        meshCredentials->password.c_str(),
+        meshCredentials->port,
         WIFI_AP_STA);
 
-    meshClient.onReceive(&AsyncMesh._messageReceivedCallback);
-    meshClient.onNewConnection(&AsyncMesh._newConnectionCallback);
-    meshClient.onChangedConnections(&AsyncMesh._changedConnectionCallback);
-    meshClient.onNodeTimeAdjusted(&AsyncMesh._nodeTimeAdjustedCallback);
-    meshClient.onNodeDelayRecieved(&AsyncMesh._nodeDelayReceived);
+    meshClient->onReceive(
+        [this](const uint32_t &from, const String &message)
+        { _messageReceivedCallback(from, message); });
+    meshClient->onNewConnection(
+        [this](uint32_t nodeId)
+        { _newConnectionCallback(nodeId); });
+    meshClient->onChangedConnections(
+        [this]()
+        { _changedConnectionCallback(); });
+    meshClient->onNodeTimeAdjusted(
+        [this](int32_t offset)
+        { _nodeTimeAdjustedCallback(offset); });
+    meshClient->onNodeDelayReceived(
+        [this](uint32_t nodeId, int32_t delay)
+        { _nodeDelayReceived(nodeId, delay); });
 
-    meshClient.stationManual(_wifiCredentials->ssid, wifiCredentials->password);
+    meshClient->stationManual(
+        _wifiCredentials->ssid.c_str(),
+        _wifiCredentials->password.c_str());
 
     if (hostname != HOSTNAME_NULL_VALUE)
-        meshClient.setHostname(hostname);
+        meshClient->setHostname(hostname.c_str());
 
     for (SsidCallback callback : connectCallbacks)
         callback(ssid);
     getConnectionSsid();
     getConnectionStrength();
 
-    meshClient.setRoot(true);
-    meshClient.setContainsRoot(true);
-    meshClient.initOTAReceive("bridge");
+    meshClient->setRoot(true);
+    meshClient->setContainsRoot(true);
+    meshClient->initOTAReceive("bridge");
 
-    Log.infof("Connected to mesh, node id: %d", meshClient.getNodeId())
+    Log.infof("Connected to mesh, node id: %d", meshClient->getNodeId());
 };
 
 void AsyncMeshClass::loop()
@@ -46,15 +58,30 @@ void AsyncMeshClass::loop()
     if (meshClient == nullptr)
         setup();
     if (meshClient != nullptr)
-        meshClient.update();
+        meshClient->update();
 };
 
-void AsyncMeshClass::setWifiCredentials(std::vector<WifiCredentials> _wifiCredentials)
+void AsyncMeshClass::addConnectCallback(ConnectCallback callback)
+{
+    connectCallbacks.push_back(callback);
+};
+
+void AsyncMeshClass::addSsidCallback(SsidCallback callback)
+{
+    ssidCallbacks.push_back(callback);
+};
+
+void AsyncMeshClass::addStrengthCallback(StrengthCallback callback)
+{
+    strengthCallbacks.push_back(callback);
+};
+
+void AsyncMeshClass::setWifiCredentials(std::vector<WifiCredentials *> _wifiCredentials)
 {
     wifiCredentials = _wifiCredentials;
 };
 
-void AsyncMeshClass::setMeshCredentials(MeshCredentials _meshCredentials)
+void AsyncMeshClass::setMeshCredentials(MeshCredentials *_meshCredentials)
 {
     meshCredentials = _meshCredentials;
 };
@@ -108,7 +135,7 @@ std::string AsyncMeshClass::getIPAddressString()
     if (meshClient == nullptr)
         return "";
 
-    IPAddress ip = meshClient.getStationIP();
+    IPAddress ip = meshClient->getStationIP();
     char buffer[32];
     sprintf(
         buffer,
@@ -128,7 +155,7 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
         return nullptr;
     }
 
-    Log.infof("Finding strongest of %d networks...\n", credentials.size());
+    Log.infof("Finding strongest of %d networks...\n", wifiCredentials.size());
     Log.info("Scanning local networks...");
 
     int networkCount = WiFi.scanNetworks();
@@ -145,7 +172,7 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
             "        '%s' network found with strength %.1f%%.",
             WiFi.SSID(i),
             strength);
-        for (WifiCredentials *_credential : credentials)
+        for (WifiCredentials *_credential : wifiCredentials)
             if (_credential->ssid == WiFi.SSID(i).c_str())
             {
                 Log.infof(
@@ -158,7 +185,7 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
                     strengthOfStrongest = strength;
                 }
             }
-        Log.infof("\n")
+        Log.infof("\n");
     }
     if (!strongest)
     {
@@ -174,7 +201,7 @@ WifiCredentials *AsyncMeshClass::getStrongestWifiNetwork()
 
 float AsyncMeshClass::getConnectionStrength()
 {
-    if (TimeUtils.millisSince(lastStrengthUpdate) > strengthUpdatePeriod)
+    if (TimeUtils.millisSince(lastStrengthCheck) > strengthUpdatePeriod)
     {
         float _strength = (255 + WiFi.RSSI()) / 255.0f;
         if (_strength != strength)
@@ -183,7 +210,7 @@ float AsyncMeshClass::getConnectionStrength()
             for (StrengthCallback callback : strengthCallbacks)
                 callback(strength);
         }
-        lastStrengthUpdate = millis();
+        lastStrengthCheck = millis();
     }
 
     return strength;
@@ -208,11 +235,11 @@ std::string AsyncMeshClass::getNodeInfo()
     std::string response = "{";
 
     response += "\"ip\":\"";
-    response += getIpAddressString();
+    response += getIPAddressString();
     response += "\",";
 
     response += "\"mac\":\"";
-    response += getMacAddressString();
+    response += getMACAddressString();
     response += "\",";
 
     response += "\"hostname\":";
@@ -227,9 +254,9 @@ std::string AsyncMeshClass::getNodeInfo()
     response += ",";
 
     response += "\"strength\":";
-    if (hostname != STRENGTH_NULL_VALUE)
+    if (strength != STRENGTH_NULL_VALUE)
     {
-        char buf[64];
+        char buff[64];
         sprintf(buff, "%f", strength);
         response += buff;
     }
@@ -238,7 +265,7 @@ std::string AsyncMeshClass::getNodeInfo()
     response += ",";
 
     response += "\"ssid\":";
-    if (hostname != SSID_NULL_VALUE)
+    if (ssid != SSID_NULL_VALUE)
     {
         response += "\"";
         response += ssid;
@@ -249,7 +276,7 @@ std::string AsyncMeshClass::getNodeInfo()
     response += ",";
 
     response += "\"isRoot\":";
-    response += meshClient.isRoot() ? "true" : "false";
+    response += meshClient->isRoot() ? "true" : "false";
     response += "";
 
     response += "}";
@@ -257,19 +284,19 @@ std::string AsyncMeshClass::getNodeInfo()
     return response;
 }
 
-void meshResponse(AsyncWebServerRequest *request)
+void AsyncMeshClass::meshResponse(AsyncWebServerRequest *request)
 {
     unsigned long requestStart = millis();
-    meshClient.sendBroadcast("INFO?");
-    std::list<uint32_t> nodeList = meshClient.getNodeList();
-    String connectionJson = subConnectionJson();
-    nodeInfo[meshClient.getNodeId()] = getNodeInfo();
+    meshClient->sendBroadcast("INFO?");
+    std::list<uint32_t> nodeList = meshClient->getNodeList();
+    String connectionJson = meshClient->subConnectionJson();
+    nodeInfo[meshClient->getNodeId()] = getNodeInfo();
 
     while (
         nodeInfo.size() < nodeList.size() &&
-        !TimeUtils.millisSince(requestStart) > 1000)
+        TimeUtils.millisSince(requestStart) < 1000)
     {
-        yeild();
+        yield();
         delay(10);
     }
 
@@ -288,7 +315,7 @@ void meshResponse(AsyncWebServerRequest *request)
 
     json.pop_back();
     json += "}}";
-    request->send(200, "application/json", json);
+    request->send(200, "application/json", json.c_str());
     nodeInfo = {};
     json = "";
 };
@@ -300,7 +327,7 @@ void AsyncMeshClass::_messageReceivedCallback(const uint32_t &from, const String
     {
         std::string response = "INFO>";
         response += getNodeInfo();
-        meshClient.sendSingle(from, response.c_str());
+        meshClient->sendSingle(from, response.c_str());
         return;
     }
     if (message.startsWith("INFO?"))
@@ -324,7 +351,7 @@ void AsyncMeshClass::_changedConnectionCallback()
 
 void AsyncMeshClass::_nodeTimeAdjustedCallback(int32_t offset)
 {
-    Log.infof("Adjusted mesh time %u. Offset = %d\n", mesh.getNodeTime(), offset);
+    Log.infof("Adjusted mesh time %u. Offset = %d\n", meshClient->getNodeTime(), offset);
 };
 
 void AsyncMeshClass::_nodeDelayReceived(uint32_t nodeId, int32_t delay)

@@ -16,10 +16,10 @@
 #include <WiFi.h>
 #endif
 
-#include <painlessMesh.h>
-
+#include <ESPAsyncWebServer.h>
 #include <Log.h>
 #include <TimeUtils.h>
+#include <painlessMesh.h>
 
 struct WifiCredentials
 {
@@ -41,14 +41,14 @@ public:
     typedef std::function<void(std::string ssid)> SsidCallback;
     typedef std::function<void(float strength)> StrengthCallback;
 
-    static float STRENGTH_NULL_VALUE = -1;
-    static std::string HOSTNAME_NULL_VALUE = "";
-    static std::string SSID_NULL_VALUE = "";
+    float STRENGTH_NULL_VALUE = -1;
+    std::string HOSTNAME_NULL_VALUE = "";
+    std::string SSID_NULL_VALUE = "";
 
     painlessMesh *meshClient = nullptr;
 
-    std::vector<WifiCredentials> wifiCredentials = {};
-    MeshCredentials meshCredentials = {};
+    std::vector<WifiCredentials *> wifiCredentials = {};
+    MeshCredentials *meshCredentials = {};
 
     IPAddress ip = {0, 0, 0, 0};
     IPAddress gateway = {192, 168, 1, 1};
@@ -56,10 +56,10 @@ public:
     IPAddress dns1 = {8, 8, 8, 8};
     IPAddress dns2 = {4, 4, 4, 4};
     byte mac[6] = {0, 0, 0, 0, 0, 0};
-    std::string hostname = HOSTNAME_NULL_VALUE;
+    std::string hostname = "";
 
-    float strength = STRENGTH_NULL_VALUE;
-    std::string ssid = SSID_NULL_VALUE;
+    float strength = -1;
+    std::string ssid = "";
 
     uint16_t strengthUpdatePeriod = 10000;
 
@@ -69,7 +69,7 @@ public:
 
 private:
     unsigned long lastStrengthCheck = 0;
-    std::unordered_map<uint23_t, std::string> nodeInfo = {};
+    std::unordered_map<uint32_t, std::string> nodeInfo = {};
 
 public:
     AsyncMeshClass(const AsyncMeshClass &) = delete;
@@ -78,17 +78,21 @@ public:
     void setup();
     void loop();
 
-    void setWifiCredentials(std::vector<WifiCredentials> wifiCredentials = {});
-    void setMeshCredentials(MeshCredentials meshCredentials = {});
+    void addConnectCallback(ConnectCallback callback);
+    void addSsidCallback(SsidCallback callback);
+    void addStrengthCallback(StrengthCallback callback);
+
+    void setWifiCredentials(std::vector<WifiCredentials *> wifiCredentials = {});
+    void setMeshCredentials(MeshCredentials *meshCredentials = {});
     void setIpAddress(
         IPAddress ip = {0, 0, 0, 0},
         IPAddress gateway = {192, 168, 1, 1},
         IPAddress subnet = {255, 255, 0, 0},
         IPAddress dns1 = {8, 8, 8, 8},
         IPAddress dns2 = {4, 4, 4, 4});
-    void setHostname(std::string hostname = HOSTNAME_NULL_VALUE);
+    void setHostname(std::string hostname = "");
 
-    std::string getIpAddressString();
+    std::string getIPAddressString();
     std::string getMACAddressString();
     WifiCredentials *getStrongestWifiNetwork();
     float getConnectionStrength();
