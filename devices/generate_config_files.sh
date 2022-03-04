@@ -34,18 +34,18 @@ cat > "$water_butt/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncMesh.h>
+#include <Mesh.h>
 
 const char HOSTNAME[24] = "$WATER_BUTT_HOSTNAME";
 const char LOCATION[24] = "$WATER_BUTT_LOCATION";
 uint8_t IP_LOCATION = $WATER_BUTT_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$WATER_BUTT_OTA_PASS";
 
-WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
-WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
-WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
+SamIoT::Mesh::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+SamIoT::Mesh::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
+SamIoT::Mesh::MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
@@ -55,18 +55,18 @@ cat > "$pond/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncMesh.h>
+#include <Mesh.h>
 
 const char HOSTNAME[24] = "$POND_HOSTNAME";
 const char LOCATION[24] = "$POND_LOCATION";
 uint8_t IP_LOCATION = $POND_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$POND_OTA_PASS";
 
-WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
-WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
-WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
+SamIoT::Mesh::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+SamIoT::Mesh::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
+SamIoT::Mesh::MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
@@ -76,18 +76,18 @@ cat > "$aquaponics/src/config.h" <<- EOF
 #ifndef config_h
 #define config_h
 
-#include <AsyncMesh.h>
+#include <Mesh.h>
 
 const char HOSTNAME[24] = "$AQUAPONICS_HOSTNAME";
 const char LOCATION[24] = "$AQUAPONICS_LOCATION";
 uint8_t IP_LOCATION = $AQUAPONICS_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$AQUAPONICS_OTA_PASS";
 
-WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
-WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
-WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
+SamIoT::Mesh::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+SamIoT::Mesh::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
-MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
+SamIoT::Mesh::MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
 
 #endif
 EOF
