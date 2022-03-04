@@ -12,7 +12,7 @@ module.exports = {
   },
   mode: 'production',
   output: {
-    path: path.resolve(__dirname + '/data/js'),
+    path: path.resolve(__dirname + '/data'),
     filename: '[name].js',
     publicPath: '',
   },
@@ -47,6 +47,7 @@ module.exports = {
     new CleanWebpackPlugin({
       protectWebpackAssets: false,
       cleanAfterEveryBuildPatterns: ['*.LICENSE.*', 'client.js'],
+      cleanOnceBeforeBuildPatterns: ['**/*', '!index.html'],
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({

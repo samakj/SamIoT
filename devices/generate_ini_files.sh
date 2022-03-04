@@ -73,11 +73,13 @@ upload_flags =
     --auth=$WATER_BUTT_OTA_PASS
 lib_ldf_mode = deep+
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
     me-no-dev/ESP Async WebServer @ ^1.2.3
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESPAsyncTCP @ ^1.2.2
     painlessmesh/painlessMesh @ ^1.4.10
 
@@ -96,10 +98,12 @@ upload_port=$WATER_BUTT_HOSTNAME.local
 upload_flags =
     --auth=$WATER_BUTT_OTA_PASS
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     painlessmesh/painlessMesh @ ^1.4.10
 EOF
@@ -132,10 +136,12 @@ upload_flags =
     --auth=$POND_OTA_PASS
 lib_ldf_mode = deep+
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     me-no-dev/ESPAsyncTCP @ ^1.2.2
     painlessmesh/painlessMesh @ ^1.4.10
@@ -155,10 +161,12 @@ upload_port=$POND_HOSTNAME.local
 upload_flags =
     --auth=$POND_OTA_PASS
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     painlessmesh/painlessMesh @ ^1.4.10
 EOF
@@ -191,10 +199,12 @@ upload_flags =
     --auth=$AQUAPONICS_OTA_PASS
 lib_ldf_mode = deep+
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     me-no-dev/ESPAsyncTCP @ ^1.2.2
     painlessmesh/painlessMesh @ ^1.4.10
@@ -214,10 +224,12 @@ upload_port=$AQUAPONICS_HOSTNAME.local
 upload_flags =
     --auth=$AQUAPONICS_OTA_PASS
 lib_deps = 
+    4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.17.3
     jandrassy/TelnetStream @ ^1.2.1
+    mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     painlessmesh/painlessMesh @ ^1.4.10
 EOF

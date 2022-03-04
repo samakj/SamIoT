@@ -17,7 +17,7 @@ cat > "$solar_controller/src/config.h" <<- EOF
 
 const char HOSTNAME[24] = "$SOLAR_CONTROLLER_HOSTNAME";
 const char LOCATION[24] = "$SOLAR_CONTROLLER_LOCATION";
-int IP_LOCATION = $SOLAR_CONTROLLER_IP_LOCATION;
+uint8_t IP_LOCATION = $SOLAR_CONTROLLER_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$SOLAR_CONTROLLER_OTA_PASS";
 
 WifiCredentials Patty("$PATTY_SSID", "$PATTY_PASS");
@@ -38,7 +38,7 @@ cat > "$water_butt/src/config.h" <<- EOF
 
 const char HOSTNAME[24] = "$WATER_BUTT_HOSTNAME";
 const char LOCATION[24] = "$WATER_BUTT_LOCATION";
-int IP_LOCATION = $WATER_BUTT_IP_LOCATION;
+uint8_t IP_LOCATION = $WATER_BUTT_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$WATER_BUTT_OTA_PASS";
 
 WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
@@ -59,7 +59,7 @@ cat > "$pond/src/config.h" <<- EOF
 
 const char HOSTNAME[24] = "$POND_HOSTNAME";
 const char LOCATION[24] = "$POND_LOCATION";
-int IP_LOCATION = $POND_IP_LOCATION;
+uint8_t IP_LOCATION = $POND_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$POND_OTA_PASS";
 
 WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
@@ -80,7 +80,7 @@ cat > "$aquaponics/src/config.h" <<- EOF
 
 const char HOSTNAME[24] = "$AQUAPONICS_HOSTNAME";
 const char LOCATION[24] = "$AQUAPONICS_LOCATION";
-int IP_LOCATION = $AQUAPONICS_IP_LOCATION;
+uint8_t IP_LOCATION = $AQUAPONICS_IP_LOCATION;
 const char OTA_PASSWORD[24] = "$AQUAPONICS_OTA_PASS";
 
 WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
