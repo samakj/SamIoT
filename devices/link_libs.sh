@@ -4,10 +4,14 @@ devices=$(pwd)
 root="$(dirname $devices)"
 shared="$root/shared"
 cpp="$shared/c++"
+mesh_bridge="$devices/mesh-bridge"
 solar_controller="$devices/solar-controller"
 water_butt="$devices/water-butt"
 pond="$devices/pond"
 aquaponics="$devices/aquaponics"
+
+rm -rf "$mesh_bridge/lib"
+ln -s "$cpp" "$mesh_bridge/lib"
 
 rm -rf "$solar_controller/lib"
 ln -s "$cpp" "$solar_controller/lib"

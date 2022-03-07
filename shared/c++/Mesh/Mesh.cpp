@@ -1,8 +1,13 @@
 #include "Mesh.h"
 
-void SamIoT::Mesh::setup()
+void SamIoT::Mesh::setup(bool isBridge)
 {
+    SamIoT::Mesh::WifiCredentials* wifi = isBridge ? SamIoT::Mesh::getStrongestWifiNetwork() : nullptr;
+
     SamIoT::Mesh::meshClient = new painlessMesh();
+
+    SamIoT::Mesh::meshClient->setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE );
+
     SamIoT::Mesh::meshClient->init(
         SamIoT::Mesh::meshCredentials->ssid.c_str(),
         SamIoT::Mesh::meshCredentials->password.c_str(),
@@ -15,26 +20,30 @@ void SamIoT::Mesh::setup()
     SamIoT::Mesh::meshClient->onNodeTimeAdjusted(SamIoT::Mesh::_nodeTimeAdjustedCallback);
     SamIoT::Mesh::meshClient->onNodeDelayReceived(SamIoT::Mesh::_nodeDelayReceived);
 
-    SamIoT::Mesh::connectToNetwork();
-
     if (SamIoT::Mesh::hostname != SamIoT::Mesh::HOSTNAME_NULL_VALUE)
     {
         SamIoT::Mesh::meshClient->setHostname(SamIoT::Mesh::hostname.c_str());
         SamIoT::Mesh::meshClient->initOTAReceive(SamIoT::Mesh::hostname.c_str());
     }
-    for (SamIoT::Mesh::SsidCallback callback : SamIoT::Mesh::connectCallbacks)
-        callback(SamIoT::Mesh::ssid);
 
-    SamIoT::Mesh::getConnectionSsid();
-    SamIoT::Mesh::getConnectionStrength();
+    if (isBridge) {
+        SamIoT::Mesh::meshClient->stationManual(
+            wifi->ssid.c_str(),
+            wifi->password.c_str());
+        SamIoT::Mesh::meshClient->setRoot(true);
+        SamIoT::Mesh::meshClient->setContainsRoot(true);
+    }
 
-    SamIoT::Mesh::meshClient->setContainsRoot(true);
-
-    SamIoT::Logger::info("Connected to mesh:");
-    SamIoT::Logger::infof("    Node ID:  %X\n", SamIoT::Mesh::meshClient->getNodeId());
-    SamIoT::Logger::infof("    IP:       %s\n", SamIoT::Mesh::getIPAddressString().c_str());
-    SamIoT::Logger::infof("    MAC:      %s\n", SamIoT::Mesh::getMACAddressString().c_str());
-    SamIoT::Logger::infof("    Hostname: %s\n", WiFi.getHostname());
+    WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
+    {
+        SamIoT::Logger::info("Connected to mesh:");
+        SamIoT::Logger::infof("    Node ID:  %X\n", SamIoT::Mesh::meshClient->getNodeId());
+        SamIoT::Logger::infof("    IP:       %s\n", SamIoT::Mesh::getIPAddressString().c_str());
+        SamIoT::Logger::infof("    MAC:      %s\n", SamIoT::Mesh::getMACAddressString().c_str());
+        SamIoT::Logger::infof("    Hostname: %s\n", WiFi.getHostname());
+        for (SamIoT::Mesh::SsidCallback callback : SamIoT::Mesh::connectCallbacks)
+            callback(SamIoT::Mesh::ssid);
+    });
 };
 
 void SamIoT::Mesh::loop()
@@ -96,7 +105,7 @@ void SamIoT::Mesh::setIpAddress(
 void SamIoT::Mesh::setHostname(std::string _hostname)
 {
     SamIoT::Mesh::hostname = _hostname;
-    WiFi.setHostname(SamIoT::Mesh::hostname.c_str());
+    SamIoT::Mesh::meshClient->setHostname(SamIoT::Mesh::hostname.c_str());
 };
 
 std::string SamIoT::Mesh::getMACAddressString()
@@ -133,20 +142,18 @@ std::string SamIoT::Mesh::getIPAddressString()
     return (std::string)buffer;
 };
 
-void SamIoT::Mesh::connectToNetwork()
+SamIoT::Mesh::WifiCredentials* SamIoT::Mesh::getStrongestWifiNetwork()
 {
-    if (
-        !SamIoT::Mesh::meshCredentials &&
-        SamIoT::Mesh::wifiCredentials.size())
+    if (!SamIoT::Mesh::wifiCredentials.size())
     {
-        SamIoT::Logger::error("No mesh or wifi credentials to connect to.");
-        return;
+        SamIoT::Logger::error("No wifi credentials to connect to.");
+        return nullptr;
     }
 
     SamIoT::Logger::infof(
-        "Finding strongest of %u mesh networks and %u wifi networks...\n",
-        SamIoT::Mesh::meshCredentials != nullptr ? 1 : 0,
+        "Finding strongest of %u wifi networks...\n",
         (uint8_t)SamIoT::Mesh::wifiCredentials.size());
+
     SamIoT::Logger::info("Scanning local networks...");
 
     uint8_t networkCount = WiFi.scanNetworks();
@@ -154,8 +161,7 @@ void SamIoT::Mesh::connectToNetwork()
     SamIoT::Logger::infof("%u networks found in range.\n", networkCount);
 
     bool meshFound = false;
-    std::string strongestSsid = "";
-    std::string strongestPassword = "";
+    SamIoT::Mesh::WifiCredentials* strongest = nullptr;
     float strengthOfStrongest = 0;
 
     for (uint8_t i = 0; i < networkCount; i++)
@@ -187,8 +193,7 @@ void SamIoT::Mesh::connectToNetwork()
                         _strength);
                     if (_strength > strengthOfStrongest)
                     {
-                        strongestSsid = _credential->ssid;
-                        strongestPassword = _credential->password;
+                        strongest = _credential;
                         strengthOfStrongest = _strength;
                     }
                 }
@@ -202,74 +207,49 @@ void SamIoT::Mesh::connectToNetwork()
                 _strength);
     }
 
-    if (!meshFound && !strongestSsid.size())
-    {
-        SamIoT::Logger::error("None of the provided credentials matched found local networks.");
+    if (!meshFound)
+        SamIoT::Logger::warn("Mesh not found in wifi network scan.");
+    if (strongest==nullptr)
+        SamIoT::Logger::error("No matching credentials in wifi network scan.");
+    else {
+        SamIoT::Logger::infof(
+            "'%s' network strongest at %.1f%%\n",
+            strongest->ssid.c_str(), 
+            strengthOfStrongest);
+        ssid = strongest->ssid;
+        strength = strengthOfStrongest;
     }
-    else
-    {
-        if (meshFound)
-            SamIoT::Logger::infof(
-                "Mesh network '%s' found waiting for connection.\n",
-                SamIoT::Mesh::meshCredentials->ssid.c_str());
-        if (strongestSsid.size())
-        {
-            SamIoT::Logger::infof(
-                "Wifi network '%s' found waiting for connection.\n",
-                strongestSsid.c_str());
-            SamIoT::Mesh::meshClient->stationManual(
-                strongestSsid.c_str(),
-                strongestPassword.c_str());
-            ssid = strongestSsid;
-            strength = strengthOfStrongest;
-        }
 
-        unsigned long start = millis();
-        while (!WiFi.isConnected())
-        {
-            float timeSinceStart = SamIoT::Time::millisSince(start);
-
-            if (timeSinceStart >= 20000)
-            {
-                SamIoT::Logger::error("Max wait exceeded.", "\n");
-                break;
-            }
-            SamIoT::Logger::infof(
-                "Waiting for connection... %.1fs\r",
-                timeSinceStart / 1000.0f);
-
-            delay(10);
-        }
-    }
+    return strongest;
 };
 
 float SamIoT::Mesh::getConnectionStrength()
 {
-    if (SamIoT::Time::millisSince(lastStrengthCheck) > SamIoT::Mesh::strengthUpdatePeriod)
-    {
-        float _strength = WiFi.RSSI() * 2;
-        if (_strength != strength)
-        {
-            SamIoT::Mesh::strength = _strength;
-            for (StrengthCallback callback : SamIoT::Mesh::strengthCallbacks)
-                callback(SamIoT::Mesh::strength);
-        }
-        SamIoT::Mesh::lastStrengthCheck = millis();
-    }
+    // if (SamIoT::Time::millisSince(lastStrengthCheck) > SamIoT::Mesh::strengthUpdatePeriod)
+    // {
+    //     float _strength = WiFi.RSSI() * 2;
+    //     if (_strength != strength)
+    //     {
+    //         SamIoT::Mesh::strength = _strength;
+    //         for (StrengthCallback callback : SamIoT::Mesh::strengthCallbacks)
+    //             callback(SamIoT::Mesh::strength);
+    //     }
+    //     SamIoT::Mesh::lastStrengthCheck = millis();
+    // }
 
     return SamIoT::Mesh::strength;
 };
 
 std::string SamIoT::Mesh::getConnectionSsid()
 {
-    std::string _ssid = (std::string)(WiFi.SSID().c_str());
+    // std::string _ssid = (std::string)(WiFi.SSID().c_str());
 
-    if (_ssid.size() && _ssid != SamIoT::Mesh::ssid)
-    {
-        SamIoT::Mesh::ssid = _ssid;
-        for (SsidCallback callback : SamIoT::Mesh::ssidCallbacks)
-            callback(SamIoT::Mesh::ssid);
-    }
+    // if (_ssid.size() && _ssid != SamIoT::Mesh::ssid)
+    // {
+    //     SamIoT::Mesh::ssid = _ssid;
+    //     for (SsidCallback callback : SamIoT::Mesh::ssidCallbacks)
+    //         callback(SamIoT::Mesh::ssid);
+    // }
 
     return SamIoT::Mesh::ssid;
 };

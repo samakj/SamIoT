@@ -3,10 +3,32 @@
 source ./env.sh
 
 devices=$(pwd)
+mesh_bridge="$devices/mesh-bridge"
 solar_controller="$devices/solar-controller"
 water_butt="$devices/water-butt"
 pond="$devices/pond"
 aquaponics="$devices/aquaponics"
+
+echo "Writing mesh bridge config file."
+cat > "$mesh_bridge/src/config.h" <<- EOF
+#ifndef config_h
+#define config_h
+
+#include <Mesh.h>
+
+const char HOSTNAME[24] = "$WATER_BUTT_HOSTNAME";
+const char LOCATION[24] = "$WATER_BUTT_LOCATION";
+uint8_t IP_LOCATION = $WATER_BUTT_IP_LOCATION;
+const char OTA_PASSWORD[24] = "$WATER_BUTT_OTA_PASS";
+
+SamIoT::Mesh::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+SamIoT::Mesh::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
+
+SamIoT::Mesh::MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
+
+#endif
+EOF
 
 echo "Writing solar controller config file."
 cat > "$solar_controller/src/config.h" <<- EOF

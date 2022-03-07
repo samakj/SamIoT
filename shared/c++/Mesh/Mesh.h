@@ -70,7 +70,7 @@ namespace SamIoT::Mesh
     static unsigned long lastStrengthCheck = 0;
     static std::unordered_map<uint32_t, std::string> nodeInfo = {};
 
-    void setup();
+    void setup(bool isBridge = false);
     void loop();
 
     void addConnectCallback(ConnectCallback callback);
@@ -89,7 +89,7 @@ namespace SamIoT::Mesh
 
     std::string getIPAddressString();
     std::string getMACAddressString();
-    void connectToNetwork();
+    WifiCredentials *getStrongestWifiNetwork();
     float getConnectionStrength();
     std::string getConnectionSsid();
 
