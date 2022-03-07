@@ -89,7 +89,7 @@ namespace SamIoT::Mesh
 
     std::string getIPAddressString();
     std::string getMACAddressString();
-    WifiCredentials *getStrongestWifiNetwork();
+    void connectToNetwork();
     float getConnectionStrength();
     std::string getConnectionSsid();
 
