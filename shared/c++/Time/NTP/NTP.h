@@ -25,9 +25,7 @@ namespace SamIoT::Time::NTP
     static uint16_t maxWait = 20000;
 
     static std::vector<ConnectCallback> connectCallbacks = {};
-
-    static bool usingWifiCallback = false;
-    static unsigned long lastReconnect = 0;
+    static bool connecting = false;
 
     void connect();
     void loop();

@@ -2,17 +2,16 @@
 
 void SamIoT::Mesh::setup(bool isBridge)
 {
-    SamIoT::Mesh::WifiCredentials* wifi = isBridge ? SamIoT::Mesh::getStrongestWifiNetwork() : nullptr;
+    SamIoT::Mesh::WifiCredentials *wifi = isBridge ? SamIoT::Mesh::getStrongestWifiNetwork() : nullptr;
 
     SamIoT::Mesh::meshClient = new painlessMesh();
 
-    SamIoT::Mesh::meshClient->setDebugMsgTypes( ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE );
+    // SamIoT::Mesh::meshClient->setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION | SYNC | COMMUNICATION | GENERAL | MSG_TYPES | REMOTE);
 
     SamIoT::Mesh::meshClient->init(
         SamIoT::Mesh::meshCredentials->ssid.c_str(),
         SamIoT::Mesh::meshCredentials->password.c_str(),
-        SamIoT::Mesh::meshCredentials->port,
-        WIFI_AP_STA);
+        SamIoT::Mesh::meshCredentials->port);
 
     SamIoT::Mesh::meshClient->onReceive(SamIoT::Mesh::_messageReceivedCallback);
     SamIoT::Mesh::meshClient->onNewConnection(SamIoT::Mesh::_newConnectionCallback);
@@ -20,13 +19,8 @@ void SamIoT::Mesh::setup(bool isBridge)
     SamIoT::Mesh::meshClient->onNodeTimeAdjusted(SamIoT::Mesh::_nodeTimeAdjustedCallback);
     SamIoT::Mesh::meshClient->onNodeDelayReceived(SamIoT::Mesh::_nodeDelayReceived);
 
-    if (SamIoT::Mesh::hostname != SamIoT::Mesh::HOSTNAME_NULL_VALUE)
+    if (isBridge)
     {
-        SamIoT::Mesh::meshClient->setHostname(SamIoT::Mesh::hostname.c_str());
-        SamIoT::Mesh::meshClient->initOTAReceive(SamIoT::Mesh::hostname.c_str());
-    }
-
-    if (isBridge) {
         SamIoT::Mesh::meshClient->stationManual(
             wifi->ssid.c_str(),
             wifi->password.c_str());
@@ -34,16 +28,11 @@ void SamIoT::Mesh::setup(bool isBridge)
         SamIoT::Mesh::meshClient->setContainsRoot(true);
     }
 
-    WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
+    if (SamIoT::Mesh::hostname != SamIoT::Mesh::HOSTNAME_NULL_VALUE)
     {
-        SamIoT::Logger::info("Connected to mesh:");
-        SamIoT::Logger::infof("    Node ID:  %X\n", SamIoT::Mesh::meshClient->getNodeId());
-        SamIoT::Logger::infof("    IP:       %s\n", SamIoT::Mesh::getIPAddressString().c_str());
-        SamIoT::Logger::infof("    MAC:      %s\n", SamIoT::Mesh::getMACAddressString().c_str());
-        SamIoT::Logger::infof("    Hostname: %s\n", WiFi.getHostname());
-        for (SamIoT::Mesh::SsidCallback callback : SamIoT::Mesh::connectCallbacks)
-            callback(SamIoT::Mesh::ssid);
-    });
+        SamIoT::Mesh::meshClient->setHostname(SamIoT::Mesh::hostname.c_str());
+        SamIoT::Mesh::meshClient->initOTAReceive(SamIoT::Mesh::hostname.c_str());
+    }
 };
 
 void SamIoT::Mesh::loop()
@@ -52,6 +41,27 @@ void SamIoT::Mesh::loop()
         SamIoT::Mesh::setup();
     if (SamIoT::Mesh::meshClient != nullptr)
         SamIoT::Mesh::meshClient->update();
+    if (SamIoT::Time::millisSince(lastInfoBroadcast) > infoBroadcastPeriod)
+    {
+        SamIoT::Logger::info("Broadcasting node info.");
+        std::string response = "INFO>";
+        response += getNodeInfo();
+        SamIoT::Mesh::meshClient->sendBroadcast(response.c_str());
+        lastInfoBroadcast = millis();
+    }
+    if (!SamIoT::Mesh::wifiConnected && WiFi.status() == WL_CONNECTED)
+    {
+        SamIoT::Logger::info("Connected to mesh:");
+        SamIoT::Logger::infof("    Node ID:  %X\n", SamIoT::Mesh::meshClient->getNodeId());
+        SamIoT::Logger::infof("    IP:       %s\n", SamIoT::Mesh::getIPAddressString().c_str());
+        SamIoT::Logger::infof("    MAC:      %s\n", SamIoT::Mesh::getMACAddressString().c_str());
+        SamIoT::Logger::infof("    Hostname: %s\n", WiFi.getHostname());
+        for (SamIoT::Mesh::SsidCallback callback : SamIoT::Mesh::connectCallbacks)
+            callback(SamIoT::Mesh::ssid);
+        SamIoT::Mesh::wifiConnected = true;
+    }
+    if (WiFi.status() != WL_CONNECTED)
+        SamIoT::Mesh::wifiConnected = false;
 };
 
 void SamIoT::Mesh::addConnectCallback(ConnectCallback callback)
@@ -142,7 +152,7 @@ std::string SamIoT::Mesh::getIPAddressString()
     return (std::string)buffer;
 };
 
-SamIoT::Mesh::WifiCredentials* SamIoT::Mesh::getStrongestWifiNetwork()
+SamIoT::Mesh::WifiCredentials *SamIoT::Mesh::getStrongestWifiNetwork()
 {
     if (!SamIoT::Mesh::wifiCredentials.size())
     {
@@ -161,7 +171,7 @@ SamIoT::Mesh::WifiCredentials* SamIoT::Mesh::getStrongestWifiNetwork()
     SamIoT::Logger::infof("%u networks found in range.\n", networkCount);
 
     bool meshFound = false;
-    SamIoT::Mesh::WifiCredentials* strongest = nullptr;
+    SamIoT::Mesh::WifiCredentials *strongest = nullptr;
     float strengthOfStrongest = 0;
 
     for (uint8_t i = 0; i < networkCount; i++)
@@ -209,12 +219,13 @@ SamIoT::Mesh::WifiCredentials* SamIoT::Mesh::getStrongestWifiNetwork()
 
     if (!meshFound)
         SamIoT::Logger::warn("Mesh not found in wifi network scan.");
-    if (strongest==nullptr)
+    if (strongest == nullptr)
         SamIoT::Logger::error("No matching credentials in wifi network scan.");
-    else {
+    else
+    {
         SamIoT::Logger::infof(
             "'%s' network strongest at %.1f%%\n",
-            strongest->ssid.c_str(), 
+            strongest->ssid.c_str(),
             strengthOfStrongest);
         ssid = strongest->ssid;
         strength = strengthOfStrongest;
@@ -257,6 +268,10 @@ std::string SamIoT::Mesh::getConnectionSsid()
 std::string SamIoT::Mesh::getNodeInfo()
 {
     std::string response = "{";
+
+    response += "\"timestamp\":\"";
+    response += SamIoT::Time::getIsoTimestamp();
+    response += "\",";
 
     response += "\"ip\":\"";
     response += SamIoT::Mesh::getIPAddressString();
@@ -311,22 +326,13 @@ std::string SamIoT::Mesh::getNodeInfo()
 void SamIoT::Mesh::meshResponse(AsyncWebServerRequest *request)
 {
     unsigned long requestStart = millis();
-    SamIoT::Mesh::meshClient->sendBroadcast("INFO?");
-    std::list<uint32_t> nodeList = SamIoT::Mesh::meshClient->getNodeList();
+    std::list<uint32_t> nodeList = SamIoT::Mesh::meshClient->getNodeList(true);
     String connectionJson = SamIoT::Mesh::meshClient->subConnectionJson();
     SamIoT::Mesh::nodeInfo[SamIoT::Mesh::meshClient->getNodeId()] = getNodeInfo();
 
-    while (
-        SamIoT::Mesh::nodeInfo.size() < nodeList.size() &&
-        SamIoT::Time::millisSince(requestStart) < 1000)
-    {
-        yield();
-        delay(10);
-    }
-
     std::string json = "{\"connections\":";
     json += connectionJson.c_str();
-    json += ",\"info\":{";
+    json += ",\"nodes\":{";
 
     for (auto &it : SamIoT::Mesh::nodeInfo)
     {
@@ -342,13 +348,12 @@ void SamIoT::Mesh::meshResponse(AsyncWebServerRequest *request)
     json.pop_back();
     json += "}}";
     request->send(200, "application/json", json.c_str());
-    SamIoT::Mesh::nodeInfo = {};
     json = "";
 };
 
 void SamIoT::Mesh::_messageReceivedCallback(const uint32_t &from, const String &message)
 {
-    SamIoT::Logger::infof("Mesh message received from %u message = '%s'\n", from, message.c_str());
+    SamIoT::Logger::infof("Mesh message received from %u:\n%s\n", from, message.c_str());
     if (message.startsWith("INFO?"))
     {
         std::string response = "INFO>";
@@ -356,7 +361,7 @@ void SamIoT::Mesh::_messageReceivedCallback(const uint32_t &from, const String &
         SamIoT::Mesh::meshClient->sendSingle(from, response.c_str());
         return;
     }
-    if (message.startsWith("INFO?"))
+    if (message.startsWith("INFO>"))
     {
         std::string _message = message.c_str();
         _message.replace(0, 5, "");
@@ -372,15 +377,15 @@ void SamIoT::Mesh::_newConnectionCallback(uint32_t nodeId)
 
 void SamIoT::Mesh::_changedConnectionCallback()
 {
-    SamIoT::Logger::infof("Mesh changed connections\n");
+    SamIoT::Logger::debugf("Mesh changed connections\n");
 };
 
 void SamIoT::Mesh::_nodeTimeAdjustedCallback(int32_t offset)
 {
-    SamIoT::Logger::infof("Adjusted mesh time %u. Offset = %d\n", meshClient->getNodeTime(), offset);
+    SamIoT::Logger::debugf("Adjusted mesh time %u. Offset = %d\n", meshClient->getNodeTime(), offset);
 };
 
 void SamIoT::Mesh::_nodeDelayReceived(uint32_t nodeId, int32_t delay)
 {
-    SamIoT::Logger::infof("Mesh delay from node %u = %d\n", nodeId, delay);
+    SamIoT::Logger::debugf("Mesh delay from node %u = %d\n", nodeId, delay);
 };

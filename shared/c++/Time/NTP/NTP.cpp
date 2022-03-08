@@ -12,36 +12,20 @@ void SamIoT::Time::NTP::addConnectCallback(SamIoT::Time::NTP::ConnectCallback ca
 
 void SamIoT::Time::NTP::connect()
 {
-    if (!isConnected())
+    SamIoT::Logger::infof("NTP not connected, connecting to %s..\n", server.c_str());
+    configTime(
+        SamIoT::Time::NTP::timezone * 3600,
+        SamIoT::Time::NTP::dst * 3600,
+        SamIoT::Time::NTP::server.c_str());
+};
+
+void SamIoT::Time::NTP::loop()
+{
+    if (!SamIoT::Time::NTP::isConnected() && !connecting)
+        connect();
+
+    if (SamIoT::Time::NTP::isConnected() && connecting)
     {
-        SamIoT::Logger::infof("NTP not connected, connecting to %s..\n", server.c_str());
-
-        unsigned long start = millis();
-        uint16_t loop = 0;
-
-        while (!isConnected())
-        {
-            if (!(loop % 100))
-            {
-                configTime(
-                    SamIoT::Time::NTP::timezone * 3600,
-                    SamIoT::Time::NTP::dst * 3600,
-                    SamIoT::Time::NTP::server.c_str());
-            }
-            if (SamIoT::Time::millisSince(start) >= SamIoT::Time::NTP::maxWait)
-            {
-                SamIoT::Logger::error("Max wait exceeded.", "\n");
-                return;
-            }
-            SamIoT::Logger::infof(
-                "Attempting to sync with '%s'... %.1fs\r",
-                SamIoT::Time::NTP::server.c_str(),
-                (millis() - start) / 1000.);
-            loop++;
-            delay(100);
-        }
-
-        SamIoT::Logger::info("");
         SamIoT::Logger::infof(
             "Synced with '%s'. Time: %s.\n",
             SamIoT::Time::NTP::server.c_str(),
@@ -51,19 +35,8 @@ void SamIoT::Time::NTP::connect()
             SamIoT::Time::NTP::ConnectCallback callback :
             SamIoT::Time::NTP::connectCallbacks)
             callback();
-    }
-};
 
-void SamIoT::Time::NTP::loop()
-{
-    if (!SamIoT::Time::NTP::usingWifiCallback)
-    {
-        connect();
-    }
-    if (SamIoT::Time::millisSince(SamIoT::Time::NTP::lastReconnect) > 1000 * 60 * 10)
-    {
-        connect();
-        SamIoT::Time::NTP::lastReconnect = millis();
+        connecting = false;
     }
 };
 

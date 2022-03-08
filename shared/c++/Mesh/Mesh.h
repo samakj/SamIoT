@@ -67,6 +67,7 @@ namespace SamIoT::Mesh
     static std::vector<SsidCallback> ssidCallbacks = {};
     static std::vector<StrengthCallback> strengthCallbacks = {};
 
+    static bool wifiConnected = false;
     static unsigned long lastStrengthCheck = 0;
     static std::unordered_map<uint32_t, std::string> nodeInfo = {};
 
@@ -102,6 +103,8 @@ namespace SamIoT::Mesh
     void _nodeDelayReceived(uint32_t nodeId, int32_t delay);
 
     std::string getNodeInfo();
+    static unsigned long lastInfoBroadcast = 0;
+    static unsigned long infoBroadcastPeriod = 10000;
 };
 
 #endif

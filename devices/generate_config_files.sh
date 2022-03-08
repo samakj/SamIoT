@@ -16,10 +16,10 @@ cat > "$mesh_bridge/src/config.h" <<- EOF
 
 #include <Mesh.h>
 
-const char HOSTNAME[24] = "$WATER_BUTT_HOSTNAME";
-const char LOCATION[24] = "$WATER_BUTT_LOCATION";
-uint8_t IP_LOCATION = $WATER_BUTT_IP_LOCATION;
-const char OTA_PASSWORD[24] = "$WATER_BUTT_OTA_PASS";
+const char HOSTNAME[24] = "$MESH_BRIDGE_HOSTNAME";
+const char LOCATION[24] = "$MESH_BRIDGE_LOCATION";
+uint8_t IP_LOCATION = $MESH_BRIDGE_IP_LOCATION;
+const char OTA_PASSWORD[24] = "$MESH_BRIDGE_OTA_PASS";
 
 SamIoT::Mesh::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
 SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
