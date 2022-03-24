@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 iot="$(dirname "$(pwd)")"
 python="$(dirname $iot)"
@@ -8,8 +8,8 @@ services="$(dirname $python)"
 root="$(dirname $services)"
 
 python3 -m venv .
-source bin/activate
-ln -s "$root/shared" ./
+. bin/activate
+cp -r "$root/shared" ./
 
 pip3 install -r requirements.txt
 

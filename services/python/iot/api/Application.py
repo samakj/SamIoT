@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from shared.python.extensions.aiohttp import ApplicationWithDatabaseAndCache
 
@@ -5,6 +6,8 @@ from stores.devices import DevicesStore
 from stores.locations import LocationsStore
 from stores.measurements import MeasurementsStore
 from stores.metrics import MetricsStore
+
+LOG = logging.getLogger(__name__)
 
 
 class IoTAPIApplication(ApplicationWithDatabaseAndCache):
@@ -15,7 +18,7 @@ class IoTAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_devices_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -23,7 +26,7 @@ class IoTAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_locations_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -31,7 +34,7 @@ class IoTAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_measurements_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -39,7 +42,7 @@ class IoTAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_metrics_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 

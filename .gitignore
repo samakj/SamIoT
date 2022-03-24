@@ -14,6 +14,7 @@ __pycache__/
 # .env files
 /**/*.env
 /**/env.sh
+/**/*.env.sh
 
 # Certificates
 /**/*.pem

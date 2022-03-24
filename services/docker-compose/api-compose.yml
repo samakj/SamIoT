@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - ${IOT_API_CONTAINER_NAME}
+      - ${UTILITIES_API_CONTAINER_NAME}
+      - ${WEATHER_API_CONTAINER_NAME}
+    volumes:
+      - "${NGINX_FOLDER}/api.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+
+  iot-api:
+    image: ${IOT_API_CONTAINER_NAME}
+    container_name: ${IOT_API_CONTAINER_NAME}
+    build:
+      context: "${IOT_FOLDER}/api"
+      args:
+        IOT_API_PORT: "$IOT_API_PORT"
+    env_file:
+      - ${IOT_FOLDER}/api/.env
+    volumes:
+      - "${IOT_FOLDER}/api:/app"
+    ports:
+      - "${IOT_API_PORT}:${IOT_API_PORT}"
+    restart: on-failure
+
+  utilities-api:
+    image: ${UTILITIES_API_CONTAINER_NAME}
+    container_name: ${UTILITIES_API_CONTAINER_NAME}
+    build:
+      context: "${UTILITIES_FOLDER}/api"
+      args:
+        UTILITIES_API_PORT: "$UTILITIES_API_PORT"
+    env_file:
+      - ${UTILITIES_FOLDER}/api/.env
+    volumes:
+      - "${UTILITIES_FOLDER}/api:/app"
+    ports:
+      - "${UTILITIES_API_PORT}:${UTILITIES_API_PORT}"
+    restart: on-failure
+
+  weather-api:
+    image: ${WEATHER_API_CONTAINER_NAME}
+    container_name: ${WEATHER_API_CONTAINER_NAME}
+    build:
+      context: "${WEATHER_FOLDER}/api"
+      args:
+        WEATHER_API_PORT: "$WEATHER_API_PORT"
+    env_file:
+      - ${WEATHER_FOLDER}/api/.env
+    volumes:
+      - "${WEATHER_FOLDER}/api:/app"
+    ports:
+      - "${WEATHER_API_PORT}:${WEATHER_API_PORT}"
+    restart: on-failure

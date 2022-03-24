@@ -51,13 +51,16 @@ async def create_app() -> WeatherAPIApplication:
             ]
         )
 
-        await app.connect_db(
-            host=os.environ["WEATHER_DB_HOST"],
-            port=os.environ["WEATHER_DB_PORT"],
-            name=os.environ["WEATHER_DB_NAME"],
-            username=os.environ["WEATHER_DB_USER"],
-            password=os.environ["WEATHER_DB_PASS"],
-        )
+        try:
+            await app.connect_db(
+                host=os.environ["WEATHER_DB_HOST"],
+                port=os.environ["WEATHER_DB_PORT"],
+                name=os.environ["WEATHER_DB_NAME"],
+                username=os.environ["WEATHER_DB_USER"],
+                password=os.environ["WEATHER_DB_PASS"],
+            )
+        except:
+            LOG.error('Failed to connect to db, restart to try again.')
 
         app.connect_current_store()
         app.connect_hourly_store()

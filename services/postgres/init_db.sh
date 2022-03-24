@@ -1,5 +1,5 @@
-source ./env.sh
-source ./init_roles.sh
+. ./env.sh
+. ./init_roles.sh
 
 export PGPASSWORD=$IOT_PASS
 echo "\nInitialising iot devices table...\n"
@@ -24,4 +24,4 @@ echo "\nInitialising daily weather table...\n"
 psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --db=$WEATHER_DB_NAME --file=./weather/daily/1.init.sql
 export PGPASSWORD=
 
-source ./init_roles.sh
+. ./init_roles.sh

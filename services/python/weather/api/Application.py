@@ -1,9 +1,12 @@
+import logging
 from typing import Optional
 
 from stores.current import CurrentStore
 from stores.daily import DailyStore
 from stores.hourly import HourlyStore
 from shared.python.extensions.aiohttp import ApplicationWithDatabaseAndCache
+
+LOG = logging.getLogger(__name__)
 
 
 class WeatherAPIApplication(ApplicationWithDatabaseAndCache):
@@ -13,7 +16,7 @@ class WeatherAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_current_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -21,7 +24,7 @@ class WeatherAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_hourly_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -29,7 +32,7 @@ class WeatherAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_daily_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 

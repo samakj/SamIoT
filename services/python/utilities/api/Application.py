@@ -1,8 +1,11 @@
+import logging
 from typing import Optional
 
 from stores.gas import GasStore
 from stores.electric import ElectricStore
 from shared.python.extensions.aiohttp import ApplicationWithDatabaseAndCache
+
+LOG = logging.getLogger(__name__)
 
 
 class UtilitiesAPIApplication(ApplicationWithDatabaseAndCache):
@@ -11,7 +14,7 @@ class UtilitiesAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_gas_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 
@@ -19,7 +22,7 @@ class UtilitiesAPIApplication(ApplicationWithDatabaseAndCache):
 
     def connect_electric_store(self) -> None:
         if self.db is None:
-            raise ValueError(
+            LOG.error(
                 "Database not initialised before connecting store."
             )
 

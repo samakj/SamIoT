@@ -18,8 +18,8 @@ class RootView(View):
                 continue
 
             pathSplit = path.split("/")
-            version = pathSplit[1]
-            resource = pathSplit[2]
+            version = pathSplit[1] if len(pathSplit) >= 2 else ""
+            resource = pathSplit[2] if len(pathSplit) >= 3 else ""
 
             routes[version] = routes.get(version, {})
             routes[version][resource] = routes[version].get(resource, {})

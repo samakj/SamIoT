@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 devices=$(pwd)
 mesh_bridge="$devices/mesh-bridge"
@@ -13,7 +13,7 @@ echo "Writing mesh bridge ini file."
 cat > "$mesh_bridge/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
+;   Build options: build flags, . filter
 ;   Upload options: custom upload port, speed and extra flags
 ;   Library options: dependencies, extra library storages
 ;   Advanced options: extra scripting
@@ -76,7 +76,7 @@ echo "Writing solar controller ini file."
 cat > "$solar_controller/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
+;   Build options: build flags, . filter
 ;   Upload options: custom upload port, speed and extra flags
 ;   Library options: dependencies, extra library storages
 ;   Advanced options: extra scripting
@@ -113,7 +113,7 @@ echo "Writing water butt ini file."
 cat > "$water_butt/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
+;   Build options: build flags, . filter
 ;   Upload options: custom upload port, speed and extra flags
 ;   Library options: dependencies, extra library storages
 ;   Advanced options: extra scripting
@@ -176,7 +176,7 @@ echo "Writing pond ini file."
 cat > "$pond/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
+;   Build options: build flags, . filter
 ;   Upload options: custom upload port, speed and extra flags
 ;   Library options: dependencies, extra library storages
 ;   Advanced options: extra scripting
@@ -239,7 +239,7 @@ echo "Writing aquaponics ini file."
 cat > "$aquaponics/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
-;   Build options: build flags, source filter
+;   Build options: build flags, . filter
 ;   Upload options: custom upload port, speed and extra flags
 ;   Library options: dependencies, extra library storages
 ;   Advanced options: extra scripting

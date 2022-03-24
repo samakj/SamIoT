@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 scrapers="$(dirname "$(pwd)")"
 python="$(dirname $scrapers)"
@@ -8,7 +8,7 @@ services="$(dirname $python)"
 root="$(dirname $services)"
 
 python3 -m venv .
-source bin/activate
+. bin/activate
 ln -s "$root/shared" ./
 
 pip3 install -r requirements.txt

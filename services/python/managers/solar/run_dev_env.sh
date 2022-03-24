@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 managers="$(dirname "$(pwd)")"
 python="$(dirname $managers)"
@@ -8,7 +8,7 @@ services="$(dirname $python)"
 root="$(dirname $services)"
 
 python3 -m venv .
-source bin/activate
+. bin/activate
 ln -s "$root/shared" ./
 
 echo $controllers

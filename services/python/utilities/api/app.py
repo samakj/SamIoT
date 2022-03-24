@@ -50,13 +50,16 @@ async def create_app() -> UtilitiesAPIApplication:
             ]
         )
 
-        await app.connect_db(
-            host=os.environ["UTILITIES_DB_HOST"],
-            port=os.environ["UTILITIES_DB_PORT"],
-            name=os.environ["UTILITIES_DB_NAME"],
-            username=os.environ["UTILITIES_DB_USER"],
-            password=os.environ["UTILITIES_DB_PASS"],
-        )
+        try:
+            await app.connect_db(
+                host=os.environ["UTILITIES_DB_HOST"],
+                port=os.environ["UTILITIES_DB_PORT"],
+                name=os.environ["UTILITIES_DB_NAME"],
+                username=os.environ["UTILITIES_DB_USER"],
+                password=os.environ["UTILITIES_DB_PASS"],
+            )
+        except:
+            LOG.error('Failed to connect to db, restart to try again.')
 
         app.connect_gas_store()
         app.connect_electric_store()

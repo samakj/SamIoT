@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 alias debug_mesh_bridge="telnet $DEVICE_IP_MASK$MESH_BRIDGE_IP_LOCATION"
 alias debug_solar_controller="telnet $DEVICE_IP_MASK$SOLAR_CONTROLLER_IP_LOCATION"

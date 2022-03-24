@@ -1,4 +1,4 @@
-source ./env.sh
+. ./env.sh
 
 # echo "\nSetting postgres user password...\n"
 # psql --host=$DB_HOST --port=$DB_PORT --username=$POSTGRES_USER --command="ALTER USER postgres PASSWORD '$POSTGRES_PASS';"

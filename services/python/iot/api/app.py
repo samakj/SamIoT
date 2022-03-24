@@ -64,13 +64,16 @@ async def create_app() -> IoTAPIApplication:
             ]
         )
 
-        await app.connect_db(
-            host=os.environ["IOT_DB_HOST"],
-            port=os.environ["IOT_DB_PORT"],
-            name=os.environ["IOT_DB_NAME"],
-            username=os.environ["IOT_DB_USER"],
-            password=os.environ["IOT_DB_PASS"],
-        )
+        try:
+            await app.connect_db(
+                host=os.environ["IOT_DB_HOST"],
+                port=os.environ["IOT_DB_PORT"],
+                name=os.environ["IOT_DB_NAME"],
+                username=os.environ["IOT_DB_USER"],
+                password=os.environ["IOT_DB_PASS"],
+            )
+        except:
+            LOG.error('Failed to connect to db, restart to try again.')
 
         app.connect_devices_store()
         app.connect_locations_store()

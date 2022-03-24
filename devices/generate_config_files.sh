@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./env.sh
+. ./env.sh
 
 devices=$(pwd)
 mesh_bridge="$devices/mesh-bridge"

@@ -1,5 +1,5 @@
-source ./env.sh
-source ./init_roles.sh
+. ./env.sh
+. ./init_roles.sh
 
 services="$(dirname "$(pwd)")"
 root="$(dirname $services)"
