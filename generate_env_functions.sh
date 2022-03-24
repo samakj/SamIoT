@@ -386,7 +386,7 @@ EOF
 generate_api_docker_compose_env_files() {
     get_env
     echo "Writing docker-compose/api env files."
-    cat > "$docker_compose/api.env" <<- EOF
+    cat > "$docker_compose/api/.env" <<- EOF
 # Ports
 
 IOT_API_PORT=$IOT_API_PORT
@@ -409,6 +409,6 @@ UTILITIES_API_CONTAINER_NAME="$UTILITIES_API_CONTAINER_NAME"
 WEATHER_API_CONTAINER_NAME="$WEATHER_API_CONTAINER_NAME"
 
 EOF
-    cp "$docker_compose/api.env" "$docker_compose/api.env.sh"
+    cp "$docker_compose/api/.env" "$docker_compose/api/env.sh"
     clean_env
 }

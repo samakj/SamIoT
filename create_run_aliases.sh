@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_run_api () {
+run_api () {
     root=$(pwd)
     
     . "$root/generate_env_functions.sh"
@@ -26,7 +26,7 @@ _run_api () {
     cp -r "$root/shared/python" "$weather/api/shared"
 
     docker_compose="$root/services/docker-compose"
-    . "$docker_compose/api.env.sh"
+    . "$docker_compose/api/env.sh"
     
     echo "Starting api..."
 
@@ -43,8 +43,8 @@ _run_api () {
 
     # Useful for debugging 
     # docker-compose \
-    #     --file "$docker_compose/api-compose.yml" \
-    #     --env-file "$docker_compose/api.env" \
+    #     --file "$docker_compose/api/docker-compose.yml" \
+    #     --env-file "$docker_compose/api/.env" \
     #     --project-name "api"\
     #     down
     # docker rm ${IOT_API_CONTAINER_NAME}
@@ -55,14 +55,14 @@ _run_api () {
     # docker rmi ${WEATHER_API_CONTAINER_NAME}
 
     docker-compose \
-        --file "$docker_compose/api-compose.yml" \
-        --env-file "$docker_compose/api.env" \
+        --file "$docker_compose/api/docker-compose.yml" \
+        --env-file "$docker_compose/api/.env" \
         --project-name "api"\
         build
 
     docker-compose \
-        --file "$docker_compose/api-compose.yml" \
-        --env-file "$docker_compose/api.env" \
+        --file "$docker_compose/api/docker-compose.yml" \
+        --env-file "$docker_compose/api/.env" \
         --project-name "api"\
         up
 
@@ -76,5 +76,3 @@ _run_api () {
     unset weather
     unset docker_compose
 }
-
-alias run_api="_run_api"
