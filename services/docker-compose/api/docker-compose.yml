@@ -12,10 +12,30 @@ services:
       - "${NGINX_FOLDER}/api.conf:/etc/nginx/nginx.conf"
     ports:
       - "${NGINX_PORT}:${NGINX_PORT}"
+    
+  postgres:
+    image: postgres:latest
+    container_name: ${DB_CONTAINER_NAME}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+      - POSTGRES_PORT=${DB_PORT}
+    volumes: 
+      - ./postgres-data:/var/lib/postgresql/data
+      - ${POSTGRES_FOLDER}/env.sh:/docker-entrypoint-initdb.d/1.init-env.sh
+      - ${POSTGRES_FOLDER}/init_roles.sh:/docker-entrypoint-initdb.d/2.init-roles.sh
+      - ${POSTGRES_FOLDER}/init_db.sh:/docker-entrypoint-initdb.d/3.init-db.sh
+      - ${POSTGRES_FOLDER}/iot:/migrations/iot
+      - ${POSTGRES_FOLDER}/utilities:/migrations/utilities
+      - ${POSTGRES_FOLDER}/weather:/migrations/weather
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
 
   iot-api:
     image: ${IOT_API_CONTAINER_NAME}
     container_name: ${IOT_API_CONTAINER_NAME}
+    depends_on:
+      - ${DB_CONTAINER_NAME}
     build:
       context: "${IOT_FOLDER}/api"
       args:
@@ -31,6 +51,8 @@ services:
   utilities-api:
     image: ${UTILITIES_API_CONTAINER_NAME}
     container_name: ${UTILITIES_API_CONTAINER_NAME}
+    depends_on:
+      - ${DB_CONTAINER_NAME}
     build:
       context: "${UTILITIES_FOLDER}/api"
       args:
@@ -46,6 +68,8 @@ services:
   weather-api:
     image: ${WEATHER_API_CONTAINER_NAME}
     container_name: ${WEATHER_API_CONTAINER_NAME}
+    depends_on:
+      - ${DB_CONTAINER_NAME}
     build:
       context: "${WEATHER_FOLDER}/api"
       args:

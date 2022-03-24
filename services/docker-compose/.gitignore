@@ -1,2 +1,5 @@
 /**/portainer-data/*
 !/**/portainer-data/.gitinclude
+
+/**/postgres-data/*
+!/**/postgres-data/.gitinclude

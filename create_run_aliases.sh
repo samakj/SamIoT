@@ -4,6 +4,7 @@ init_api () {
     root=$(pwd)
     
     . "$root/generate_env_functions.sh"
+    generate_postgres_env_files
     generate_iot_api_env_files
     generate_utilities_api_env_files
     generate_weather_api_env_files
@@ -27,6 +28,9 @@ init_api () {
 
     docker_compose="$root/services/docker-compose"
     . "$docker_compose/api/env.sh"
+
+    mkdir "$docker_compose/api/portainer-data"
+    mkdir "$docker_compose/api/postgres-data"
     
     export IOT_API_CONTAINER_NAME=$IOT_API_CONTAINER_NAME
     export IOT_API_PORT=$IOT_API_PORT
@@ -125,8 +129,9 @@ init_scrapers () {
     cp -r "$root/shared/python" "$weather/scraper/shared"
 
     docker_compose="$root/services/docker-compose"
-    . "$docker_compose/scraper/env.sh"
-    
+    . "$docker_compose/scrapers/env.sh"
+
+    mkdir "$docker_compose/scrapers/portainer-data"
 
     export IOT_FORAGER_CONTAINER_NAME=$IOT_FORAGER_CONTAINER_NAME
     export IOT_FORAGER_PORT=$IOT_FORAGER_PORT

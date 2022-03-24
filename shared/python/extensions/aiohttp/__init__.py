@@ -1,9 +1,11 @@
+import logging
 import asyncpg
 from asyncpg import Pool
 from aioredis import Redis
 from aiohttp.web import Application
 from typing import Optional, Union
 
+LOG = logging.getLogger()
 
 class ApplicationWithDatabase(Application):
     db: Optional[Pool] = None
@@ -27,6 +29,11 @@ class ApplicationWithDatabase(Application):
         if name is not None:
             db_name_suffix = f"/{name}"
 
+        LOG.info(
+            f"Connecting to db at: postgresql://{host}:{port}{db_name_suffix}, " +
+            f"username: {username if username is not None else 'None'}"
+        )
+        
         self.db = await asyncpg.create_pool(
             f"postgresql://{user_prefix}{host}:{port}{db_name_suffix}"
         )
@@ -53,6 +60,11 @@ class ApplicationWithCache(Application):
             user_prefix += "@"
         if name is not None:
             cache_name_suffix = f"/{name}"
+        
+        LOG.info(
+            f"Connecting to cache at: redis://{host}:{port}{cache_name_suffix}, " +
+            f"username: {username if username is not None else 'None'}"
+        )
 
         self.cache = await Redis.from_url(
             f"redis://{user_prefix}{host}:{port}{cache_name_suffix}"
