@@ -1,6 +1,6 @@
 #!/bin/bash
 
-run_api () {
+init_api () {
     root=$(pwd)
     
     . "$root/generate_env_functions.sh"
@@ -28,8 +28,6 @@ run_api () {
     docker_compose="$root/services/docker-compose"
     . "$docker_compose/api/env.sh"
     
-    echo "Starting api..."
-
     export IOT_API_CONTAINER_NAME=$IOT_API_CONTAINER_NAME
     export IOT_API_PORT=$IOT_API_PORT
     export UTILITIES_API_CONTAINER_NAME=$UTILITIES_API_CONTAINER_NAME
@@ -40,6 +38,24 @@ run_api () {
     envsubst '${IOT_API_CONTAINER_NAME}:${IOT_API_PORT}:${UTILITIES_API_CONTAINER_NAME}:${UTILITIES_API_PORT}:${WEATHER_API_CONTAINER_NAME}:${WEATHER_API_PORT}' \
         < "$nginx/api.template" \
         > "$nginx/api.conf"
+}
+
+clean_api () {
+    . "$root/clean_env.sh"
+    unset root
+    unset shared
+    unset services
+    unset python
+    unset iot
+    unset utilities
+    unset weather
+    unset docker_compose
+}
+
+run_api () {
+    init_api
+
+    echo "Starting api..."
 
     # Useful for debugging 
     # docker-compose \
@@ -66,18 +82,24 @@ run_api () {
         --project-name "api"\
         up
 
-    . "$root/clean_env.sh"
-    unset root
-    unset shared
-    unset services
-    unset python
-    unset iot
-    unset utilities
-    unset weather
-    unset docker_compose
+    clean_api
 }
 
-run_scrapers () {
+restart_api () {
+    init_api
+
+    echo "Restarting api..."
+
+    docker-compose \
+        --file "$docker_compose/api/docker-compose.yml" \
+        --env-file "$docker_compose/api/.env" \
+        --project-name "api"\
+        restart
+
+    clean_api
+}
+
+init_scrapers () {
     root=$(pwd)
     
     . "$root/generate_env_functions.sh"
@@ -105,7 +127,6 @@ run_scrapers () {
     docker_compose="$root/services/docker-compose"
     . "$docker_compose/scraper/env.sh"
     
-    echo "Starting scrapers..."
 
     export IOT_FORAGER_CONTAINER_NAME=$IOT_FORAGER_CONTAINER_NAME
     export IOT_FORAGER_PORT=$IOT_FORAGER_PORT
@@ -117,6 +138,24 @@ run_scrapers () {
     envsubst '${IOT_FORAGER_CONTAINER_NAME}:${IOT_FORAGER_PORT}:${UTILITIES_SCRAPER_CONTAINER_NAME}:${UTILITIES_SCRAPER_PORT}:${WEATHER_SCRAPER_CONTAINER_NAME}:${WEATHER_SCRAPER_PORT}' \
         < "$nginx/scrapers.template" \
         > "$nginx/scrapers.conf"
+}
+
+clean_scrapers () {
+    . "$root/clean_env.sh"
+    unset root
+    unset shared
+    unset services
+    unset python
+    unset iot
+    unset utilities
+    unset weather
+    unset docker_compose
+}
+
+run_scrapers () {
+    init_scrapers
+
+    echo "Starting scrapers..."
 
     # Useful for debugging 
     # docker-compose \
@@ -143,13 +182,19 @@ run_scrapers () {
         --project-name "scrapers"\
         up
 
-    . "$root/clean_env.sh"
-    unset root
-    unset shared
-    unset services
-    unset python
-    unset iot
-    unset utilities
-    unset weather
-    unset docker_compose
+    clean_scrapers
+}
+
+restart_scrapers () {
+    init_scrapers
+
+    echo "Restarting scrapers..."
+
+    docker-compose \
+        --file "$docker_compose/scrapers/docker-compose.yml" \
+        --env-file "$docker_compose/scrapers/.env" \
+        --project-name "scrapers"\
+        restart
+    
+    clean_scrapers
 }
