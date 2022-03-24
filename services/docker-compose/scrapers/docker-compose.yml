@@ -1,0 +1,72 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - ${IOT_FORAGER_CONTAINER_NAME}
+      - ${UTILITIES_SCRAPER_CONTAINER_NAME}
+      - ${WEATHER_SCRAPER_CONTAINER_NAME}
+    volumes:
+      - "${NGINX_FOLDER}/scrapers.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+
+  iot-forager:
+    image: ${IOT_FORAGER_CONTAINER_NAME}
+    container_name: ${IOT_FORAGER_CONTAINER_NAME}
+    build:
+      context: "${IOT_FOLDER}/forager"
+      args:
+        IOT_FORAGER_PORT: "$IOT_FORAGER_PORT"
+    env_file:
+      - ${IOT_FOLDER}/forager/.env
+    volumes:
+      - "${IOT_FOLDER}/forager:/app"
+    ports:
+      - "${IOT_FORAGER_PORT}:${IOT_FORAGER_PORT}"
+    restart: on-failure
+
+  utilities-scraper:
+    image: ${UTILITIES_SCRAPER_CONTAINER_NAME}
+    container_name: ${UTILITIES_SCRAPER_CONTAINER_NAME}
+    build:
+      context: "${UTILITIES_FOLDER}/scraper"
+      args:
+        UTILITIES_SCRAPER_PORT: "$UTILITIES_SCRAPER_PORT"
+    env_file:
+      - ${UTILITIES_FOLDER}/scraper/.env
+    volumes:
+      - "${UTILITIES_FOLDER}/scraper:/app"
+    ports:
+      - "${UTILITIES_SCRAPER_PORT}:${UTILITIES_SCRAPER_PORT}"
+    restart: on-failure
+
+  weather-scraper:
+    image: ${WEATHER_SCRAPER_CONTAINER_NAME}
+    container_name: ${WEATHER_SCRAPER_CONTAINER_NAME}
+    build:
+      context: "${WEATHER_FOLDER}/scraper"
+      args:
+        WEATHER_SCRAPER_PORT: "$WEATHER_SCRAPER_PORT"
+    env_file:
+      - ${WEATHER_FOLDER}/scraper/.env
+    volumes:
+      - "${WEATHER_FOLDER}/scraper:/app"
+    ports:
+      - "${WEATHER_SCRAPER_PORT}:${WEATHER_SCRAPER_PORT}"
+    restart: on-failure
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    ports:
+      - 9000:9000

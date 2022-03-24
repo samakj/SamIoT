@@ -14,3 +14,4 @@ generate_weather_scraper_env_files
 generate_devices_env_files
 generate_solar_controller_env_files
 generate_api_docker_compose_env_files
+generate_scrapers_docker_compose_env_files

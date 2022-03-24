@@ -412,3 +412,33 @@ EOF
     cp "$docker_compose/api/.env" "$docker_compose/api/env.sh"
     clean_env
 }
+
+generate_scrapers_docker_compose_env_files() {
+    get_env
+    echo "Writing docker-compose/scraper env files."
+    cat > "$docker_compose/scrapers/.env" <<- EOF
+# Ports
+
+IOT_FORAGER_PORT=$IOT_FORAGER_PORT
+UTILITIES_SCRAPER_PORT=$UTILITIES_SCRAPER_PORT
+WEATHER_SCRAPER_PORT=$WEATHER_SCRAPER_PORT
+NGINX_PORT=$NGINX_PORT
+
+# Folders
+
+IOT_FOLDER="$iot"
+UTILITIES_FOLDER="$utilities"
+WEATHER_FOLDER="$weather"
+NGINX_FOLDER="$nginx"
+SHARED_FOLDER="$shared"
+
+# Container Name
+
+IOT_FORAGER_CONTAINER_NAME="$IOT_FORAGER_CONTAINER_NAME"
+UTILITIES_SCRAPER_CONTAINER_NAME="$UTILITIES_SCRAPER_CONTAINER_NAME"
+WEATHER_SCRAPER_CONTAINER_NAME="$WEATHER_SCRAPER_CONTAINER_NAME"
+
+EOF
+    cp "$docker_compose/scrapers/.env" "$docker_compose/scrapers/env.sh"
+    clean_env
+}

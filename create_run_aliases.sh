@@ -76,3 +76,80 @@ run_api () {
     unset weather
     unset docker_compose
 }
+
+run_scrapers () {
+    root=$(pwd)
+    
+    . "$root/generate_env_functions.sh"
+    generate_iot_forager_env_files
+    generate_utilities_scraper_env_files
+    generate_weather_scraper_env_files
+    generate_scrapers_docker_compose_env_files
+
+    root=$(pwd)
+    shared="$root/shared"
+    services="$root/services"
+    python="$services/python"
+    nginx="$services/nginx"
+    iot="$python/iot"
+    utilities="$python/utilities"
+    weather="$python/weather"
+
+    mkdir "$iot/forager/shared"
+    cp -r "$root/shared/python" "$iot/forager/shared"
+    mkdir "$utilities/scraper/shared"
+    cp -r "$root/shared/python" "$utilities/scraper/shared"
+    mkdir "$weather/scraper/shared"
+    cp -r "$root/shared/python" "$weather/scraper/shared"
+
+    docker_compose="$root/services/docker-compose"
+    . "$docker_compose/scraper/env.sh"
+    
+    echo "Starting scrapers..."
+
+    export IOT_FORAGER_CONTAINER_NAME=$IOT_FORAGER_CONTAINER_NAME
+    export IOT_FORAGER_PORT=$IOT_FORAGER_PORT
+    export UTILITIES_SCRAPER_CONTAINER_NAME=$UTILITIES_SCRAPER_CONTAINER_NAME
+    export UTILITIES_SCRAPER_PORT=$UTILITIES_SCRAPER_PORT
+    export WEATHER_SCRAPER_CONTAINER_NAME=$WEATHER_SCRAPER_CONTAINER_NAME
+    export WEATHER_SCRAPER_PORT=$WEATHER_SCRAPER_PORT
+
+    envsubst '${IOT_FORAGER_CONTAINER_NAME}:${IOT_FORAGER_PORT}:${UTILITIES_SCRAPER_CONTAINER_NAME}:${UTILITIES_SCRAPER_PORT}:${WEATHER_SCRAPER_CONTAINER_NAME}:${WEATHER_SCRAPER_PORT}' \
+        < "$nginx/scrapers.template" \
+        > "$nginx/scrapers.conf"
+
+    # Useful for debugging 
+    # docker-compose \
+    #     --file "$docker_compose/scrapers/docker-compose.yml" \
+    #     --env-file "$docker_compose/scrapers/.env" \
+    #     --project-name "scrapers"\
+    #     down
+    # docker rm ${IOT_FORAGER_CONTAINER_NAME}
+    # docker rm ${UTILITIES_SCRAPER_CONTAINER_NAME}
+    # docker rm ${WEATHER_SCRAPER_CONTAINER_NAME}
+    # docker rmi ${IOT_FORAGER_CONTAINER_NAME}
+    # docker rmi ${UTILITIES_SCRAPER_CONTAINER_NAME}
+    # docker rmi ${WEATHER_SCRAPER_CONTAINER_NAME}
+
+    docker-compose \
+        --file "$docker_compose/scrapers/docker-compose.yml" \
+        --env-file "$docker_compose/scrapers/.env" \
+        --project-name "scrapers"\
+        build
+
+    docker-compose \
+        --file "$docker_compose/scrapers/docker-compose.yml" \
+        --env-file "$docker_compose/scrapers/.env" \
+        --project-name "scrapers"\
+        up
+
+    . "$root/clean_env.sh"
+    unset root
+    unset shared
+    unset services
+    unset python
+    unset iot
+    unset utilities
+    unset weather
+    unset docker_compose
+}
