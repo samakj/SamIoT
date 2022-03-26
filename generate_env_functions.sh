@@ -9,6 +9,7 @@ get_env () {
     shared="$root/shared"
     javascript="$services/javascript"
     postgres="$services/postgres"
+    redis="$services/redis"
     python="$services/python"
     docker_compose="$services/docker-compose"
     nginx="$services/nginx"
@@ -25,6 +26,7 @@ clean_env () {
     unset shared
     unset javascript
     unset postgres
+    unset redis
     unset python
     unset docker_compose
     unset nginx
@@ -394,10 +396,20 @@ UTILITIES_API_PORT=$UTILITIES_API_PORT
 WEATHER_API_PORT=$WEATHER_API_PORT
 NGINX_PORT=$NGINX_PORT
 DB_PORT=$DB_PORT
+CACHE_PORT=$CACHE_PORT
 
 # Build Vars
 POSTGRES_USER=$POSTGRES_USER
 POSTGRES_PASS=$POSTGRES_PASS
+IOT_DB_NAME="$IOT_DB_NAME"
+IOT_DB_USER="$IOT_DB_USER"
+IOT_DB_PASS="$IOT_DB_PASS"
+UTILITIES_DB_NAME="$UTILITIES_DB_NAME"
+UTILITIES_DB_USER="$UTILITIES_DB_USER"
+UTILITIES_DB_PASS="$UTILITIES_DB_PASS"
+WEATHER_DB_NAME="$WEATHER_DB_NAME"
+WEATHER_DB_USER="$WEATHER_DB_USER"
+WEATHER_DB_PASS="$WEATHER_DB_PASS"
 
 # Folders
 
@@ -407,6 +419,7 @@ WEATHER_FOLDER="$weather"
 NGINX_FOLDER="$nginx"
 SHARED_FOLDER="$shared"
 POSTGRES_FOLDER="$postgres"
+REDIS_FOLDER="$redis"
 
 # Container Name
 
@@ -414,6 +427,7 @@ IOT_API_CONTAINER_NAME="$IOT_API_CONTAINER_NAME"
 UTILITIES_API_CONTAINER_NAME="$UTILITIES_API_CONTAINER_NAME"
 WEATHER_API_CONTAINER_NAME="$WEATHER_API_CONTAINER_NAME"
 DB_CONTAINER_NAME="$DB_CONTAINER_NAME"
+CACHE_CONTAINER_NAME="$CACHE_CONTAINER_NAME"
 
 EOF
     cp "$docker_compose/api/.env" "$docker_compose/api/env.sh"

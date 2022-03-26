@@ -1,5 +1,6 @@
 import logging
 import asyncpg
+import asyncio
 from asyncpg import Pool
 from aioredis import Redis
 from aiohttp.web import Application
@@ -34,9 +35,17 @@ class ApplicationWithDatabase(Application):
             f"username: {username if username is not None else 'None'}"
         )
         
-        self.db = await asyncpg.create_pool(
-            f"postgresql://{user_prefix}{host}:{port}{db_name_suffix}"
-        )
+        while self.db is None:
+            try:
+                self.db = await asyncpg.create_pool(
+                    f"postgresql://{user_prefix}{host}:{port}{db_name_suffix}"
+                )
+            except:
+                pass
+            
+            if self.db is None:
+                LOG.warning("Failed to connect to db, trying again in 5 seconds.")
+                await asyncio.sleep(5)
 
 
 class ApplicationWithCache(Application):
@@ -66,9 +75,17 @@ class ApplicationWithCache(Application):
             f"username: {username if username is not None else 'None'}"
         )
 
-        self.cache = await Redis.from_url(
-            f"redis://{user_prefix}{host}:{port}{cache_name_suffix}"
-        )
+        while self.cache is None:
+            try:
+                self.cache = await Redis.from_url(
+                    f"redis://{user_prefix}{host}:{port}{cache_name_suffix}"
+                )
+            except:
+                pass
+                
+            if self.cache is None:
+                LOG.warning("Failed to connect to cache, trying again in 5 seconds.")
+                await asyncio.sleep(5)
 
 
 class ApplicationWithDatabaseAndCache(ApplicationWithDatabase, ApplicationWithCache):

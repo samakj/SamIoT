@@ -15,6 +15,7 @@ init_api () {
     services="$root/services"
     python="$services/python"
     nginx="$services/nginx"
+    redis="$services/redis"
     iot="$python/iot"
     utilities="$python/utilities"
     weather="$python/weather"
@@ -31,6 +32,7 @@ init_api () {
 
     mkdir "$docker_compose/api/portainer-data"
     mkdir "$docker_compose/api/postgres-data"
+    mkdir "$docker_compose/api/redis-data"
     
     export IOT_API_CONTAINER_NAME=$IOT_API_CONTAINER_NAME
     export IOT_API_PORT=$IOT_API_PORT
@@ -42,6 +44,12 @@ init_api () {
     envsubst '${IOT_API_CONTAINER_NAME}:${IOT_API_PORT}:${UTILITIES_API_CONTAINER_NAME}:${UTILITIES_API_PORT}:${WEATHER_API_CONTAINER_NAME}:${WEATHER_API_PORT}' \
         < "$nginx/api.template" \
         > "$nginx/api.conf"
+
+    export CACHE_PORT=$CACHE_PORT
+
+    envsubst '${CACHE_PORT}' \
+        < "$redis/api.template" \
+        > "$redis/api.conf"
 }
 
 clean_api () {
