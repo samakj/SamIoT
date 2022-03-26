@@ -94,7 +94,7 @@ http {
         resolver 127.0.0.11;
 
         location / {
-            proxy_pass  http://portainer:9000;
+            proxy_pass  http://${PORTAINER_CONTAINER_NAME}:${PORTAINER_PORT};
 
             proxy_redirect off;
             proxy_set_header Host $host;

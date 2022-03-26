@@ -3,11 +3,12 @@ version: "3"
 services:
   reverse-proxy:
     image: nginx:latest
-    container_name: nginx
+    container_name: ${NGINX_CONTAINER_NAME}
     depends_on:
       - ${IOT_FORAGER_CONTAINER_NAME}
       - ${UTILITIES_SCRAPER_CONTAINER_NAME}
       - ${WEATHER_SCRAPER_CONTAINER_NAME}
+      - ${PORTAINER_CONTAINER_NAME}
     volumes:
       - "${NGINX_FOLDER}/scrapers.conf:/etc/nginx/nginx.conf"
     ports:
@@ -58,9 +59,9 @@ services:
       - "${WEATHER_SCRAPER_PORT}:${WEATHER_SCRAPER_PORT}"
     restart: on-failure
 
-  portainer:
+  scrapers-portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: ${PORTAINER_CONTAINER_NAME}
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -69,4 +70,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
     ports:
-      - 9000:9000
+      - ${PORTAINER_PORT}:${PORTAINER_PORT}

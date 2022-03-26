@@ -44,10 +44,13 @@ class CachedValue:
         value = None
 
         if self.cache is not None:
-            cache_value = await self.cache.get(self.key)
+            try:
+                cache_value = await self.cache.get(self.key)
 
-            if cache_value is not None:
-                value = self.parse_value(cache_value)
+                if cache_value is not None:
+                    value = self.parse_value(cache_value)
+            except Exception as error:
+                LOG.error(f"Errored when getting '{self.key}' from cache: {error}")
         else:
             LOG.warn("Cache not connected.")
 
@@ -64,11 +67,14 @@ class CachedValue:
 
         if self.cache is not None:
             if value is not None:
-                await self.cache.set(
-                    self.key,
-                    self.serialise_value(value),
-                    ex=self.expiry
-                )
+                try:
+                    await self.cache.set(
+                        self.key,
+                        self.serialise_value(value),
+                        ex=self.expiry
+                    )
+                except Exception as error:
+                    LOG.error(f"Errored when setting '{self.key}' in cache: {error}")
             else:
                 await self.clear()
 
