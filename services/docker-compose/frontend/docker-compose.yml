@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - ${FRONTEND_CONTAINER_NAME}
+    volumes:
+      - "${NGINX_FOLDER}/frontend.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+
+  frontend:
+    image: ${FRONTEND_CONTAINER_NAME}
+    container_name: ${FRONTEND_CONTAINER_NAME}
+    build:
+      context: "${FRONTEND_FOLDER}"
+      args:
+        FRONTEND_PORT: "$FRONTEND_PORT"
+    env_file:
+      - ${FRONTEND_FOLDER}/.env
+    volumes:
+      - "${FRONTEND_FOLDER}:/app"
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    restart: on-failure
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    ports:
+      - 9000:9000

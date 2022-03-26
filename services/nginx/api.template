@@ -14,7 +14,7 @@ http {
     }
 
     server {
-        listen 80;
+        listen ${NGINX_PORT};
 
         location / {
             default_type application/json;
@@ -23,7 +23,7 @@ http {
     }
 
     server {
-        listen 80;
+        listen ${NGINX_PORT};
         server_name  ~^iot.*$;
         resolver 127.0.0.11;
 
@@ -45,7 +45,7 @@ http {
     }
 
     server {
-        listen 80;
+        listen ${NGINX_PORT};
         server_name  ~^utilities.*$;
         resolver 127.0.0.11;
 
@@ -67,7 +67,7 @@ http {
     }
 
     server {
-        listen 80;
+        listen ${NGINX_PORT};
         server_name  ~^weather.*$;
         resolver 127.0.0.11;
 

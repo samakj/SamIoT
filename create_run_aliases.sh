@@ -40,8 +40,9 @@ init_api () {
     export UTILITIES_API_PORT=$UTILITIES_API_PORT
     export WEATHER_API_CONTAINER_NAME=$WEATHER_API_CONTAINER_NAME
     export WEATHER_API_PORT=$WEATHER_API_PORT
+    export NGINX_PORT=$NGINX_PORT
 
-    envsubst '${IOT_API_CONTAINER_NAME}:${IOT_API_PORT}:${UTILITIES_API_CONTAINER_NAME}:${UTILITIES_API_PORT}:${WEATHER_API_CONTAINER_NAME}:${WEATHER_API_PORT}' \
+    envsubst '${NGINX_PORT}:${IOT_API_CONTAINER_NAME}:${IOT_API_PORT}:${UTILITIES_API_CONTAINER_NAME}:${UTILITIES_API_PORT}:${WEATHER_API_CONTAINER_NAME}:${WEATHER_API_PORT}' \
         < "$nginx/api.template" \
         > "$nginx/api.conf"
 
@@ -147,8 +148,9 @@ init_scrapers () {
     export UTILITIES_SCRAPER_PORT=$UTILITIES_SCRAPER_PORT
     export WEATHER_SCRAPER_CONTAINER_NAME=$WEATHER_SCRAPER_CONTAINER_NAME
     export WEATHER_SCRAPER_PORT=$WEATHER_SCRAPER_PORT
+    export NGINX_PORT=$NGINX_PORT
 
-    envsubst '${IOT_FORAGER_CONTAINER_NAME}:${IOT_FORAGER_PORT}:${UTILITIES_SCRAPER_CONTAINER_NAME}:${UTILITIES_SCRAPER_PORT}:${WEATHER_SCRAPER_CONTAINER_NAME}:${WEATHER_SCRAPER_PORT}' \
+    envsubst '${NGINX_PORT}:${IOT_FORAGER_CONTAINER_NAME}:${IOT_FORAGER_PORT}:${UTILITIES_SCRAPER_CONTAINER_NAME}:${UTILITIES_SCRAPER_PORT}:${WEATHER_SCRAPER_CONTAINER_NAME}:${WEATHER_SCRAPER_PORT}' \
         < "$nginx/scrapers.template" \
         > "$nginx/scrapers.conf"
 }
@@ -236,8 +238,9 @@ init_managers () {
     
     export SOLAR_MANAGER_CONTAINER_NAME=$SOLAR_MANAGER_CONTAINER_NAME
     export SOLAR_MANAGER_PORT=$SOLAR_MANAGER_PORT
+    export NGINX_PORT=$NGINX_PORT
 
-    envsubst '${SOLAR_MANAGER_CONTAINER_NAME}:${SOLAR_MANAGER_PORT}' \
+    envsubst '${NGINX_PORT}:${SOLAR_MANAGER_CONTAINER_NAME}:${SOLAR_MANAGER_PORT}' \
         < "$nginx/managers.template" \
         > "$nginx/managers.conf"
 }
@@ -293,4 +296,88 @@ restart_managers () {
         restart
 
     clean_managers
+}
+
+init_frontend () {
+    root=$(pwd)
+    
+    . "$root/generate_env_functions.sh"
+    generate_frontend_env_files
+    generate_frontend_docker_compose_env_files
+
+    root=$(pwd)
+    shared="$root/shared"
+    services="$root/services"
+    javascript="$services/javascript"
+    nginx="$services/nginx"
+    frontend="$javascript/frontend"
+
+    mkdir "$frontend/shared"
+    cp -r "$root/shared/javascript" "$frontend/shared"
+
+    docker_compose="$root/services/docker-compose"
+    . "$docker_compose/frontend/env.sh"
+
+    mkdir "$docker_compose/managers/portainer-data"
+    
+    export FRONTEND_CONTAINER_NAME=$FRONTEND_CONTAINER_NAME
+    export FRONTEND_PORT=$FRONTEND_PORT
+    export NGINX_PORT=$NGINX_PORT
+
+    envsubst '${NGINX_PORT}:${FRONTEND_CONTAINER_NAME}:${FRONTEND_PORT}' \
+        < "$nginx/frontend.template" \
+        > "$nginx/frontend.conf"
+}
+
+clean_frontend () {
+    . "$root/clean_env.sh"
+    unset root
+    unset shared
+    unset services
+    unset javascript
+    unset frontend
+    unset docker_compose
+}
+
+run_frontend () {
+    init_frontend
+
+    echo "Starting frontend..."
+
+    # Useful for debugging 
+    # docker-compose \
+    #     --file "$docker_compose/frontend/docker-compose.yml" \
+    #     --env-file "$docker_compose/frontend/.env" \
+    #     --project-name "frontend"\
+    #     down
+    # docker rm ${FRONTEND_CONTAINER_NAME}
+    # docker rmi ${FRONTEND_CONTAINER_NAME}
+
+    docker-compose \
+        --file "$docker_compose/frontend/docker-compose.yml" \
+        --env-file "$docker_compose/frontend/.env" \
+        --project-name "frontend"\
+        build
+
+    docker-compose \
+        --file "$docker_compose/frontend/docker-compose.yml" \
+        --env-file "$docker_compose/frontend/.env" \
+        --project-name "frontend"\
+        up
+
+    clean_frontend
+}
+
+restart_frontend () {
+    init_frontend
+
+    echo "Restarting frontend..."
+
+    docker-compose \
+        --file "$docker_compose/frontend/docker-compose.yml" \
+        --env-file "$docker_compose/frontend/.env" \
+        --project-name "frontend"\
+        restart
+
+    clean_frontend
 }

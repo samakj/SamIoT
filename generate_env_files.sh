@@ -16,3 +16,4 @@ generate_solar_controller_env_files
 generate_api_docker_compose_env_files
 generate_scrapers_docker_compose_env_f iles
 generate_managers_docker_compose_env_f iles
+generate_frontend_docker_compose_env_f iles

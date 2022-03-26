@@ -48,5 +48,5 @@ server.get('*', (request, response) => {
 });
 
 server.listen(process.env.FRONTEND_PORT, () => {
-  console.log(`Server running on http://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}`);
+  console.log(`Server running on http://0.0.0.0:${process.env.FRONTEND_PORT}`);
 });

@@ -15,20 +15,10 @@ http {
 
     server {
         listen ${NGINX_PORT};
-
-        location / {
-            default_type application/json;
-            return 404 '{"status": 404, "reason": "Not Found"}';
-        }
-    }
-
-    server {
-        listen ${NGINX_PORT};
-        server_name  ~^solar.*$;
         resolver 127.0.0.11;
 
         location / {
-            proxy_pass  http://${SOLAR_MANAGER_CONTAINER_NAME}:${SOLAR_MANAGER_PORT};
+            proxy_pass  http://${FRONTEND_CONTAINER_NAME}:${FRONTEND_PORT};
 
             proxy_redirect off;
             proxy_set_header Host $host;

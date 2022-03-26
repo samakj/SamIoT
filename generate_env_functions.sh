@@ -13,6 +13,7 @@ get_env () {
     python="$services/python"
     docker_compose="$services/docker-compose"
     nginx="$services/nginx"
+    frontend="$javascript/frontend"
     iot="$python/iot"
     managers="$python/managers"
     utilities="$python/utilities"
@@ -30,6 +31,7 @@ clean_env () {
     unset python
     unset docker_compose
     unset nginx
+    unset frontend
     unset iot
     unset managers
     unset utilities
@@ -485,5 +487,29 @@ SOLAR_MANAGER_CONTAINER_NAME="$SOLAR_MANAGER_CONTAINER_NAME"
 
 EOF
     cp "$docker_compose/managers/.env" "$docker_compose/managers/env.sh"
+    clean_env
+}
+
+generate_frontend_docker_compose_env_files() {
+    get_env
+    echo "Writing docker-compose/frontend env files."
+    cat > "$docker_compose/frontend/.env" <<- EOF
+# Ports
+
+FRONTEND_PORT=$FRONTEND_PORT
+NGINX_PORT=$NGINX_PORT
+
+# Folders
+
+FRONTEND_FOLDER="$frontend"
+NGINX_FOLDER="$nginx"
+SHARED_FOLDER="$shared"
+
+# Container Name
+
+FRONTEND_CONTAINER_NAME="$FRONTEND_CONTAINER_NAME"
+
+EOF
+    cp "$docker_compose/frontend/.env" "$docker_compose/frontend/env.sh"
     clean_env
 }
