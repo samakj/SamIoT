@@ -211,3 +211,86 @@ restart_scrapers () {
     
     clean_scrapers
 }
+
+init_managers () {
+    root=$(pwd)
+    
+    . "$root/generate_env_functions.sh"
+    generate_solar_manager_env_files
+    generate_managers_docker_compose_env_files
+
+    root=$(pwd)
+    shared="$root/shared"
+    services="$root/services"
+    python="$services/python"
+    nginx="$services/nginx"
+    managers="$python/managers"
+
+    mkdir "$managers/solar/shared"
+    cp -r "$root/shared/python" "$managers/solar/shared"
+
+    docker_compose="$root/services/docker-compose"
+    . "$docker_compose/managers/env.sh"
+
+    mkdir "$docker_compose/managers/portainer-data"
+    
+    export SOLAR_MANAGER_CONTAINER_NAME=$SOLAR_MANAGER_CONTAINER_NAME
+    export SOLAR_MANAGER_PORT=$SOLAR_MANAGER_PORT
+
+    envsubst '${SOLAR_MANAGER_CONTAINER_NAME}:${SOLAR_MANAGER_PORT}' \
+        < "$nginx/managers.template" \
+        > "$nginx/managers.conf"
+}
+
+clean_managers () {
+    . "$root/clean_env.sh"
+    unset root
+    unset shared
+    unset services
+    unset python
+    unset managers
+    unset docker_compose
+}
+
+run_managers () {
+    init_managers
+
+    echo "Starting managers..."
+
+    # Useful for debugging 
+    # docker-compose \
+    #     --file "$docker_compose/managers/docker-compose.yml" \
+    #     --env-file "$docker_compose/managers/.env" \
+    #     --project-name "managers"\
+    #     down
+    # docker rm ${SOLAR_MANAGER_CONTAINER_NAME}
+    # docker rmi ${SOLAR_MANAGER_CONTAINER_NAME}
+
+    docker-compose \
+        --file "$docker_compose/managers/docker-compose.yml" \
+        --env-file "$docker_compose/managers/.env" \
+        --project-name "managers"\
+        build
+
+    docker-compose \
+        --file "$docker_compose/managers/docker-compose.yml" \
+        --env-file "$docker_compose/managers/.env" \
+        --project-name "managers"\
+        up
+
+    clean_managers
+}
+
+restart_managers () {
+    init_managers
+
+    echo "Restarting managers..."
+
+    docker-compose \
+        --file "$docker_compose/managers/docker-compose.yml" \
+        --env-file "$docker_compose/managers/.env" \
+        --project-name "managers"\
+        restart
+
+    clean_managers
+}

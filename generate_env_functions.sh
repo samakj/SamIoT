@@ -436,7 +436,7 @@ EOF
 
 generate_scrapers_docker_compose_env_files() {
     get_env
-    echo "Writing docker-compose/scraper env files."
+    echo "Writing docker-compose/scrapers env files."
     cat > "$docker_compose/scrapers/.env" <<- EOF
 # Ports
 
@@ -461,5 +461,29 @@ WEATHER_SCRAPER_CONTAINER_NAME="$WEATHER_SCRAPER_CONTAINER_NAME"
 
 EOF
     cp "$docker_compose/scrapers/.env" "$docker_compose/scrapers/env.sh"
+    clean_env
+}
+
+generate_managers_docker_compose_env_files() {
+    get_env
+    echo "Writing docker-compose/managers env files."
+    cat > "$docker_compose/managers/.env" <<- EOF
+# Ports
+
+SOLAR_MANAGER_PORT=$SOLAR_MANAGER_PORT
+NGINX_PORT=$NGINX_PORT
+
+# Folders
+
+MANAGERS_FOLDER="$managers"
+NGINX_FOLDER="$nginx"
+SHARED_FOLDER="$shared"
+
+# Container Name
+
+SOLAR_MANAGER_CONTAINER_NAME="$SOLAR_MANAGER_CONTAINER_NAME"
+
+EOF
+    cp "$docker_compose/managers/.env" "$docker_compose/managers/env.sh"
     clean_env
 }

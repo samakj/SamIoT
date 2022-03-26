@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - ${SOLAR_MANAGER_CONTAINER_NAME}
+    volumes:
+      - "${NGINX_FOLDER}/managers.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+
+  solar-manager:
+    image: ${SOLAR_MANAGER_CONTAINER_NAME}
+    container_name: ${SOLAR_MANAGER_CONTAINER_NAME}
+    build:
+      context: "${MANAGERS_FOLDER}/solar"
+      args:
+        SOLAR_MANAGER_PORT: "$SOLAR_MANAGER_PORT"
+    env_file:
+      - ${MANAGERS_FOLDER}/solar/.env
+    volumes:
+      - "${MANAGERS_FOLDER}/solar:/app"
+    ports:
+      - "${SOLAR_MANAGER_PORT}:${SOLAR_MANAGER_PORT}"
+    restart: on-failure
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    ports:
+      - 9000:9000
