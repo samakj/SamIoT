@@ -53,8 +53,6 @@ init_api () {
     envsubst '${CACHE_PORT}' \
         < "$redis/api.template" \
         > "$redis/api.conf"
-
-    cat "${REDIS_FOLDER}/redis.conf" | grep port
 }
 
 clean_api () {
