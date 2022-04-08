@@ -8,6 +8,7 @@ solar_controller="$devices/solar-controller"
 water_butt="$devices/water-butt"
 pond="$devices/pond"
 aquaponics="$devices/aquaponics"
+chicken_coop="$devices/chicken-coop"
 
 echo "Writing mesh bridge config file."
 cat > "$mesh_bridge/src/config.h" <<- EOF
@@ -110,6 +111,25 @@ SamIoT::Mesh::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
 SamIoT::Mesh::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
 SamIoT::Mesh::MeshCredentials Marge = {"$MESH_SSID", "$MESH_PASSWORD"};
+
+#endif
+EOF
+
+echo "Writing chicken coop config file."
+cat > "$chicken_coop/src/config.h" <<- EOF
+#ifndef config_h
+#define config_h
+
+#include <Wifi.h>
+
+const char HOSTNAME[24] = "$CHICKEN_COOP_HOSTNAME";
+const char LOCATION[24] = "$CHICKEN_COOP_LOCATION";
+uint8_t IP_LOCATION = $CHICKEN_COOP_IP_LOCATION;
+const char OTA_PASSWORD[24] = "$CHICKEN_COOP_OTA_PASS";
+
+SamIoT::Wifi::WifiCredentials Patty = {"$PATTY_SSID", "$PATTY_PASS"};
+SamIoT::Wifi::WifiCredentials Selma = {"$SELMA_SSID", "$SELMA_PASS"};
+SamIoT::Wifi::WifiCredentials TheVale = {"$VALE_SSID", "$VALE_PASS"};
 
 #endif
 EOF
