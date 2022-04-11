@@ -300,6 +300,7 @@ lib_deps =
 EOF
 
 echo "Writing chicken coop ini file."
+echo "$chicken_coop/platformio.ini"
 cat > "$chicken_coop/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
@@ -322,9 +323,9 @@ monitor_flags = --raw
 board_build.mcu = esp8266
 board_build.f_cpu = 80000000L
 upload_protocol = espota
-upload_port=$CHICKEND_COOP_HOSTNAME.local
+upload_port=$CHICKEN_COOP_HOSTNAME.local
 upload_flags =
-    --auth=$CHICKEND_COOP_OTA_PASS
+    --auth=$CHICKEN_COOP_OTA_PASS
 lib_ldf_mode = deep+
 lib_deps = 
     4-20ma/ModbusMaster @ ^2.0.1
