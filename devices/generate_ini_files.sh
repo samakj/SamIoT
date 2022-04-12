@@ -26,6 +26,10 @@ cat > "$mesh_bridge/platformio.ini" <<- EOF
 platform = espressif8266
 board = d1
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp8266_exception_decoder
@@ -49,9 +53,13 @@ lib_deps =
     painlessmesh/painlessMesh @ ^1.4.10
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
@@ -86,9 +94,13 @@ cat > "$solar_controller/platformio.ini" <<- EOF
 ; https://docs.platformio.org/page/projectconf.html
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
@@ -126,6 +138,10 @@ cat > "$water_butt/platformio.ini" <<- EOF
 platform = espressif8266
 board = d1
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp8266_exception_decoder
@@ -149,9 +165,13 @@ lib_deps =
     painlessmesh/painlessMesh @ ^1.4.10
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
@@ -189,6 +209,10 @@ cat > "$pond/platformio.ini" <<- EOF
 platform = espressif8266
 board = d1
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp8266_exception_decoder
@@ -212,9 +236,13 @@ lib_deps =
     painlessmesh/painlessMesh @ ^1.4.10
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
@@ -252,6 +280,10 @@ cat > "$aquaponics/platformio.ini" <<- EOF
 platform = espressif8266
 board = d1
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp8266_exception_decoder
@@ -275,9 +307,13 @@ lib_deps =
     painlessmesh/painlessMesh @ ^1.4.10
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
@@ -300,7 +336,6 @@ lib_deps =
 EOF
 
 echo "Writing chicken coop ini file."
-echo "$chicken_coop/platformio.ini"
 cat > "$chicken_coop/platformio.ini" <<- EOF
 ; PlatformIO Project Configuration File
 ;
@@ -316,6 +351,10 @@ cat > "$chicken_coop/platformio.ini" <<- EOF
 platform = espressif8266
 board = d1
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp8266_exception_decoder
@@ -339,9 +378,13 @@ lib_deps =
     painlessmesh/painlessMesh @ ^1.4.10
 
 [env:lolin_d32_pro]
-platform = espressif32
+platform = https://github.com/jason2866/platform-espressif32.git
 board = lolin_d32_pro
 build_type = debug
+build_unflags = 
+    -std=gnu++11
+build_flags = 
+    -std=gnu++17
 framework = arduino
 monitor_speed = 115200
 monitor_filters = colorize, esp32_exception_decoder
