@@ -45,12 +45,12 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     me-no-dev/ESP Async WebServer @ ^1.2.3
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESPAsyncTCP @ ^1.2.2
-    painlessmesh/painlessMesh @ ^1.4.10
+    painlessmesh/painlessMesh @ ^1.5.0
 
 [env:lolin_d32_pro]
 platform = https://github.com/jason2866/platform-espressif32.git
@@ -74,11 +74,11 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
 
 echo "Writing solar controller ini file."
@@ -115,11 +115,11 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
 
 echo "Writing water butt ini file."
@@ -157,12 +157,12 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     me-no-dev/ESP Async WebServer @ ^1.2.3
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESPAsyncTCP @ ^1.2.2
-    painlessmesh/painlessMesh @ ^1.4.10
+    painlessmesh/painlessMesh @ ^1.5.0
 
 [env:lolin_d32_pro]
 platform = https://github.com/jason2866/platform-espressif32.git
@@ -186,11 +186,11 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
 
 echo "Writing pond ini file."
@@ -228,12 +228,12 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     me-no-dev/ESPAsyncTCP @ ^1.2.2
-    painlessmesh/painlessMesh @ ^1.4.10
+    painlessmesh/painlessMesh @ ^1.5.0
 
 [env:lolin_d32_pro]
 platform = https://github.com/jason2866/platform-espressif32.git
@@ -257,11 +257,11 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
 
 echo "Writing aquaponics ini file."
@@ -299,12 +299,12 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     me-no-dev/ESPAsyncTCP @ ^1.2.2
-    painlessmesh/painlessMesh @ ^1.4.10
+    painlessmesh/painlessMesh @ ^1.5.0
 
 [env:lolin_d32_pro]
 platform = https://github.com/jason2866/platform-espressif32.git
@@ -328,11 +328,11 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
 
 echo "Writing chicken coop ini file."
@@ -370,12 +370,12 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
     me-no-dev/ESPAsyncTCP @ ^1.2.2
-    painlessmesh/painlessMesh @ ^1.4.10
+    painlessmesh/painlessMesh @ ^1.5.0
 
 [env:lolin_d32_pro]
 platform = https://github.com/jason2866/platform-espressif32.git
@@ -399,9 +399,9 @@ lib_deps =
     4-20ma/ModbusMaster @ ^2.0.1
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
-    bblanchon/ArduinoJson@ ^6.17.3
+    bblanchon/ArduinoJson@ ^6.19.4
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
-    me-no-dev/ESP Async WebServer @ ^1.2.3
-    painlessmesh/painlessMesh @ ^1.4.10
+    https://github.com/khoih-prog/ESPAsyncWebServer
+    painlessmesh/painlessMesh @ ^1.5.0
 EOF
