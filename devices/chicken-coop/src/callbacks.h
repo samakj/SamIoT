@@ -55,7 +55,6 @@ void onCoopTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Coop Temperature changed to %.1fc\n", temperature);
-    Ultrasonic.setTemperature(temperature);
 };
 
 void onCoopHumidityChange(float humidity)
@@ -82,7 +81,6 @@ void onShadeTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Shade Temperature changed to %.1fc\n", temperature);
-    Ultrasonic.setTemperature(temperature);
 };
 
 void onShadeHumidityChange(float humidity)
@@ -109,7 +107,6 @@ void onRunTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Run Temperature changed to %.1fc\n", temperature);
-    Ultrasonic.setTemperature(temperature);
 };
 
 void onRunHumidityChange(float humidity)

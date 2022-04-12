@@ -28,7 +28,7 @@ void setup()
     RunDHT.setTemperatureCallback(onRunTemperatureChange);
     RunDHT.setHumidityCallback(onRunHumidityChange);
 
-    SamIoT::Wifi::setup();
+    SamIoT::Wifi::connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
 
     CoopDHT.setup();
     ShadeDHT.setup();
