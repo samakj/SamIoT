@@ -76,6 +76,6 @@ namespace SamIoT::Wifi
         std::string hostname = nullptr,
         uint8_t ipLocation = 1,
         uint16_t maxWait = 60000);
-}
+};
 
 #endif

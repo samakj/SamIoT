@@ -1,4 +1,4 @@
-#include <Wifi.h>
+#include "Wifi.h"
 
 SamIoT::Wifi::WifiCredentials::WifiCredentials(std::string _ssid, std::string _password)
 {
@@ -68,7 +68,7 @@ void SamIoT::Wifi::addStrengthCallback(StrengthCallback callback)
 
 float SamIoT::Wifi::getConnectedNetworkStrength()
 {
-    if (TimeUtils.millisSince(lastStrengthUpdate) > (unsigned long)(strengthUpdatePeriod))
+    if (SamIoT::Time::millisSince(lastStrengthUpdate) > (unsigned long)(strengthUpdatePeriod))
     {
         if (!isConnected())
         {
@@ -144,7 +144,7 @@ float SamIoT::Wifi::getNetworkStrength(std::string ssid)
     return SamIoT::Wifi::STRENGTH_NULL_VALUE;
 }
 
-WifiCredentials *SamIoT::Wifi::getStrongestNetwork(std::vector<WifiCredentials *> credentials)
+SamIoT::Wifi::WifiCredentials *SamIoT::Wifi::getStrongestNetwork(std::vector<WifiCredentials *> credentials)
 {
     if (!credentials.size())
     {
@@ -255,7 +255,7 @@ void SamIoT::Wifi::_connect(
                 credentials->ssid.c_str(),
                 credentials->password.c_str());
         }
-        if (timeSinceStart >= SamIoT::Wifi::maxWait)
+        if (timeSinceStart >= maxWait)
         {
             SamIoT::Logger::warn("Max wait exceeded.", "\n");
             return;
