@@ -1,66 +1,64 @@
 #include "Text.h"
 
-
-SamIot::Graphics::Elements::Text::Text(
-    TFT_eSPI* tft,
-    int16_t x, 
+SamIoT::Graphics::Elements::Text::Text(
+    TFT_eSPI *tft,
+    int16_t x,
     int16_t y,
     std::string _text,
-    const GFXfont* _font,
+    const GFXfont *_font,
     int16_t _color,
     int16_t _background,
     uint8_t _datum,
     uint16_t _zIndex,
-    bool isManaged
-) : SamIot::Graphics::Elements::Element(tft, x, y, 0, 0, _zIndex, true),
-    text(_text),
-    font(_font),
-    color(_color),
-    background(_background),
-    datum(_datum)
+    bool isManaged) : SamIoT::Graphics::Elements::Element(tft, x, y, 0, 0, _zIndex, true),
+                      text(_text),
+                      font(_font),
+                      color(_color),
+                      background(_background),
+                      datum(_datum)
 {
-    if (!isManaged) addToRenderer();
+    if (!isManaged)
+        addToRenderer();
 }
 
-void SamIot::Graphics::Elements::Text::setText(std::string _text)
+void SamIoT::Graphics::Elements::Text::setText(std::string _text)
 {
     text = _text;
 };
-void SamIot::Graphics::Elements::Text::setFont(const GFXfont* _font)
+void SamIoT::Graphics::Elements::Text::setFont(const GFXfont *_font)
 {
     font = _font;
 };
-void SamIot::Graphics::Elements::Text::setColor(int16_t _color)
+void SamIoT::Graphics::Elements::Text::setColor(int16_t _color)
 {
     color = _color;
 };
-void SamIot::Graphics::Elements::Text::setBackground(int16_t _background)
+void SamIoT::Graphics::Elements::Text::setBackground(int16_t _background)
 {
     background = _background;
 };
-void SamIot::Graphics::Elements::Text::setDatum(uint8_t _datum)
+void SamIoT::Graphics::Elements::Text::setDatum(uint8_t _datum)
 {
     datum = _datum;
 };
-void SamIot::Graphics::Elements::Text::setVisible(bool _visible)
+void SamIoT::Graphics::Elements::Text::setVisible(bool _visible)
 {
-    if (visible && !_visible) 
+    if (visible && !_visible)
     {
-        SamIot::Graphics::Box bounds = getDisplayedBounds();
+        SamIoT::Graphics::Box bounds = getDisplayedBounds();
         tft->fillRect(
             bounds.topLeft.x,
             bounds.topLeft.y,
             bounds.bottomRight.x,
             bounds.bottomRight.y,
-            displayedBackground
-        );
+            displayedBackground);
     }
     visible = _visible;
 };
 
-SamIot::Graphics::Point SamIot::Graphics::Elements::Text::getDimensions()
+SamIoT::Graphics::Point SamIoT::Graphics::Elements::Text::getDimensions()
 {
-    SamIot::Graphics::Point dimensions = {0, 0};
+    SamIoT::Graphics::Point dimensions = {0, 0};
 
     tft->setFreeFont(font);
     dimensions.y = (int16_t)tft->fontHeight();
@@ -69,9 +67,9 @@ SamIot::Graphics::Point SamIot::Graphics::Elements::Text::getDimensions()
     return dimensions;
 };
 
-SamIot::Graphics::Point SamIot::Graphics::Elements::Text::getDisplayedDimensions()
+SamIoT::Graphics::Point SamIoT::Graphics::Elements::Text::getDisplayedDimensions()
 {
-    SamIot::Graphics::Point dimensions = {0, 0};
+    SamIoT::Graphics::Point dimensions = {0, 0};
 
     tft->setFreeFont(displayedFont);
     dimensions.y = (int16_t)tft->fontHeight();
@@ -80,11 +78,11 @@ SamIot::Graphics::Point SamIot::Graphics::Elements::Text::getDisplayedDimensions
     return dimensions;
 };
 
-SamIot::Graphics::Box SamIot::Graphics::Elements::Text::getBounds()
+SamIoT::Graphics::Box SamIoT::Graphics::Elements::Text::getBounds()
 {
-    SamIot::Graphics::Box bounds = {{0, 0}, {0, 0}};
+    SamIoT::Graphics::Box bounds = {{0, 0}, {0, 0}};
 
-    SamIot::Graphics::Point dimensions = getDimensions();
+    SamIoT::Graphics::Point dimensions = getDimensions();
 
     if (datum == TL_DATUM || datum == ML_DATUM || datum == BL_DATUM)
     {
@@ -120,11 +118,11 @@ SamIot::Graphics::Box SamIot::Graphics::Elements::Text::getBounds()
     return bounds;
 };
 
-SamIot::Graphics::Box SamIot::Graphics::Elements::Text::getDisplayedBounds()
+SamIoT::Graphics::Box SamIoT::Graphics::Elements::Text::getDisplayedBounds()
 {
-    SamIot::Graphics::Box bounds = {{0, 0}, {0, 0}};
+    SamIoT::Graphics::Box bounds = {{0, 0}, {0, 0}};
 
-    SamIot::Graphics::Point dimensions = getDisplayedDimensions();
+    SamIoT::Graphics::Point dimensions = getDisplayedDimensions();
 
     if (displayedDatum == TL_DATUM || displayedDatum == ML_DATUM || displayedDatum == BL_DATUM)
     {
@@ -160,7 +158,7 @@ SamIot::Graphics::Box SamIot::Graphics::Elements::Text::getDisplayedBounds()
     return bounds;
 };
 
-bool SamIot::Graphics::Elements::Text::needsRedraw()
+bool SamIoT::Graphics::Elements::Text::needsRedraw()
 {
     return (
         redraw ||
@@ -170,41 +168,39 @@ bool SamIot::Graphics::Elements::Text::needsRedraw()
         font != displayedFont ||
         color != displayedColor ||
         background != displayedBackground ||
-        datum != displayedDatum
-    );
+        datum != displayedDatum);
 };
 
-void SamIot::Graphics::Elements::Text::configureTFTFontStyles()
+void SamIoT::Graphics::Elements::Text::configureTFTFontStyles()
 {
     tft->setFreeFont(font);
     tft->setTextDatum(datum);
     tft->setTextColor(color, background);
 };
 
-void SamIot::Graphics::Elements::Text::draw()
+void SamIoT::Graphics::Elements::Text::draw()
 {
     if (height && width)
     {
-        SamIot::Graphics::Box oldBounds = getDisplayedBounds();
-        SamIot::Graphics::Box newBounds = getBounds();
+        SamIoT::Graphics::Box oldBounds = getDisplayedBounds();
+        SamIoT::Graphics::Box newBounds = getBounds();
         std::vector<Box> fillBoxs = uncontainedBoxs(oldBounds, newBounds);
 
-        for (SamIot::Graphics::Box &box : fillBoxs)
+        for (SamIoT::Graphics::Box &box : fillBoxs)
         {
             tft->fillRect(
                 box.topLeft.x - 1,
                 box.topLeft.y - 1,
                 box.bottomRight.x - box.topLeft.x + 1,
                 box.bottomRight.y - box.topLeft.y + 1,
-                background
-            );
+                background);
         }
     }
 
     configureTFTFontStyles();
     tft->drawString(text.c_str(), x, y);
 
-    SamIot::Graphics::Point newDimensions = getDimensions();
+    SamIoT::Graphics::Point newDimensions = getDimensions();
 
     height = newDimensions.y;
     width = newDimensions.x;
@@ -220,7 +216,7 @@ void SamIot::Graphics::Elements::Text::draw()
     redraw = false;
 };
 
-void SamIot::Graphics::Elements::Text::addToRenderer()
+void SamIoT::Graphics::Elements::Text::addToRenderer()
 {
-    SamIot::Graphics::Renderer.addElement(this);
+    SamIoT::Graphics::Renderer.addElement(this);
 }

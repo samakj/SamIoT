@@ -6,17 +6,20 @@
 
 namespace SamIoT::Graphics
 {
-    struct Point {
+    struct Point
+    {
         int16_t x = 0;
         int16_t y = 0;
     };
 
-    struct Line {
+    struct Line
+    {
         Point p1;
         Point p2;
     };
 
-    struct Box {
+    struct Box
+    {
         Point topLeft;
         Point bottomRight;
     };

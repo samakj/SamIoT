@@ -1,9 +1,8 @@
 #include "Arc.h"
 
-
-SamIot::Graphics::Elements::Arc::Arc(
-    TFT_eSPI* _tft,
-    int16_t _x, 
+SamIoT::Graphics::Elements::Arc::Arc(
+    TFT_eSPI *_tft,
+    int16_t _x,
     int16_t _y,
     uint16_t _radius,
     int16_t _startAngle,
@@ -13,88 +12,84 @@ SamIot::Graphics::Elements::Arc::Arc(
     int8_t _thickness,
     int8_t _segments,
     uint16_t _zIndex,
-    bool isManaged
-) : Element(_tft, _x, _y, _radius, _radius, _zIndex, true),
-    radius(_radius),
-    startAngle(_startAngle),
-    endAngle(_endAngle),
-    color(_color),
-    backgroundColor(_backgroundColor),
-    thickness(_thickness),
-    segments(_segments)
+    bool isManaged) : Element(_tft, _x, _y, _radius, _radius, _zIndex, true),
+                      radius(_radius),
+                      startAngle(_startAngle),
+                      endAngle(_endAngle),
+                      color(_color),
+                      backgroundColor(_backgroundColor),
+                      thickness(_thickness),
+                      segments(_segments)
 {
-    if (!isManaged) addToRenderer();
+    if (!isManaged)
+        addToRenderer();
 };
 
-void SamIot::Graphics::Elements::Arc::setRadius(uint16_t _radius)
+void SamIoT::Graphics::Elements::Arc::setRadius(uint16_t _radius)
 {
     radius = _radius;
 };
-void SamIot::Graphics::Elements::Arc::setStartAngle(int16_t _startAngle)
+void SamIoT::Graphics::Elements::Arc::setStartAngle(int16_t _startAngle)
 {
     startAngle = _startAngle;
 };
-void SamIot::Graphics::Elements::Arc::setEndAngle(int16_t _endAngle)
+void SamIoT::Graphics::Elements::Arc::setEndAngle(int16_t _endAngle)
 {
     endAngle = _endAngle;
 };
-void SamIot::Graphics::Elements::Arc::setColor(int16_t _color)
+void SamIoT::Graphics::Elements::Arc::setColor(int16_t _color)
 {
     color = _color;
 };
-void SamIot::Graphics::Elements::Arc::setThickness(int8_t _thickness)
+void SamIoT::Graphics::Elements::Arc::setThickness(int8_t _thickness)
 {
     thickness = _thickness;
 };
-void SamIot::Graphics::Elements::Arc::setSegments(int8_t _segments)
+void SamIoT::Graphics::Elements::Arc::setSegments(int8_t _segments)
 {
     segments = _segments;
 };
 
-std::vector<SamIot::Graphics::Point> SamIot::Graphics::Elements::Arc::getPoints()
+std::vector<SamIoT::Graphics::Point> SamIoT::Graphics::Elements::Arc::getPoints()
 {
-    std::vector<SamIot::Graphics::Point> points = {};
+    std::vector<SamIoT::Graphics::Point> points = {};
     float dAngle = 1. * (endAngle - startAngle) / segments;
     if (thickness > 1)
     {
-        for (int8 i = 0; i <= segments; i ++)
+        for (uint8_t i = 0; i <= segments; i++)
         {
             float angle = startAngle + i * dAngle;
-            Point p1 = {0,0};
-            Point p2 = {0,0};
+            Point p1 = {0, 0};
+            Point p2 = {0, 0};
             float dt = (thickness - 1) / 2.;
             p1.x = x + (radius - std::floor(dt)) * sin(angle * PI / 180);
-            p1.y = y + (radius - std::floor(dt)) * - cos(angle * PI / 180);
+            p1.y = y + (radius - std::floor(dt)) * -cos(angle * PI / 180);
             p2.x = x + (radius + std::ceil(dt)) * sin(angle * PI / 180);
-            p2.y = y + (radius + std::ceil(dt)) * - cos(angle * PI / 180);
+            p2.y = y + (radius + std::ceil(dt)) * -cos(angle * PI / 180);
             if (
                 !points.size() ||
                 !(
                     points.back().x == p2.x &&
-                    points.back().y == p2.y
-                )
-            )
+                    points.back().y == p2.y))
             {
                 points.push_back(p1);
                 points.push_back(p2);
             }
         }
-    } 
-    else 
+    }
+    else
     {
-        for (int8 i = 0; i <= segments; i ++)
+        for (uint8_t i = 0; i <= segments; i++)
         {
             float angle = startAngle + i * dAngle;
-            SamIot::Graphics::Point point = {0,0};
+            SamIoT::Graphics::Point point = {0, 0};
             point.x = x + radius * sin(angle * PI / 180);
-            point.y = y + radius * - cos(angle * PI / 180);
+            point.y = y + radius * -cos(angle * PI / 180);
             if (
                 !points.size() ||
                 !(
                     points.back().x == point.x &&
-                    points.back().y == point.y
-                )
-            )
+                    points.back().y == point.y))
             {
                 points.push_back(point);
             }
@@ -103,50 +98,46 @@ std::vector<SamIot::Graphics::Point> SamIot::Graphics::Elements::Arc::getPoints(
     return points;
 };
 
-std::vector<SamIot::Graphics::Point> SamIot::Graphics::Elements::Arc::getDisplayedPoints()
+std::vector<SamIoT::Graphics::Point> SamIoT::Graphics::Elements::Arc::getDisplayedPoints()
 {
-    std::vector<SamIot::Graphics::Point> points = {};
+    std::vector<SamIoT::Graphics::Point> points = {};
     float dAngle = 1. * (displayedEndAngle - displayedStartAngle) / displayedSegments;
     if (displayedThickness > 1)
     {
-        for (int8 i = 0; i <= displayedSegments; i ++)
+        for (uint8_t i = 0; i <= displayedSegments; i++)
         {
             float angle = displayedStartAngle + i * dAngle;
-            Point p1 = {0,0};
-            Point p2 = {0,0};
+            Point p1 = {0, 0};
+            Point p2 = {0, 0};
             float dt = (displayedThickness - 1) / 2.;
             p1.x = displayedX + (displayedRadius - std::floor(dt)) * sin(angle * PI / 180);
-            p1.y = displayedY + (displayedRadius - std::floor(dt)) * - cos(angle * PI / 180);
+            p1.y = displayedY + (displayedRadius - std::floor(dt)) * -cos(angle * PI / 180);
             p2.x = displayedX + (displayedRadius + std::ceil(dt)) * sin(angle * PI / 180);
-            p2.y = displayedY + (displayedRadius + std::ceil(dt)) * - cos(angle * PI / 180);
+            p2.y = displayedY + (displayedRadius + std::ceil(dt)) * -cos(angle * PI / 180);
             if (
                 !points.size() ||
                 !(
                     points.back().x == p2.x &&
-                    points.back().y == p2.y
-                )
-            )
+                    points.back().y == p2.y))
             {
                 points.push_back(p1);
                 points.push_back(p2);
             }
         }
-    } 
-    else 
+    }
+    else
     {
-        for (int8 i = 0; i <= displayedSegments; i ++)
+        for (uint8_t i = 0; i <= displayedSegments; i++)
         {
             float angle = displayedStartAngle + i * dAngle;
-            SamIot::Graphics::Point point = {0,0};
+            SamIoT::Graphics::Point point = {0, 0};
             point.x = displayedX + displayedRadius * sin(angle * PI / 180);
-            point.y = displayedY + displayedRadius * - cos(angle * PI / 180);
+            point.y = displayedY + displayedRadius * -cos(angle * PI / 180);
             if (
                 !points.size() ||
                 !(
                     points.back().x == point.x &&
-                    points.back().y == point.y
-                )
-            )
+                    points.back().y == point.y))
             {
                 points.push_back(point);
             }
@@ -155,7 +146,7 @@ std::vector<SamIot::Graphics::Point> SamIot::Graphics::Elements::Arc::getDisplay
     return points;
 };
 
-bool SamIot::Graphics::Elements::Arc::needsRedraw()
+bool SamIoT::Graphics::Elements::Arc::needsRedraw()
 {
     return (
         redraw ||
@@ -167,11 +158,10 @@ bool SamIot::Graphics::Elements::Arc::needsRedraw()
         color != displayedColor ||
         backgroundColor != displayedBackgroundColor ||
         thickness != displayedThickness ||
-        segments != displayedSegments
-    );
+        segments != displayedSegments);
 };
 
-bool SamIot::Graphics::Elements::Arc::needsFullRedraw()
+bool SamIoT::Graphics::Elements::Arc::needsFullRedraw()
 {
     return (
         redraw ||
@@ -181,34 +171,34 @@ bool SamIot::Graphics::Elements::Arc::needsFullRedraw()
         startAngle != displayedStartAngle ||
         endAngle != displayedEndAngle ||
         thickness < displayedThickness ||
-        segments != displayedSegments
-    );
+        segments != displayedSegments);
 };
 
-void SamIot::Graphics::Elements::Arc::clear()
+void SamIoT::Graphics::Elements::Arc::clear()
 {
-    std::vector<SamIot::Graphics::Point> points = getDisplayedPoints();
-    if (thickness > 1) drawTriangles(points, backgroundColor);
-    else drawLines(points, backgroundColor);
+    std::vector<SamIoT::Graphics::Point> points = getDisplayedPoints();
+    if (thickness > 1)
+        drawTriangles(points, backgroundColor);
+    else
+        drawLines(points, backgroundColor);
 };
 
-void SamIot::Graphics::Elements::Arc::drawLines(std::vector<SamIot::Graphics::Point> points, int16_t color)
+void SamIoT::Graphics::Elements::Arc::drawLines(std::vector<SamIoT::Graphics::Point> points, int16_t color)
 {
-    for (uint8 i = 1; i < points.size(); i++)
+    for (uint8_t i = 1; i < points.size(); i++)
     {
         tft->drawLine(
             points[i - 1].x,
             points[i - 1].y,
             points[i].x,
             points[i].y,
-            color
-        );
+            color);
     }
 }
 
-void SamIot::Graphics::Elements::Arc::drawTriangles(std::vector<SamIot::Graphics::Point> points, int16_t color)
+void SamIoT::Graphics::Elements::Arc::drawTriangles(std::vector<SamIoT::Graphics::Point> points, int16_t color)
 {
-    for (uint8 i = 3; i < points.size(); i += 2)
+    for (uint8_t i = 3; i < points.size(); i += 2)
     {
         tft->fillTriangle(
             points[i - 3].x,
@@ -217,8 +207,7 @@ void SamIot::Graphics::Elements::Arc::drawTriangles(std::vector<SamIot::Graphics
             points[i - 2].y,
             points[i - 1].x,
             points[i - 1].y,
-            color
-        );
+            color);
         tft->fillTriangle(
             points[i - 2].x,
             points[i - 2].y,
@@ -226,18 +215,21 @@ void SamIot::Graphics::Elements::Arc::drawTriangles(std::vector<SamIot::Graphics
             points[i - 1].y,
             points[i].x,
             points[i].y,
-            color
-        );
+            color);
     }
 }
 
-void SamIot::Graphics::Elements::Arc::draw()
+void SamIoT::Graphics::Elements::Arc::draw()
 {
-    if (needsFullRedraw()) clear();
-    if (!radius || !thickness || startAngle == endAngle) return;
-    std::vector<SamIot::Graphics::Point> points = getPoints();
-    if (thickness > 1) drawTriangles(points, color);
-    else drawLines(points, color);
+    if (needsFullRedraw())
+        clear();
+    if (!radius || !thickness || startAngle == endAngle)
+        return;
+    std::vector<SamIoT::Graphics::Point> points = getPoints();
+    if (thickness > 1)
+        drawTriangles(points, color);
+    else
+        drawLines(points, color);
 
     redraw = false;
     height = radius;
@@ -246,16 +238,16 @@ void SamIot::Graphics::Elements::Arc::draw()
     displayedY = y;
     displayedHeight = height;
     displayedWidth = width;
-    displayedRadius = radius; 
-    displayedStartAngle = startAngle; 
-    displayedEndAngle = endAngle; 
-    displayedColor = color; 
-    displayedBackgroundColor = backgroundColor; 
-    displayedThickness = thickness; 
-    displayedSegments = segments; 
+    displayedRadius = radius;
+    displayedStartAngle = startAngle;
+    displayedEndAngle = endAngle;
+    displayedColor = color;
+    displayedBackgroundColor = backgroundColor;
+    displayedThickness = thickness;
+    displayedSegments = segments;
 };
 
-void SamIot::Graphics::Elements::Arc::addToRenderer()
+void SamIoT::Graphics::Elements::Arc::addToRenderer()
 {
-    SamIot::Graphics::Renderer.addElement(this);
+    SamIoT::Graphics::Renderer.addElement(this);
 }

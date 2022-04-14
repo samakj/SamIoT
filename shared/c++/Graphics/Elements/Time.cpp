@@ -1,180 +1,190 @@
 #include "Time.h"
 
-SamIot::Graphics::Elements::Time::Time(
-    TFT_eSPI* tft,
-    int16_t x, 
+SamIoT::Graphics::Elements::Time::Time(
+    TFT_eSPI *tft,
+    int16_t x,
     int16_t y,
     std::string _hours,
     std::string _minutes,
     std::string _seconds,
-    const GFXfont* _font,
+    const GFXfont *_font,
     int16_t _color,
     int16_t _background,
     uint8_t _datum,
     uint16_t _zIndex,
-    bool isManaged
-) : SamIot::Graphics::Elements::Element(tft, x, y, 0, 0, _zIndex),
-    hours(_hours),
-    minutes(_minutes),
-    seconds(_seconds),
-    font(_font),
-    color(_color),
-    background(_background),
-    datum(_datum)
+    bool isManaged) : SamIoT::Graphics::Elements::Element(tft, x, y, 0, 0, _zIndex),
+                      hours(_hours),
+                      minutes(_minutes),
+                      seconds(_seconds),
+                      font(_font),
+                      color(_color),
+                      background(_background),
+                      datum(_datum)
 {
-    if (!isManaged) addToRenderer();
+    if (!isManaged)
+        addToRenderer();
 }
 
-void SamIot::Graphics::Elements::Time::setX(int16_t _x)
+void SamIoT::Graphics::Elements::Time::setX(int16_t _x)
 {
     x = _x;
     repositionElements();
 };
-void SamIot::Graphics::Elements::Time::setY(int16_t _y)
+void SamIoT::Graphics::Elements::Time::setY(int16_t _y)
 {
     y = _y;
     repositionElements();
 };
-void SamIot::Graphics::Elements::Time::setHours(std::string _hours)
+void SamIoT::Graphics::Elements::Time::setHours(std::string _hours)
 {
     hours = _hours;
-    if (elements.size()) elements[0].setText(hours);
+    if (elements.size())
+        elements[0].setText(hours);
 };
-void SamIot::Graphics::Elements::Time::setHours(uint8_t _hours)
+void SamIoT::Graphics::Elements::Time::setHours(uint8_t _hours)
 {
     char __hours[8];
     sprintf(__hours, "%02d", _hours);
-    setHours(__hours); 
+    setHours(__hours);
 };
-void SamIot::Graphics::Elements::Time::setMinutes(std::string _minutes)
+void SamIoT::Graphics::Elements::Time::setMinutes(std::string _minutes)
 {
     minutes = _minutes;
-    if (elements.size()) elements[2].setText(minutes);
+    if (elements.size())
+        elements[2].setText(minutes);
 };
-void SamIot::Graphics::Elements::Time::setMinutes(uint8_t _minutes)
+void SamIoT::Graphics::Elements::Time::setMinutes(uint8_t _minutes)
 {
     char __minutes[8];
     sprintf(__minutes, "%02d", _minutes);
-    setMinutes(__minutes); 
+    setMinutes(__minutes);
 };
-void SamIot::Graphics::Elements::Time::setSeconds(std::string _seconds)
+void SamIoT::Graphics::Elements::Time::setSeconds(std::string _seconds)
 {
     seconds = _seconds;
-    if (elements.size()) elements[4].setText(seconds);
+    if (elements.size())
+        elements[4].setText(seconds);
 };
-void SamIot::Graphics::Elements::Time::setSeconds(uint8_t _seconds)
+void SamIoT::Graphics::Elements::Time::setSeconds(uint8_t _seconds)
 {
     char __seconds[8];
     sprintf(__seconds, "%02d", _seconds);
-    setSeconds(__seconds); 
+    setSeconds(__seconds);
 };
-void SamIot::Graphics::Elements::Time::setFromSamIot::Graphics::Elements::Time()
+void SamIoT::Graphics::Elements::Time::setFromTime()
 {
     char _hours[8], _minutes[8], _seconds[8];
-    samiot::graphics::elements::time_t tm = samiot::graphics::elements::time(nullptr);
-    strfsamiot::graphics::elements::time(_hours, sizeof(_hours), "%H", gmsamiot::graphics::elements::time(&tm));
-    strfsamiot::graphics::elements::time(_minutes, sizeof(_minutes), "%M", gmsamiot::graphics::elements::time(&tm));
-    strfsamiot::graphics::elements::time(_seconds, sizeof(_seconds), "%S", gmsamiot::graphics::elements::time(&tm));
+    time_t tm = time(nullptr);
+    strftime(_hours, sizeof(_hours), "%H", gmtime(&tm));
+    strftime(_minutes, sizeof(_minutes), "%M", gmtime(&tm));
+    strftime(_seconds, sizeof(_seconds), "%S", gmtime(&tm));
     setHours(_hours);
     setMinutes(_minutes);
     setSeconds(_seconds);
 };
-void SamIot::Graphics::Elements::Time::setFont(const GFXfont* _font)
+void SamIoT::Graphics::Elements::Time::setFont(const GFXfont *_font)
 {
     font = _font;
     setPartSizes();
     repositionElements();
     restyleElements();
 };
-void SamIot::Graphics::Elements::Time::setColor(int16_t _color)
+void SamIoT::Graphics::Elements::Time::setColor(int16_t _color)
 {
     color = _color;
     restyleElements();
 };
-void SamIot::Graphics::Elements::Time::setBackground(int16_t _background)
+void SamIoT::Graphics::Elements::Time::setBackground(int16_t _background)
 {
     background = _background;
     restyleElements();
 };
-void SamIot::Graphics::Elements::Time::setDatum(uint8_t _datum)
+void SamIoT::Graphics::Elements::Time::setDatum(uint8_t _datum)
 {
     datum = _datum;
     repositionElements();
 };
-void SamIot::Graphics::Elements::Time::setVisible(bool _visible)
+void SamIoT::Graphics::Elements::Time::setVisible(bool _visible)
 {
     if (visible && !_visible)
     {
-        SamIot::Graphics::Box bounds = getDisplayedBounds();
+        SamIoT::Graphics::Box bounds = getDisplayedBounds();
         tft->fillRect(
             bounds.topLeft.x,
             bounds.topLeft.y,
             bounds.bottomRight.x,
             bounds.bottomRight.y,
-            displayedBackground
-        );
+            displayedBackground);
     }
     visible = _visible;
 };
 
-SamIot::Graphics::Point SamIot::Graphics::Elements::Time::getDimensions()
+SamIoT::Graphics::Point SamIoT::Graphics::Elements::Time::getDimensions()
 {
-    if (!maxPartWidth || !colonWidth) setPartSizes();
+    if (!maxPartWidth || !colonWidth)
+        setPartSizes();
     configureTFTFontStyles();
     return {
         3 * maxPartWidth + 4 * colonPadding + 2 * colonWidth,
-        tft->fontHeight()
-    };
+        tft->fontHeight()};
 };
 
-SamIot::Graphics::Point SamIot::Graphics::Elements::Time::getDisplayedDimensions()
+SamIoT::Graphics::Point SamIoT::Graphics::Elements::Time::getDisplayedDimensions()
 {
-    if (!maxPartWidth || !colonWidth) setPartSizes();
+    if (!maxPartWidth || !colonWidth)
+        setPartSizes();
     configureTFTFontStyles();
     return {
         3 * maxPartWidth + 4 * colonPadding + 2 * colonWidth,
-        tft->fontHeight()
-    };
+        tft->fontHeight()};
 };
 
-SamIot::Graphics::Box SamIot::Graphics::Elements::Time::getBounds()
+SamIoT::Graphics::Box SamIoT::Graphics::Elements::Time::getBounds()
 {
-    SamIot::Graphics::Box bounds = {{10000, 10000}, {0, 0}};
+    SamIoT::Graphics::Box bounds = {{10000, 10000}, {0, 0}};
 
-    for (SamIot::Graphics::Elements::Text &element : elements)
+    for (SamIoT::Graphics::Elements::Text &element : elements)
     {
-        SamIot::Graphics::Box _bounds = element.getBounds();
-        if (_bounds.topLeft.x < bounds.topLeft.x) bounds.topLeft.x = _bounds.topLeft.x;
-        if (_bounds.topLeft.y < bounds.topLeft.y) bounds.topLeft.x = _bounds.topLeft.x;
-        if (_bounds.bottomRight.x > bounds.bottomRight.x) bounds.bottomRight.x = _bounds.bottomRight.x;
-        if (_bounds.bottomRight.y > bounds.bottomRight.y) bounds.bottomRight.x = _bounds.bottomRight.x;
+        SamIoT::Graphics::Box _bounds = element.getBounds();
+        if (_bounds.topLeft.x < bounds.topLeft.x)
+            bounds.topLeft.x = _bounds.topLeft.x;
+        if (_bounds.topLeft.y < bounds.topLeft.y)
+            bounds.topLeft.x = _bounds.topLeft.x;
+        if (_bounds.bottomRight.x > bounds.bottomRight.x)
+            bounds.bottomRight.x = _bounds.bottomRight.x;
+        if (_bounds.bottomRight.y > bounds.bottomRight.y)
+            bounds.bottomRight.x = _bounds.bottomRight.x;
     }
     return bounds;
 };
 
-SamIot::Graphics::Box SamIot::Graphics::Elements::Time::getDisplayedBounds()
+SamIoT::Graphics::Box SamIoT::Graphics::Elements::Time::getDisplayedBounds()
 {
-    SamIot::Graphics::Box bounds = {{10000, 10000}, {0, 0}};
+    SamIoT::Graphics::Box bounds = {{10000, 10000}, {0, 0}};
 
-    for (SamIot::Graphics::Elements::Text &element : elements)
+    for (SamIoT::Graphics::Elements::Text &element : elements)
     {
-        SamIot::Graphics::Box _bounds = element.getDisplayedBounds();
-        if (_bounds.topLeft.x < bounds.topLeft.x) bounds.topLeft.x = _bounds.topLeft.x;
-        if (_bounds.topLeft.y < bounds.topLeft.y) bounds.topLeft.x = _bounds.topLeft.x;
-        if (_bounds.bottomRight.x > bounds.bottomRight.x) bounds.bottomRight.x = _bounds.bottomRight.x;
-        if (_bounds.bottomRight.y > bounds.bottomRight.y) bounds.bottomRight.x = _bounds.bottomRight.x;
+        SamIoT::Graphics::Box _bounds = element.getDisplayedBounds();
+        if (_bounds.topLeft.x < bounds.topLeft.x)
+            bounds.topLeft.x = _bounds.topLeft.x;
+        if (_bounds.topLeft.y < bounds.topLeft.y)
+            bounds.topLeft.x = _bounds.topLeft.x;
+        if (_bounds.bottomRight.x > bounds.bottomRight.x)
+            bounds.bottomRight.x = _bounds.bottomRight.x;
+        if (_bounds.bottomRight.y > bounds.bottomRight.y)
+            bounds.bottomRight.x = _bounds.bottomRight.x;
     }
     return bounds;
 };
 
-void SamIot::Graphics::Elements::Time::configureTFTFontStyles()
+void SamIoT::Graphics::Elements::Time::configureTFTFontStyles()
 {
     tft->setFreeFont(font);
     tft->setTextDatum(TC_DATUM);
     tft->setTextColor(color, background);
 };
 
-boolean SamIot::Graphics::Elements::Time::needsRedraw()
+boolean SamIoT::Graphics::Elements::Time::needsRedraw()
 {
     return (
         redraw ||
@@ -186,36 +196,36 @@ boolean SamIot::Graphics::Elements::Time::needsRedraw()
         font != displayedFont ||
         color != displayedColor ||
         background != displayedBackground ||
-        datum != displayedDatum
-    );
+        datum != displayedDatum);
 };
 
-void SamIot::Graphics::Elements::Time::draw()
+void SamIoT::Graphics::Elements::Time::draw()
 {
-    if (!elements.size()) createElements();
+    if (!elements.size())
+        createElements();
     if (height && width)
     {
-        SamIot::Graphics::Box oldBounds = getDisplayedBounds();
-        SamIot::Graphics::Box newBounds = getBounds();
-        std::vector<SamIot::Graphics::Box> fillSamIot::Graphics::Boxs = uncontainedSamIot::Graphics::Boxs(oldBounds, newBounds);
+        SamIoT::Graphics::Box oldBounds = getDisplayedBounds();
+        SamIoT::Graphics::Box newBounds = getBounds();
+        std::vector<SamIoT::Graphics::Box> fillBoxs = uncontainedBoxs(oldBounds, newBounds);
 
-        for (SamIot::Graphics::Box &samiot::graphics::box : fillSamIot::Graphics::Boxs)
+        for (SamIoT::Graphics::Box &box : fillBoxs)
         {
             tft->fillRect(
-                samiot::graphics::box.topLeft.x,
-                samiot::graphics::box.topLeft.y,
-                samiot::graphics::box.bottomRight.x - samiot::graphics::box.topLeft.x,
-                samiot::graphics::box.bottomRight.y - samiot::graphics::box.topLeft.y,
-                background
-            );
+                box.topLeft.x,
+                box.topLeft.y,
+                box.bottomRight.x - box.topLeft.x,
+                box.bottomRight.y - box.topLeft.y,
+                background);
         }
     }
-    for (SamIot::Graphics::Elements::Text &element : elements)
+    for (SamIoT::Graphics::Elements::Text &element : elements)
     {
-        if (element.needsRedraw()) element.draw();
+        if (element.needsRedraw())
+            element.draw();
     }
 
-    SamIot::Graphics::Point newDimensions = getDimensions();
+    SamIoT::Graphics::Point newDimensions = getDimensions();
 
     height = newDimensions.y;
     width = newDimensions.x;
@@ -233,12 +243,13 @@ void SamIot::Graphics::Elements::Time::draw()
     redraw = false;
 };
 
-void SamIot::Graphics::Elements::Time::createElements()
+void SamIoT::Graphics::Elements::Time::createElements()
 {
-    if (!maxPartWidth || !colonWidth) setPartSizes();
-    SamIot::Graphics::Point reference = getReferenceSamIot::Graphics::Point();
+    if (!maxPartWidth || !colonWidth)
+        setPartSizes();
+    SamIoT::Graphics::Point reference = getReferencePoint();
 
-    SamIot::Graphics::Elements::Text HoursElement(
+    SamIoT::Graphics::Elements::Text HoursElement(
         tft,
         reference.x + std::floor(maxPartWidth * 0.5),
         reference.y,
@@ -248,9 +259,8 @@ void SamIot::Graphics::Elements::Time::createElements()
         background,
         TC_DATUM,
         zIndex,
-        true
-    );
-    SamIot::Graphics::Elements::Text HoursColonElement(
+        true);
+    SamIoT::Graphics::Elements::Text HoursColonElement(
         tft,
         reference.x + maxPartWidth + colonPadding + std::floor(colonWidth / 2.),
         reference.y,
@@ -260,21 +270,19 @@ void SamIot::Graphics::Elements::Time::createElements()
         background,
         TC_DATUM,
         zIndex,
-        true
-    );
-    SamIot::Graphics::Elements::Text MinutesElement(
+        true);
+    SamIoT::Graphics::Elements::Text MinutesElement(
         tft,
         reference.x + std::floor(maxPartWidth * 1.5) + 2 * colonPadding + colonWidth,
-        reference.y, 
+        reference.y,
         minutes,
         font,
         color,
         background,
         TC_DATUM,
         zIndex,
-        true
-    );
-    SamIot::Graphics::Elements::Text MinutesColonElement(
+        true);
+    SamIoT::Graphics::Elements::Text MinutesColonElement(
         tft,
         reference.x + 2 * maxPartWidth + 3 * colonPadding + std::floor(colonWidth * 1.5),
         reference.y,
@@ -284,9 +292,8 @@ void SamIot::Graphics::Elements::Time::createElements()
         background,
         TC_DATUM,
         zIndex,
-        true
-    );
-    SamIot::Graphics::Elements::Text SecondsElement(
+        true);
+    SamIoT::Graphics::Elements::Text SecondsElement(
         tft,
         reference.x + std::floor(maxPartWidth * 2.5) + 4 * colonPadding + 2 * colonWidth,
         reference.y,
@@ -296,8 +303,7 @@ void SamIot::Graphics::Elements::Time::createElements()
         background,
         TC_DATUM,
         zIndex,
-        true
-    );
+        true);
 
     elements.push_back(HoursElement);
     elements.push_back(HoursColonElement);
@@ -306,11 +312,13 @@ void SamIot::Graphics::Elements::Time::createElements()
     elements.push_back(SecondsElement);
 }
 
-void SamIot::Graphics::Elements::Time::repositionElements()
+void SamIoT::Graphics::Elements::Time::repositionElements()
 {
-    if (!elements.size()) return;
-    if (!maxPartWidth || !colonWidth) setPartSizes();
-    SamIot::Graphics::Point reference = getReferenceSamIot::Graphics::Point();
+    if (!elements.size())
+        return;
+    if (!maxPartWidth || !colonWidth)
+        setPartSizes();
+    SamIoT::Graphics::Point reference = getReferencePoint();
 
     elements[0].setX(reference.x + std::floor(maxPartWidth * 0.5));
     elements[0].setY(reference.y);
@@ -324,11 +332,12 @@ void SamIot::Graphics::Elements::Time::repositionElements()
     elements[4].setY(reference.y);
 };
 
-void SamIot::Graphics::Elements::Time::restyleElements()
+void SamIoT::Graphics::Elements::Time::restyleElements()
 {
-    if (!elements.size()) return;
+    if (!elements.size())
+        return;
 
-    for (SamIot::Graphics::Elements::Text &element : elements)
+    for (SamIoT::Graphics::Elements::Text &element : elements)
     {
         element.setFont(font);
         element.setColor(color);
@@ -336,12 +345,12 @@ void SamIot::Graphics::Elements::Time::restyleElements()
     }
 }
 
-SamIot::Graphics::Point SamIot::Graphics::Elements::Time::getReferenceSamIot::Graphics::Point()
+SamIoT::Graphics::Point SamIoT::Graphics::Elements::Time::getReferencePoint()
 {
     setPartSizes();
 
-    SamIot::Graphics::Point dimensions = getDimensions();
-    SamIot::Graphics::Point reference = {x, y};
+    SamIoT::Graphics::Point dimensions = getDimensions();
+    SamIoT::Graphics::Point reference = {x, y};
 
     if (datum == TC_DATUM || datum == MC_DATUM || datum == BC_DATUM)
     {
@@ -363,14 +372,14 @@ SamIot::Graphics::Point SamIot::Graphics::Elements::Time::getReferenceSamIot::Gr
     return reference;
 }
 
-void SamIot::Graphics::Elements::Time::setPartSizes()
+void SamIoT::Graphics::Elements::Time::setPartSizes()
 {
     tft->setFreeFont(font);
     maxPartWidth = tft->textWidth("00");
     colonWidth = tft->textWidth(":");
 }
 
-void SamIot::Graphics::Elements::Time::addToRenderer()
+void SamIoT::Graphics::Elements::Time::addToRenderer()
 {
     Renderer.addElement(this);
 }
