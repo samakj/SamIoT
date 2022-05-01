@@ -1,76 +1,90 @@
 #include "DHT.h"
 
-SamIoT::Sensors::DHT::DHT(
-    uint8_t _pinNo,
-    uint8_t _type,
-    TemperatureCallback _temperatureCallback,
-    HumidityCallback _humidityCallback) : pinNo(_pinNo),
-                                          type(_type),
-                                          temperatureCallback(_temperatureCallback),
-                                          humidityCallback(_humidityCallback){};
-
-void SamIoT::Sensors::DHT::setTemperatureCallback(
-    TemperatureCallback _temperatureCallback)
+namespace SamIoT::Sensors
 {
-    this->temperatureCallback = _temperatureCallback;
-};
+    float TEMPERATURE_NULL_VALUE = -1000.0f;
+    float HUMIDITY_NULL_VALUE = -1000.0f;
 
-void SamIoT::Sensors::DHT::setHumidityCallback(
-    HumidityCallback _humidityCallback)
-{
-    this->humidityCallback = _humidityCallback;
-};
+    DHT::DHT(
+        uint8_t _pinNo,
+        uint8_t _type,
+        TemperatureCallback _temperatureCallback,
+        HumidityCallback _humidityCallback) : pinNo(_pinNo),
+                                              type(_type),
+                                              temperatureCallback(_temperatureCallback),
+                                              humidityCallback(_humidityCallback){};
 
-void SamIoT::Sensors::DHT::setup()
-{
-    this->client = new _DHT(this->pinNo, this->type);
-    this->client->begin();
-    SamIoT::Logger::infof("DHT sensor initialised on pin %d\n", this->pinNo);
-};
-
-void SamIoT::Sensors::DHT::loop()
-{
-    if (!this->client)
-        this->setup();
-    if (SamIoT::Time::millisSince(this->lastReadMillis) > (long unsigned int)this->readPeriod)
+    void DHT::setTemperatureCallback(
+        TemperatureCallback _temperatureCallback)
     {
-        this->checkTemperature();
-        this->checkHumidity();
-        this->lastReadMillis = millis();
-        this->readCount++;
-    }
-};
+        this->temperatureCallback = _temperatureCallback;
+    };
 
-void SamIoT::Sensors::DHT::checkTemperature()
-{
-    float newTemperature = this->client->readTemperature();
-
-    if (!isnan(newTemperature))
+    void DHT::setHumidityCallback(
+        HumidityCallback _humidityCallback)
     {
-        if (abs(newTemperature - temperature) > 0.15)
+        this->humidityCallback = _humidityCallback;
+    };
+
+    void DHT::setup()
+    {
+        this->client = new _DHT(this->pinNo, this->type);
+        this->client->begin();
+        SamIoT::Logger::infof("DHT sensor initialised on pin %d\n", this->pinNo);
+    };
+
+    void DHT::loop()
+    {
+        if (!this->client)
+            this->setup();
+        if (SamIoT::Time::millisSince(this->lastReadMillis) > (long unsigned int)this->readPeriod)
         {
-            if (this->temperatureCallback)
-                this->temperatureCallback(newTemperature);
-            this->temperature = newTemperature;
+            this->checkTemperature();
+            this->checkHumidity();
+            this->lastReadMillis = millis();
+            this->readCount++;
+        }
+    };
+
+    void DHT::checkTemperature()
+    {
+        float newTemperature = this->client->readTemperature();
+
+        if (!isnan(newTemperature))
+        {
+            if (abs(newTemperature - temperature) > 0.15)
+            {
+                if (this->temperatureCallback)
+                    this->temperatureCallback(newTemperature);
+                this->temperature = newTemperature;
+            }
+            this->nanTemperatureReported = false;
+        }
+        else if (!this->nanTemperatureReported)
+        {
+            SamIoT::Logger::debug("NaN value returned for DHT temperature");
+            this->nanTemperatureReported = true;
+        }
+    };
+
+    void DHT::checkHumidity()
+    {
+        float newHumidity = client->readHumidity();
+
+        if (!isnan(newHumidity))
+        {
+            if (abs(newHumidity - humidity) > 0.25)
+            {
+                if (this->humidityCallback)
+                    this->humidityCallback(newHumidity);
+                this->humidity = newHumidity;
+            }
+            this->nanHumidityReported = false;
+        }
+        else if (!this->nanHumidityReported)
+        {
+            SamIoT::Logger::debug("NaN value returned for DHT humidity");
+            this->nanHumidityReported = true;
         }
     }
-    else
-        SamIoT::Logger::debug("NaN value returned for DHT temperature");
-};
-
-void SamIoT::Sensors::DHT::checkHumidity()
-{
-    float newHumidity = client->readHumidity();
-
-    if (!isnan(newHumidity))
-    {
-        if (abs(newHumidity - humidity) > 0.25)
-        {
-            if (this->humidityCallback)
-                this->humidityCallback(newHumidity);
-            this->humidity = newHumidity;
-        }
-    }
-    else
-        SamIoT::Logger::debug("NaN value returned for DHT humidity");
 }

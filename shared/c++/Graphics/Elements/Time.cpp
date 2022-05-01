@@ -125,7 +125,9 @@ SamIoT::Graphics::Point SamIoT::Graphics::Elements::Time::getDimensions()
         setPartSizes();
     configureTFTFontStyles();
     return {
-        3 * maxPartWidth + 4 * colonPadding + 2 * colonWidth,
+        3 * maxPartWidth +
+            4 * colonPadding +
+            2 * colonWidth,
         tft->fontHeight()};
 };
 
@@ -135,7 +137,9 @@ SamIoT::Graphics::Point SamIoT::Graphics::Elements::Time::getDisplayedDimensions
         setPartSizes();
     configureTFTFontStyles();
     return {
-        3 * maxPartWidth + 4 * colonPadding + 2 * colonWidth,
+        3 * maxPartWidth +
+            4 * colonPadding +
+            2 * colonWidth,
         tft->fontHeight()};
 };
 

@@ -31,18 +31,18 @@ namespace SamIoT::Wifi
         WifiCredentials(std::string _ssid, std::string _password);
     };
 
-    static std::string SSID_NULL_VALUE = "";
-    static float STRENGTH_NULL_VALUE = -1.0f;
-    static uint8_t IP_LOCATION_NULL_VALUE = 0;
+    extern std::string SSID_NULL_VALUE;
+    extern float STRENGTH_NULL_VALUE;
+    extern uint8_t IP_LOCATION_NULL_VALUE;
 
-    static std::string ssid = SSID_NULL_VALUE;
-    static float strength = STRENGTH_NULL_VALUE;
-    static uint16_t strengthUpdatePeriod = 10000;
-    static std::vector<ConnectCallback> connectCallbacks = {};
-    static std::vector<SsidCallback> ssidCallbacks = {};
-    static std::vector<StrengthCallback> strengthCallbacks = {};
+    extern std::string ssid;
+    extern float strength;
+    extern uint16_t strengthUpdatePeriod;
+    extern std::vector<ConnectCallback> connectCallbacks;
+    extern std::vector<SsidCallback> ssidCallbacks;
+    extern std::vector<StrengthCallback> strengthCallbacks;
 
-    static unsigned long lastStrengthUpdate = 0;
+    extern unsigned long lastStrengthUpdate;
 
     boolean isConnected();
     std::string MACAddressByteArrayToString(byte MACAddressByteArray[6]);

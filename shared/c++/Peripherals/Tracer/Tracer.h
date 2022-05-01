@@ -26,7 +26,7 @@ namespace SamIoT::Peripherals
     typedef std::function<void(float remoteBatteryTemperature)> RemoteBatteryTemperatureCallback;
     typedef std::function<void(float systemVoltage)> SystemVoltageCallback;
 
-    static float NULL_RESPONSE_VALUE = -1000.0f;
+    extern float NULL_RESPONSE_VALUE;
 
     class Tracer
     {

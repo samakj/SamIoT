@@ -10,7 +10,7 @@
 namespace SamIoT::Sensors
 {
     typedef std::function<void(float distance)> DistanceCallback;
-    static float DISTANCE_NULL_VALUE = -1000.0f;
+    extern float DISTANCE_NULL_VALUE;
 
     class HCSR04
     {

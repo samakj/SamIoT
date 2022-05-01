@@ -23,12 +23,12 @@
 
 namespace SamIoT::Server
 {
-    static char DEVICE_STATE_KEY_SEPERATOR = '|';
-    static std::string s_DEVICE_STATE_KEY_SEPERATOR = "|";
-    static char DEVICE_STATE_TAGS_SEPERATOR = ',';
-    static std::string s_DEVICE_STATE_TAGS_SEPERATOR = ",";
-    static char DEVICE_STATE_KEY_EMPTY = '-';
-    static std::string s_DEVICE_STATE_KEY_EMPTY = "-";
+    extern char DEVICE_STATE_KEY_SEPERATOR;
+    extern std::string s_DEVICE_STATE_KEY_SEPERATOR;
+    extern char DEVICE_STATE_TAGS_SEPERATOR;
+    extern std::string s_DEVICE_STATE_TAGS_SEPERATOR;
+    extern char DEVICE_STATE_KEY_EMPTY;
+    extern std::string s_DEVICE_STATE_KEY_EMPTY;
 
     enum MessageType
     {
@@ -38,8 +38,8 @@ namespace SamIoT::Server
         META
     };
 
-    static AsyncWebServer httpClient(80);
-    static AsyncWebSocket websocketClient("/ws");
+    extern AsyncWebServer httpClient;
+    extern AsyncWebSocket websocketClient;
 
     void BAD_REQUEST(AsyncWebServerRequest *request);
     void BAD_UPLOAD(AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final);
@@ -48,12 +48,12 @@ namespace SamIoT::Server
 
     void rootResponse(AsyncWebServerRequest *request);
 
-    static std::string location = "";
-    static std::string mac = "";
-    static std::string ip = "";
+    extern std::string location;
+    extern std::string mac;
+    extern std::string ip;
 
-    static bool isOnline = false;
-    static unsigned long lastWebsocketMessage = 0;
+    extern bool isOnline;
+    extern unsigned long lastWebsocketMessage;
 
     void setup(bool mesh = false);
     void loop();

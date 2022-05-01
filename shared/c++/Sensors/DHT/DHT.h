@@ -21,8 +21,8 @@ namespace SamIoT::Sensors
     typedef std::function<void(float temperature)> TemperatureCallback;
     typedef std::function<void(float humidity)> HumidityCallback;
 
-    static float TEMPERATURE_NULL_VALUE = -1000.0f;
-    static float HUMIDITY_NULL_VALUE = -1000.0f;
+    extern float TEMPERATURE_NULL_VALUE;
+    extern float HUMIDITY_NULL_VALUE;
 
     class DHT
     {
@@ -42,6 +42,9 @@ namespace SamIoT::Sensors
         uint32_t readCount = 0;
 
     private:
+        bool nanTemperatureReported = false;
+        bool nanHumidityReported = false;
+
     public:
         DHT(
             uint8_t _pinNo,

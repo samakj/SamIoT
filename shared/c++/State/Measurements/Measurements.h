@@ -10,18 +10,18 @@
 
 namespace SamIoT::State::Measurements
 {
-    static char DEVICE_STATE_KEY_SEPERATOR = '|';
-    static char DEVICE_STATE_TAGS_SEPERATOR = ',';
-    static char DEVICE_STATE_KEY_EMPTY = '-';
-    static std::string s_DEVICE_STATE_KEY_SEPERATOR = "|";
-    static std::string s_DEVICE_STATE_TAGS_SEPERATOR = ",";
-    static std::string s_DEVICE_STATE_KEY_EMPTY = "-";
+    extern char DEVICE_STATE_KEY_SEPERATOR;
+    extern char DEVICE_STATE_TAGS_SEPERATOR;
+    extern char DEVICE_STATE_KEY_EMPTY;
+    extern std::string s_DEVICE_STATE_KEY_SEPERATOR;
+    extern std::string s_DEVICE_STATE_TAGS_SEPERATOR;
+    extern std::string s_DEVICE_STATE_KEY_EMPTY;
 
-    static std::unordered_map<std::string, std::nullptr_t> nullState = {};
-    static std::unordered_map<std::string, std::string> stringState = {};
-    static std::unordered_map<std::string, float> floatState = {};
-    static std::unordered_map<std::string, int> intState = {};
-    static std::unordered_map<std::string, bool> boolState = {};
+    extern std::unordered_map<std::string, std::nullptr_t> nullState;
+    extern std::unordered_map<std::string, std::string> stringState;
+    extern std::unordered_map<std::string, float> floatState;
+    extern std::unordered_map<std::string, int> intState;
+    extern std::unordered_map<std::string, bool> boolState;
 
     void remove(std::string metric = "", std::vector<std::string> tags = {});
 

@@ -17,9 +17,9 @@ namespace SamIoT::Logger
         WARN,
         ERROR
     };
-    static SamIoT::Logger::LogLevel level = SamIoT::Logger::LogLevel::DEBUG;
-    static bool timestamp = true;
-    static bool colour = true;
+    extern SamIoT::Logger::LogLevel level;
+    extern bool timestamp;
+    extern bool colour;
 
     std::string levelName(SamIoT::Logger::LogLevel _level);
     const char *levelColour(SamIoT::Logger::LogLevel _level);

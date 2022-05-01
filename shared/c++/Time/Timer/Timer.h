@@ -36,12 +36,12 @@ namespace SamIoT::Time::Timer
         void add(uint16_t value);
     };
 
-    static uint16_t reportPeriod = 60000;
+    extern uint16_t reportPeriod;
 
-    static uint32_t loopCount = 0;
-    static unsigned long lastLoopReportMillis = -1;
+    extern uint32_t loopCount;
+    extern unsigned long lastLoopReportMillis;
 
-    static std::unordered_map<const char *, SamIoT::Time::Timer::TimerData> data = {};
+    extern std::unordered_map<const char *, SamIoT::Time::Timer::TimerData> data;
 
     void start(const char *id);
     void end(const char *id);

@@ -19,13 +19,13 @@ namespace SamIoT::Time::NTP
 {
     typedef std::function<void()> ConnectCallback;
 
-    static std::string server = "uk.pool.ntp.org";
-    static uint16_t timezone = 0;
-    static uint16_t dst = 0;
-    static uint16_t maxWait = 20000;
+    extern std::string server;
+    extern uint16_t timezone;
+    extern uint16_t dst;
+    extern uint16_t maxWait;
 
-    static std::vector<ConnectCallback> connectCallbacks = {};
-    static bool connecting = false;
+    extern std::vector<ConnectCallback> connectCallbacks;
+    extern bool connecting;
 
     void connect();
     void loop();

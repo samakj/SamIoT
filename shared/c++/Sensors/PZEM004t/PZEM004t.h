@@ -16,12 +16,12 @@ namespace SamIoT::Sensors
     typedef std::function<void(float frequency)> FrequencyCallback;
     typedef std::function<void(float powerFactor)> PowerFactorCallback;
 
-    static float VOLTAGE_NULL_VALUE = -1000.0f;
-    static float CURRENT_NULL_VALUE = -1000.0f;
-    static float POWER_NULL_VALUE = -1000.0f;
-    static float ENERGY_NULL_VALUE = -1000.0f;
-    static float FREQUENCY_NULL_VALUE = -1000.0f;
-    static float POWER_FACTOR_NULL_VALUE = -1000.0f;
+    extern float VOLTAGE_NULL_VALUE;
+    extern float CURRENT_NULL_VALUE;
+    extern float POWER_NULL_VALUE;
+    extern float ENERGY_NULL_VALUE;
+    extern float FREQUENCY_NULL_VALUE;
+    extern float POWER_FACTOR_NULL_VALUE;
 
     class PZEM004t
     {
