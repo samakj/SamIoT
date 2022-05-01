@@ -371,6 +371,7 @@ lib_deps =
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.19.4
+    bodmer/TFT_eSPI@^2.4.42
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     me-no-dev/ESP Async WebServer @ ^1.2.3
@@ -400,6 +401,7 @@ lib_deps =
     adafruit/Adafruit Unified Sensor @ ^1.1.4
     adafruit/DHT sensor library @ ^1.4.2
     bblanchon/ArduinoJson@ ^6.19.4
+    bodmer/TFT_eSPI@^2.4.42
     jandrassy/TelnetStream @ ^1.2.1
     mandulaj/PZEM-004T-v30 @ ^1.1.2
     https://github.com/khoih-prog/ESPAsyncWebServer

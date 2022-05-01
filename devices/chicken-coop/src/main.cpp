@@ -3,6 +3,7 @@
 #include "callbacks.h"
 #include "config.h"
 #include "defs.h"
+#include "display.h"
 #include "tags.h"
 #include <Logger.h>
 #include <OTA.h>
@@ -15,6 +16,11 @@ void setup()
     Serial.begin(115200);
 
     SamIoT::Logger::info("---------------- SETTING UP ----------------");
+    Display::setup();
+    Display::Navigation.goToPage(Display::Views::Boot::name);
+    Display::Views::Boot::updateTask("Connecting to wifi");
+    Display::Renderer->draw();
+
     SamIoT::Wifi::connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
 
     SamIoT::Wifi::addConnectCallback(onWifiConnect);
@@ -35,6 +41,8 @@ void setup()
     RunDHT.setup();
 
     SamIoT::Logger::info("--------------- SETTING DONE ---------------");
+    Display::Navigation.goToPage(Display::Views::Main::name);
+    Display::Renderer->draw();
 }
 
 void loop()
@@ -60,6 +68,11 @@ void loop()
     SamIoT::Time::Timer::start("RunDHT");
     RunDHT.loop();
     SamIoT::Time::Timer::end("RunDHT");
+
+    SamIoT::Time::Timer::start("Screen");
+    Display::Views::Main::updateTime();
+    Display::Renderer->draw();
+    SamIoT::Time::Timer::end("Screen");
 
     SamIoT::Time::Timer::end("Loop");
     SamIoT::Time::Timer::loop();

@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "defs.h"
+#include "display.h"
 #include "tags.h"
 #include <OTA.h>
 #include <State.h>
@@ -27,6 +28,7 @@ void onWifiSsidChange(std::string ssid)
             WIFI_TAGS,
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
+    Display::Views::Main::updateWifi(SamIoT::Wifi::ssid, SamIoT::Wifi::strength);
 };
 
 void onWifiStrengthChange(float strength)
@@ -40,6 +42,7 @@ void onWifiStrengthChange(float strength)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Wifi strength chaned to %.0f%%\n", strength);
+    Display::Views::Main::updateWifi(SamIoT::Wifi::ssid, SamIoT::Wifi::strength);
 };
 
 void onNTPConnect(){};
