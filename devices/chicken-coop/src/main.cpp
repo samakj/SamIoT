@@ -21,11 +21,11 @@ void setup()
     Display::Views::Boot::updateTask("Connecting to wifi");
     Display::Renderer->draw();
 
-    SamIoT::Wifi::connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
-
     SamIoT::Wifi::addConnectCallback(onWifiConnect);
     SamIoT::Wifi::addSsidCallback(onWifiSsidChange);
     SamIoT::Wifi::addStrengthCallback(onWifiStrengthChange);
+
+    SamIoT::Wifi::connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
 
     CoopDHT.setTemperatureCallback(onCoopTemperatureChange);
     CoopDHT.setHumidityCallback(onCoopHumidityChange);
@@ -45,12 +45,19 @@ void setup()
     Display::Renderer->draw();
 }
 
+unsigned long lastNetworkStrengthTest = 0;
+
 void loop()
 {
     SamIoT::Time::Timer::start("Loop");
 
     SamIoT::Time::Timer::start("Wifi");
     SamIoT::Wifi::connect({&Patty, &Selma, &TheVale}, HOSTNAME, IP_LOCATION);
+    if (SamIoT::Time::millisSince(lastNetworkStrengthTest) > 10000)
+    {
+        SamIoT::Wifi::getConnectedNetworkStrength();
+        lastNetworkStrengthTest = millis();
+    }
     SamIoT::Time::Timer::end("Wifi");
 
     SamIoT::Time::Timer::start("OTA");

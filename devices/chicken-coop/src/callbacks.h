@@ -16,6 +16,7 @@ void onWifiConnect(std::string ssid)
     SamIoT::OTA::setup(HOSTNAME, OTA_PASSWORD);
     SamIoT::Time::NTP::connect();
     SamIoT::Server::setup(true);
+    Display::Views::Main::updateWifi(SamIoT::Wifi::ssid, SamIoT::Wifi::strength);
 };
 
 void onWifiSsidChange(std::string ssid)
@@ -41,8 +42,8 @@ void onWifiStrengthChange(float strength)
             WIFI_TAGS,
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
-    SamIoT::Logger::infof("Wifi strength chaned to %.0f%%\n", strength);
-    Display::Views::Main::updateWifi(SamIoT::Wifi::ssid, SamIoT::Wifi::strength);
+    SamIoT::Logger::infof("Wifi strength chaned to %.0f%%\n", strength * 100);
+    Display::Views::Main::updateWifi(SamIoT::Wifi::ssid, SamIoT::Wifi::strength * 100);
 };
 
 void onNTPConnect(){};
@@ -58,6 +59,7 @@ void onCoopTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Coop Temperature changed to %.1fc\n", temperature);
+    Display::Views::Main::updateCoopTemperature(temperature);
 };
 
 void onCoopHumidityChange(float humidity)
@@ -71,6 +73,7 @@ void onCoopHumidityChange(float humidity)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Coop Humidity changed to %.1f%%\n", humidity);
+    Display::Views::Main::updateCoopHumidity(humidity);
 };
 
 void onShadeTemperatureChange(float temperature)
@@ -84,6 +87,7 @@ void onShadeTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Shade Temperature changed to %.1fc\n", temperature);
+    Display::Views::Main::updateShadeTemperature(temperature);
 };
 
 void onShadeHumidityChange(float humidity)
@@ -97,6 +101,7 @@ void onShadeHumidityChange(float humidity)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Shade Humidity changed to %.1f%%\n", humidity);
+    Display::Views::Main::updateShadeHumidity(humidity);
 };
 
 void onRunTemperatureChange(float temperature)
@@ -110,6 +115,7 @@ void onRunTemperatureChange(float temperature)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Run Temperature changed to %.1fc\n", temperature);
+    Display::Views::Main::updateRunTemperature(temperature);
 };
 
 void onRunHumidityChange(float humidity)
@@ -123,6 +129,7 @@ void onRunHumidityChange(float humidity)
             SamIoT::Server::getMessageMeta(
                 SamIoT::Server::MessageType::MEASUREMENT)));
     SamIoT::Logger::infof("Run Humidity changed to %.1f%%\n", humidity);
+    Display::Views::Main::updateRunHumidity(humidity);
 };
 
 #endif
